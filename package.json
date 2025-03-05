@@ -1,27 +1,85 @@
 {
-  "name": "snack24-fe",
+  "name": "snack25-fe",
   "version": "0.1.0",
   "private": true,
+  "license": "BSD-3-Clause-Clear",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
+    "preinstall": "sh .husky/set-node.sh",
+    "predev": "sh .husky/check-pnpm.sh || (echo '\\033[1;31m❌ ERROR:\\033[0m \\033[1;33mpnpm dev\\033[0m \\033[1;32m명령어를 사용하세요\\033[0m' && npx only-allow pnpm)",
+    "prebuild": "sh .husky/check-pnpm.sh || (echo '\\033[1;31m❌ ERROR:\\033[0m \\033[1;33mpnpm build\\033[0m \\033[1;32m명령어를 사용하세요\\033[0m' && npx only-allow pnpm)",
+    "prestart": "sh .husky/check-pnpm.sh || (echo '\\033[1;31m❌ ERROR:\\033[0m \\033[1;33mpnpm start\\033[0m \\033[1;32m명령어를 사용하세요\\033[0m' && npx only-allow pnpm)",
+    "prelint": "sh .husky/check-pnpm.sh || (echo '\\033[1;31m❌ ERROR:\\033[0m \\033[1;33mpnpm lint\\033[0m \\033[1;32m명령어를 사용하세요\\033[0m' && npx only-allow pnpm)",
+    "precommit": "sh .husky/check-pnpm.sh || (echo '\\033[1;31m❌ ERROR:\\033[0m \\033[1;33mpnpm test\\033[0m \\033[1;32m명령어를 사용하세요\\033[0m' && npx only-allow pnpm)",
+    "check:pnpm": "command -v pnpm",
+    "format:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css}'",
+    "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx}'",
+    "stylelint:fix": "stylelint --fix 'src/**/*.css'",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky",
+    "test": "jest",
+    "postinstall": "sh .husky/check-pnpm.sh"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
+    "@radix-ui/react-navigation-menu": "1.2.5",
+    "@tailwindcss/postcss": "^4.0.9",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.477.0",
+    "next": "15.2.1",
+    "postcss": "^8.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.6"
+    "tailwind-merge": "3.0.2",
+    "tailwindcss": "^4.0.9",
+    "tailwindcss-animate": "1.0.7",
+    "zustand": "5.0.3"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
+    "@commitlint/cli": "19.7.1",
+    "@commitlint/config-conventional": "19.7.1",
+    "@eslint/eslintrc": "^3",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "@stylistic/stylelint-config": "2.0.0",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.9",
     "@types/react-dom": "^19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.6",
-    "@eslint/eslintrc": "^3"
+    "autoprefixer": "^10.4.20",
+    "commitlint-config-gitmoji": "2.3.1",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "15.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.1",
+    "prettier-plugin-prisma": "^5.0.0",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "stylelint": "16.15.0",
+    "stylelint-config-clean-order": "7.0.0",
+    "stylelint-config-recess-order": "6.0.0",
+    "stylelint-config-standard": "37.0.0",
+    "stylelint-config-tailwindcss": "^1.0.0",
+    "stylelint-order": "6.0.4",
+    "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

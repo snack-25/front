@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SNACK25
 
 ## Getting Started
 
-First, run the development server:
+- 스낵25는 원스톱 간식 구매 관리 솔루션입니다.
+
+## Requirements
+
+- PNPM을 패키지 매니저로 사용할 것이므로 아래 명령어를 통해 전역 설치
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm i -g pnpm
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 사용방법
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 스크립트 실행 시 `npm run` 자리에 `pnpm`을 사용해주세요.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev   -> pnpm dev
+npm run start -> pnpm start
+npm run build -> pnpm build
+npm run lint  -> pnpm lint
+...
+```
 
-## Learn More
+## VSCode Extensions
 
-To learn more about Next.js, take a look at the following resources:
+- 아래는 팀 프로젝트 협업 시 필요한 VSCode 확장이므로 설치하여 주시기 바랍니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Tailwind CSS IntelliSense <https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss>
+- PostCSS Sorting <https://marketplace.visualstudio.com/items?itemName=mrmlnc.vscode-postcss-sorting>
+- Gitmoji <https://marketplace.visualstudio.com/items?itemName=seatonjiang.gitmoji-vscode>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## References
 
-## Deploy on Vercel
+- npm 각종 scripts 관련 <https://docs.npmjs.com/cli/v11/using-npm/scripts>
+- css classname 명명할 때 참고 <https://classnames.paulrobertlloyd.com/>
+- Design System Token Glossary 참고 <https://martacondedesign.gumroad.com/l/tokens_glossary?layout=profile>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Design System
