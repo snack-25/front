@@ -45,7 +45,7 @@ module.exports = {
     parserOpts: {
       // gitmoji 이모지 + conventional commit 형식 파싱을 위한 정규식
       headerPattern:
-        /^(?::\w*:|(?:\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]))\s(?<type>\w+)(?:\((?<scope>.*)\))?!?:\s(?<subject>(?:(?!#).)*(?:(?!\s).))$/,
+        /^(?::\w*:|[\p{Emoji}\p{Emoji_Presentation}\p{Emoji_Modifier}\p{Emoji_Modifier_Base}\p{Emoji_Component}]+)\s(?<type>\w+)(?:\((?<scope>.*)\))?!?:\s(?<subject>(?:(?!#).)*(?:(?!\s).))$/u,
       // gitmoji 이모지 + conventional commit 형식 헤더 파싱을 위한 그룹 정의
       headerCorrespondence: ['type', 'scope', 'subject', 'body', 'footer'],
     },
