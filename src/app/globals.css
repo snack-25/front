@@ -40,6 +40,16 @@
   --sidebar-ring: oklch(87.1% 0.006 286.286deg);
   --background: oklch(100% 0 0deg);
   --foreground: oklch(14.1% 0.005 285.823deg);
+  --font-pretendard:
+    'Pretendard Variable',
+ 'Pretendard',
+ -apple-system,
+ blinkmacsystemfont,
+    system-ui,
+ roboto,
+ 'Helvetica Neue',
+ 'Segoe UI',
+ sans-serif;
 }
 
 .dark {
@@ -117,6 +127,10 @@
 }
 
 @layer base {
+  html {
+    font-family: var(--font-pretendard);
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
