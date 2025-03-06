@@ -32,7 +32,9 @@ module.exports = {
     ],
     'start-with-gitmoji': [2, 'always'], // 커밋 메시지는 반드시 gitmoji로 시작
     'type-case': [2, 'always', 'lower-case'], // 타입은 항상 소문자로
+    'scope-case': [2, 'always', 'lower-case'], // scope는 항상 소문자로
     'subject-empty': [2, 'never'], // 빈 제목 금지
+    'subject-case': [0], // 제목 대소문자 구분 안함
     'subject-full-stop': [2, 'never', '.'], // 제목 끝에 마침표 금지
     'subject-max-length': [2, 'always', 50], // 제목 길이 50자 제한
     'subject-min-length': [2, 'always', 1], // 제목 길이 1자 이상

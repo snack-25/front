@@ -10,11 +10,13 @@ export default {
   ],
   plugins: [
     'stylelint-order', // CSS 속성 순서
+    '@stylistic/stylelint-plugin', // 코드 포맷팅
     // 'stylelint-a11y', // 접근성 규칙(호환성 문제로 사용안함)
   ],
   rules: {
     // @import 사용 허용
     'import-notation': null,
+    '@stylistic/string-quotes': null, // 문자열 쌍/홑따옴표 강제 안함
     // TailwindCSS의 특수 지시자(@apply, @tailwind 등) 허용
     'at-rule-no-unknown': [
       true,
