@@ -137,7 +137,14 @@
 
   body {
     @apply bg-background text-foreground;
+    min-width: 375px;
   }
 }
 
 /* ⚠️ shadcn/ui@canary에서 자동으로 생성한 코드입니다. */
+
+@theme {
+  --breakpoint-mb: 375px;
+  --breakpoint-tb: 744px;
+  --breakpoint-lt: 1200px;
+}
