@@ -1,3 +1,6 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
 import TextBubble from '@/components/ui/TextBubble';
 import Image from 'next/image';
 
