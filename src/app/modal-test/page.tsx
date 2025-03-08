@@ -20,7 +20,10 @@ export default function ModalTestPage() {
       <h1 className='text-2xl font-bold mb-4'>Modal 테스트 페이지</h1>
 
       {/* 구매 요청 취소 모달 */}
-      <Button onClick={() => setIsCancelRequestOpen(true)}>
+      <Button
+        onClick={() => setIsCancelRequestOpen(true)}
+        className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+      >
         구매 요청 취소 열기
       </Button>
       <Modal
@@ -38,7 +41,10 @@ export default function ModalTestPage() {
       />
 
       {/* 상품 삭제 모달 */}
-      <Button onClick={() => setIsDeleteProductOpen(true)}>
+      <Button
+        onClick={() => setIsDeleteProductOpen(true)}
+        className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+      >
         상품 삭제 열기
       </Button>
       <Modal
@@ -56,7 +62,10 @@ export default function ModalTestPage() {
       />
 
       {/* 계정 탈퇴 모달 (유저 이메일 적용) */}
-      <Button onClick={() => setIsDeleteAccountOpen(true)}>
+      <Button
+        onClick={() => setIsDeleteAccountOpen(true)}
+        className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+      >
         계정 탈퇴 열기
       </Button>
       <Modal
@@ -71,7 +80,10 @@ export default function ModalTestPage() {
       />
 
       {/* 승인 완료 모달 */}
-      <Button onClick={() => setIsApprovalCompleteOpen(true)}>
+      <Button
+        onClick={() => setIsApprovalCompleteOpen(true)}
+        className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+      >
         승인 완료 열기
       </Button>
       <Modal
@@ -89,7 +101,10 @@ export default function ModalTestPage() {
       />
 
       {/* 요청 반려 모달 */}
-      <Button onClick={() => setIsRejectRequestOpen(true)}>
+      <Button
+        onClick={() => setIsRejectRequestOpen(true)}
+        className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+      >
         요청 반려 열기
       </Button>
       <Modal
