@@ -140,7 +140,7 @@
 /*⚠️ 여기부터는 공통으로 사용할 커스터마이징 코드입니다 */
 @theme {
   --breakpoint-mb: 375px;
-  --breakpoint-tb: 744px;
+  --breakpoint-tb: 745px;
   --breakpoint-lt: 1200px;
   --text-3xl: 32px;
   --text-2xl: 24px;
