@@ -1,0 +1,100 @@
+language: 'ko-KR'
+
+tone_instructions: 'Next.js, React 및 Typescript 관련 기술에 대해 빠르고 명확한 코드 리뷰를 제공하며, 건설적인 개선 제안을 합니다.'
+
+early_access: false
+enable_free_tier: true
+
+review:
+  profile: 'chill'
+  high_level_summary: true
+  poem: false
+  path_filters:
+    - '!*.lock'
+    - '!*.md'
+    - '!*.log'
+    - '!dist/**'
+    - '!node_modules/**'
+  path_instructions:
+    - path: 'src/**/*'
+      instructions: |
+        이 파일은 Next.js 및 React 컴포넌트를 포함하고 있습니다. 컴포넌트의 구조와 로직을 검토해주세요.
+        1. Code Consistency & Best Practices
+        - 'Ensure use of functional components and hooks (useState, useEffect 등)'
+        - 'Check for unnecessary re-renders and optimize with useMemo/useCallback'
+        - 'Verify consistent import order and structure'
+        - 'Ensure TypeScript types and interfaces are properly defined'
+        - 'Verify proper usage of Next.js features like pages, layouts and server components'
+
+        2. Performance Optimization
+        - 'Ensure use of Next.js built-in optimizations (Image, Script, etc.)'
+        - 'Check for unnecessary component re-renders'
+        - 'Ensure proper use of lazy loading and code splitting'
+        - 'Verify API calls are optimized and use SWR/React Query where applicable'
+        - 'Check for proper implementation of server components vs client components'
+
+        3. Security & Accessibility
+        - 'Ensure no hardcoded secrets or API keys'
+        - 'Verify CSRF/XSS protection measures in client-side code'
+        - 'Check for proper usage of `aria-*` attributes and semantic HTML'
+        - 'Ensure keyboard navigability and focus management'
+        - 'Verify proper handling of user input and data validation'
+
+        4. Testing & Documentation
+        - 'Ensure components have appropriate unit tests'
+        - 'Check for proper test coverage of critical functionality'
+        - 'Verify components and functions have proper JSDoc comments'
+        - 'Ensure complex logic has explanatory comments'
+
+        공통 지침 외에 특별히 다음 사항을 확인하세요:
+        - '컴포넌트가 단일 책임 원칙을 따르는지 확인'
+        - '적절한 컴포넌트 분리와 재사용성 확인'
+        - 'Props 전달 구조의 효율성 검토'
+    - path: 'src/app/**/*'
+      instructions: |
+        이 파일은 Next.js 애플리케이션의 App Router 구조를 포함합니다. 다음 특화된 항목을 검토하세요:
+        - 'Next.js 13+ App Router 패턴 준수 여부 확인'
+        - '적절한 서버/클라이언트 컴포넌트 분리 확인'
+        - '라우팅 구조의 효율성과 중첩 레이아웃 활용 적절성 검토'
+        - 'Route Handlers와 Server Actions의 올바른 사용법 확인'
+    - path: 'src/lib/**/*'
+      instructions: |
+        이 파일은 공통 유틸리티 및 라이브러리 코드를 포함합니다. 다음을 검토하세요:
+        - '함수의 순수성과 부작용 최소화 확인'
+        - '재사용 가능한 로직의 적절한 모듈화 검토'
+        - '일관된 오류 처리 패턴 확인'
+    - path: 'src/components/**/*'
+      instructions: |
+        이 파일은 재사용 가능한 UI 컴포넌트를 포함합니다. 다음을 검토하세요:
+        - '컴포넌트의 재사용성과 구성 가능성 확인'
+        - '적절한 prop 타입 정의와 기본값 설정 확인'
+        - 'UI 상태 관리의 적절성 검토'
+    - path: 'src/stores/**/*'
+      instructions: |
+        이 파일은 상태 관리 로직을 포함합니다. 다음을 검토하세요:
+        - 'Zustand/Context API의 모범 사례 준수 여부 확인'
+        - '상태 관리 로직의 분리와 모듈화 검토'
+        - '상태 업데이트의 예측 가능성과 효율성 확인'
+        - '비동기 작업의 적절한 처리 확인'
+    - path: 'src/types/**/*'
+      instructions: |
+        이 파일은 TypeScript 타입 정의를 포함합니다. 다음을 검토하세요:
+        - '타입 정의의 일관성과 명확성 확인'
+        - '타입 추론과 타입 가드의 적절성 확인'
+        - '타입 오류의 미리 방지를 위한 타입 정의 검토'
+  ignore_files:
+    - '*.lock'
+    - '*.md'
+    - '*.log'
+    - 'dist/**'
+    - 'node_modules/**'
+  auto_review:
+    enabled: true
+    ignore_title_keywords:
+      - 'WIP'
+      - 'Draft'
+      - 'DO NOT MERGE'
+      - 'WIP'
+code_generation:
+  docstrings:
+    language: 'ko-KR'
