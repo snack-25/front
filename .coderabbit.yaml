@@ -5,7 +5,7 @@ tone_instructions: 'Next.js, React 및 Typescript 관련 기술에 대해 빠르
 early_access: false
 enable_free_tier: true
 
-review:
+reviews:
   profile: 'chill'
   high_level_summary: true
   poem: false
