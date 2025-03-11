@@ -48,6 +48,13 @@ const NavItem = ({ href, currentPath, children }: navItemProps) => {
   );
 };
 
+/**
+ * 웹 애플리케이션의 헤더 UI를 렌더링하는 컴포넌트.
+ *
+ * 사용자의 인증 상태 및 타입, 그리고 현재 경로를 기반으로 다른 헤더 구성을 보여줍니다.
+ * 인증된 사용자에게는 다양한 네비게이션 아이템(상품 리스트, 구매 관련 내역, 상품 등록 내역 등)과 로그아웃 버튼 및 관련 아이콘이 표시되며,
+ * 인증되지 않은 사용자에게는 로그인 및 관리자 회원가입 링크를 제공합니다.
+ */
 export default function Header() {
   const user: Imock = mock[3];
   const pathname: string = usePathname();

@@ -29,6 +29,16 @@ const categoryMap: Record<string, keyof Tcategory> = {
   비품: 'equipment',
 };
 
+/**
+ * 탭 메뉴 인터페이스를 렌더링하는 React 컴포넌트입니다.
+ *
+ * 이 컴포넌트는 한글 카테고리와 해당 아이템을 나타내는 두 개의 탭을 제공하며,
+ * 카테고리 선택 시 해당 카테고리의 첫 번째 아이템이 자동으로 선택되고, 선택된 아이템은 영어로 매핑되어 상태에 반영됩니다.
+ * 개발 환경에서는 선택된 영어 값이 콘솔에 출력되어 디버깅에 도움이 됩니다.
+ *
+ * @example
+ * <TabMenu />
+ */
 export default function TabMenu() {
   const [activeKey, setActiveKey] = useState<string>('스낵');
   const [activeUnder, setActiveUnder] = useState<string>('스낵');
