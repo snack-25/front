@@ -1,10 +1,9 @@
-import TabMenu from "@/components/gnb/TabMenu";
-import { Button } from "@/components/ui/button";
+import TabMenu from '@/components/gnb/TabMenu';
 
 export default function ProductList() {
   return (
     <>
       <TabMenu />
     </>
-  )
+  );
 }

@@ -66,7 +66,7 @@ export default function TabMenu() {
     <>
       <nav>
         <ul className={ulStyle}>
-          {Object.entries(categoryKOR).map(([korKey, items]) => (
+          {Object.entries(categoryKOR).map(([korKey]) => (
             <li
               key={korKey}
               className='h-full'

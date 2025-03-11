@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,10 +18,13 @@ export function HeaderMenu() {
 
   const handleClose = () => {
     setOpen(false);
-  }
+  };
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DropdownMenuTrigger asChild>
         <button className='cursor-pointer tb:hidden focus:outline-none'>
           <Image
@@ -38,7 +40,10 @@ export function HeaderMenu() {
           {
             <div className='flex items-center justify-between'>
               <label className='font-bold text-xl'>메뉴</label>
-              <button onClick={handleClose} className='cursor-pointer'>
+              <button
+                onClick={handleClose}
+                className='cursor-pointer'
+              >
                 <Image
                   src='/icon/lined/close-md.svg'
                   width={36}
