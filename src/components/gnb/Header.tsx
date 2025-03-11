@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '../ui/button';
 import { HeaderMenu } from './HeaderMenu';
+import { cn } from '@/lib/utils';
 
 /* ### 사용자 타입(UserTypes)
 
@@ -16,7 +17,7 @@ import { HeaderMenu } from './HeaderMenu';
 
 interface Imock {
   isAuthenticated: boolean;
-  userType?: string;
+  userType?: 'basicUser' | 'admin' | 'superAdmin';
 }
 
 const mock: Imock[] = [
@@ -26,21 +27,39 @@ const mock: Imock[] = [
   { isAuthenticated: true, userType: 'superAdmin' },
 ];
 
+interface navItemProps {
+  href: string;
+  currentPath: string;
+  children: React.ReactNode;
+}
+
+const hoverStyle: string =
+  'transition-all ease-in-out duration-300 hover:text-primary-400';
+
+const NavItem = ({ href, currentPath, children }: navItemProps) => {
+  const isActive = href === currentPath;
+  return (
+    <Link
+      href={href}
+      className={cn(hoverStyle, isActive && 'text-primary-400')}
+    >
+      {children}
+    </Link>
+  );
+};
+
 export default function Header() {
   const user: Imock = mock[3];
   const pathname: string = usePathname();
   const isAuthPage: boolean = pathname === '/login' || pathname === '/signUp';
 
-  const hoverStyle: string =
-    'transition-all ease-in-out duration-300 hover:text-primary-400';
-
   return (
     <>
       {user.isAuthenticated ? (
-        <header className='sticky top-0 lt:h-[88px] tb:h-16 mb:h-[54px] flex items-center lt:px-[120px] max-lt:px-6 bg-background-400 whitespace-nowrap'>
+        <header className='sticky top-0 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] max-lt:px-6 bg-background-400 whitespace-nowrap'>
           <div className='flex items-center justify-between text-gray-400 font-bold text-[1.4vw] w-full mx-auto'>
             <div className='flex items-center gap-6'>
-            <HeaderMenu />
+              <HeaderMenu />
 
               <Link
                 href='/'
@@ -57,65 +76,65 @@ export default function Header() {
             </div>
 
             <div className='flex gap-8 max-tb:hidden'>
-              <Link
+              <NavItem
                 href='/productList'
-                className={`${hoverStyle}`}
+                currentPath={pathname}
               >
                 상품 리스트
-              </Link>
+              </NavItem>
               {user.userType === 'basicUser' && (
-                <Link
+                <NavItem
                   href='/'
-                  className={`${hoverStyle}`}
+                  currentPath={pathname}
                 >
                   구매 요청 내역
-                </Link>
+                </NavItem>
               )}
               {user.userType !== 'basicUser' && (
                 <div className='flex gap-12'>
-                  <Link
+                  <NavItem
                     href='/'
-                    className={`${hoverStyle}`}
+                    currentPath={pathname}
                   >
                     구매 요청 관리
-                  </Link>
-                  <Link
+                  </NavItem>
+                  <NavItem
                     href='/'
-                    className={`${hoverStyle}`}
+                    currentPath={pathname}
                   >
                     구매 내역 확인
-                  </Link>
+                  </NavItem>
                 </div>
               )}
-              <Link
+              <NavItem
                 href='/'
-                className={`${hoverStyle}`}
+                currentPath={pathname}
               >
                 상품 등록 내역
-              </Link>
+              </NavItem>
               {user.userType === 'superAdmin' && (
-                <Link
+                <NavItem
                   href='/'
-                  className={`${hoverStyle}`}
+                  currentPath={pathname}
                 >
                   관리
-                </Link>
+                </NavItem>
               )}
             </div>
 
             <div className='flex items-center gap-12 mx-auto max-tb:hidden'>
-              <Link
+              <NavItem
                 href='/'
-                className={`${hoverStyle}`}
+                currentPath={pathname}
               >
                 Cart
-              </Link>
-              <Link
+              </NavItem>
+              <NavItem
                 href='/'
-                className={`${hoverStyle}`}
+                currentPath={pathname}
               >
                 Profile
-              </Link>
+              </NavItem>
               <Button
                 className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
               >
@@ -145,7 +164,7 @@ export default function Header() {
         </header>
       ) : (
         <header
-          className={`sticky top-0 bg-primary-400 lt:h-[88px] tb:h-16 mb:h-[54px] flex items-center lt:px-[120px] tb:px-6 whitespace-nowrap
+          className={`sticky top-0 bg-primary-400 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] tb:px-6 whitespace-nowrap
           ${isAuthPage ? 'justify-center' : 'justify-between max-tb:justify-center'}`}
         >
           <Link href='/'>
