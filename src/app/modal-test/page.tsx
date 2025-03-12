@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
+import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/TextArea';
@@ -36,6 +37,23 @@ export default function ModalTestPage() {
   }) => {
     console.log('초대 정보:', data); // 입력한 값 확인
     setIsInviteModalOpen(false); // 모달 닫기
+  };
+
+  // 회원 권한 변경 모달
+  const [isMemberRoleModalOpen, setIsMemberRoleModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState({
+    name: '김스낵',
+    email: 'sn@codeit.com',
+    role: '관리자',
+  });
+
+  const handleRoleChangeConfirm = (data: {
+    name: string;
+    email: string;
+    role: string;
+  }) => {
+    console.log('변경된 정보:', data);
+    setIsMemberRoleModalOpen(false);
   };
 
   return (
@@ -193,6 +211,21 @@ export default function ModalTestPage() {
           isOpen={isInviteModalOpen}
           onClose={() => setIsInviteModalOpen(false)}
           onConfirm={handleInviteConfirm}
+        />
+        {/* 회원 권한 변경 버튼 */}
+        <Button
+          onClick={() => setIsMemberRoleModalOpen(true)}
+          className='bg-black text-white hover:bg-gray-800 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+        >
+          회원 권한 변경 열기
+        </Button>
+
+        {/* 회원 권한 변경 모달 */}
+        <MemberRoleChangeModal
+          isOpen={isMemberRoleModalOpen}
+          onClose={() => setIsMemberRoleModalOpen(false)}
+          onConfirm={handleRoleChangeConfirm}
+          member={selectedMember}
         />
       </div>
     </div>
