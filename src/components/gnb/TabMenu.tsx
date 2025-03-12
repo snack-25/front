@@ -10,7 +10,7 @@ type CategoryType = {
   };
 };
 
-const categories: CategoryType = {
+export const categories: CategoryType = {
   snack: {
     kor: '스낵',
     items: [
