@@ -1,5 +1,6 @@
 'use client';
 import TabMenu from '@/components/gnb/TabMenu';
+import CardList from '@/components/productList/CardList';
 import { SortDropDown } from '@/components/productList/SortDropDown';
 import { sortBy } from '@/components/productList/SortDropDown';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ export default function ProductList() {
         />
       </div>
 
-      <div></div>
+      <CardList />
     </>
   );
 }
