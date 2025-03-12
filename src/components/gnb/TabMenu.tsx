@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 type CategoryType = {
   [key: string]: {
@@ -28,7 +28,7 @@ const categories: CategoryType = {
       { kor: '과즙 음료', eng: 'juice' },
       { kor: '에너지음료', eng: 'energy' },
       { kor: '커피', eng: 'coffee' },
-      { kor: '건감음료', eng: 'health' },
+      { kor: '건강음료', eng: 'health' },
       { kor: '티', eng: 'tea' },
     ],
   },
@@ -59,79 +59,78 @@ const categories: CategoryType = {
   },
 };
 
-export default function TabMenu() {
-  const [activeMain, setActiveMain] = useState<string>('snack');
-  const [activeSub, setActiveSub] = useState<string>('스낵');
-  const [value, setValue] = useState<string>('snack');
+interface IProps {
+  mainCategory: string;
+  subCategory: string;
+  setMain: (value: string) => void;
+  setSub: (value: string) => void;
+}
 
-  const handleValue = (categoryKey: string, itemKor: string) => {
-    const category = categories[categoryKey];
-    const engItem =
-      category.items.find((item) => item.kor === itemKor)?.eng || '';
-    setValue(engItem);
-  };
-
+export default function TabMenu({
+  mainCategory,
+  subCategory,
+  setMain,
+  setSub,
+}: IProps) {
   const ulStyle =
     'flex h-16 text-gray-400 text-2lg font-medium px-[120px] gap-3 items-center border-b-1 border-line-200';
   const buttonStyle =
     'w-full h-full cursor-pointer transition-all duration-300';
 
   useEffect(() => {
-    setActiveSub(categories[activeMain].items[0].kor);
-  }, [activeMain]);
-
-  useEffect(() => {
-    handleValue(activeMain, activeSub);
-  }, [activeSub]);
-
-  useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.log(value);
+      console.log('상위 카테고리:', mainCategory);
+      console.log('하위 카테고리:', subCategory);
     }
-  }, [value]);
+  }, [subCategory]);
 
   return (
-    <>
-      <nav>
-        <ul className={ulStyle}>
-          {Object.entries(categories).map(([key, category]) => (
-            <li
-              key={key}
-              className='h-full'
+    <nav>
+      {/* 상위 카테고리 */}
+      <ul className={ulStyle}>
+        {Object.entries(categories).map(([key, category]) => (
+          <li
+            key={key}
+            className='h-full'
+          >
+            <button
+              className={cn(
+                buttonStyle,
+                mainCategory === key
+                  ? 'border-b-1 border-b-primary-400 text-primary-400'
+                  : '',
+              )}
+              onClick={() => {
+                setMain(key);
+                setSub(categories[key].items[0].eng); // 상위 카테고리 변경시 하위 카테고리 첫번째를 디폴트
+              }}
             >
-              <button
-                className={cn(
-                  buttonStyle,
-                  `${activeMain === key ? 'border-b-1 border-b-primary-400 text-primary-400' : ''}`,
-                )}
-                onClick={() => setActiveMain(key)}
-              >
-                {category.kor}
-              </button>
-            </li>
-          ))}
-        </ul>
+              {category.kor}
+            </button>
+          </li>
+        ))}
+      </ul>
 
-        <ul className={ulStyle}>
-          {categories[activeMain].items.map((item) => (
-            <li
-              key={item.kor}
-              className='h-full'
+      {/* 하위 카테고리 */}
+      <ul className={ulStyle}>
+        {categories[mainCategory]?.items.map((item) => (
+          <li
+            key={item.kor}
+            className='h-full'
+          >
+            <button
+              className={cn(
+                buttonStyle,
+                'text-lg font-semibold',
+                subCategory === item.eng ? 'text-primary-400' : '',
+              )}
+              onClick={() => setSub(item.eng)}
             >
-              <button
-                className={cn(
-                  buttonStyle,
-                  'text-lg font-semibold',
-                  `${activeSub === item.kor ? 'text-primary-400' : ''}`,
-                )}
-                onClick={() => setActiveSub(item.kor)}
-              >
-                {item.kor}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </>
+              {item.kor}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
