@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useEffect, useState } from 'react';
 
 const MOBILE_BREAKPOINT = 768; // 화면 크기 기준값 정의
