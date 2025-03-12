@@ -1,5 +1,14 @@
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-//api 나오면 바꿔라!! 신혜야!!
+
+// 📌 임시 더미 데이터~ API 나오면 수정해야함
+const mockOrders = [
+  { id: 1, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "이영희", requestDate: "2024.07.04" },
+  { id: 2, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "이영희", requestDate: "2024.07.04" },
+  { id: 3, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "이영희", requestDate: "2024.07.04" },
+  { id: 100, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "하쉐리리", requestDate: "2024.07.04" },
+  { id: 101, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "하쉐리리", requestDate: "2024.07.04" },
+  { id: 102, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "하쉐리리", requestDate: "2024.07.04" }
+];
 
 const HistoryTable = () => {
   return (
@@ -12,38 +21,25 @@ const HistoryTable = () => {
             <TableHead>주문 금액</TableHead>
             <TableHead>요청인</TableHead>
             <TableHead>담당자</TableHead>
-            <TableHead>구매요청일일</TableHead>
+            <TableHead>구매요청일</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>2024.07.04</TableCell>
-            <TableCell>코카콜라 제로 외 1건</TableCell>
-            <TableCell>21,000</TableCell>
-            <TableCell>김철수</TableCell>
-            <TableCell>이영희</TableCell>
-            <TableCell>2024.07.04</TableCell>
-          </TableRow>
-          <TableRow>
-          <TableCell>2024.07.04</TableCell>
-            <TableCell>코카콜라 제로 외 1건</TableCell>
-            <TableCell>21,000</TableCell>
-            <TableCell>김철수</TableCell>
-            <TableCell>이영희</TableCell>
-            <TableCell>2024.07.04</TableCell>
-          </TableRow>
-          <TableRow>
-          <TableCell>2024.07.04</TableCell>
-            <TableCell>코카콜라 제로 외 1건</TableCell>
-            <TableCell>21,000</TableCell>
-            <TableCell>김철수</TableCell>
-            <TableCell>이영희</TableCell>
-            <TableCell>2024.07.04</TableCell>
-          </TableRow>
+          {mockOrders.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>{order.date}</TableCell>
+              <TableCell>{order.product}</TableCell>
+              <TableCell>{order.price}원</TableCell>
+              <TableCell>{order.requester}</TableCell>
+              <TableCell>{order.handler}</TableCell>
+              <TableCell>{order.requestDate}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
   );
-}
+};
 
 export default HistoryTable;
+

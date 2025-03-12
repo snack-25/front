@@ -3,8 +3,7 @@ import { Card, CardContent , CardHeader , CardTitle } from "@/components/ui/card
 
 const SummaryCards = () => {
   return (
-    <div>
-
+    <div className={'grid grid-cols-1 gap-6 md:grid-cols-3'}>
       <Card>
         <CardHeader>
           <CardTitle>이번 달 지출액</CardTitle>
