@@ -39,7 +39,7 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
       onOpenChange={onClose}
     >
       <DialogContent
-        showCloseButton={showCloseButton} // ✅ X 버튼 여부 전달
+        showCloseButton={showCloseButton} // X 버튼 여부 전달
         className='
           flex flex-col p-6 md:p-[32px_24px_40px] gap-6 md:gap-14 
           w-[375px] h-[500px] md:w-[688px] md:h-[664px] 
