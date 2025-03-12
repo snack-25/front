@@ -3,58 +3,86 @@
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
-type Tcategory = Record<string, string[]>;
-
-const category: Tcategory = {
-  snack: ['snack', 'pie', 'chocolate', 'candy', 'jelly'],
-  drink: ['soda', 'juice', 'energy', 'coffee', 'health', 'tea'],
-  water: ['water', 'sparkling'],
-  simpleFood: ['noodle', 'fruit', 'rice', 'cereal', 'bread'],
-  equipment: ['life', 'office', 'eco'],
+type CategoryType = {
+  [key: string]: {
+    kor: string;
+    items: { kor: string; eng: string }[];
+  };
 };
 
-const categoryKOR: Tcategory = {
-  스낵: ['스낵', '파이', '초콜릿', '캔디', '젤리'],
-  음료: ['청량・탄산음료', '과즙 음료', '에너지음료', '커피', '건감음료', '티'],
-  생수: ['생수', '스파클링'],
-  간편식: ['면류', '과일', '밥', '시리얼', '빵'],
-  비품: ['생활용품', '사무용품', '친환경'],
-};
-
-const categoryMap: Record<string, keyof Tcategory> = {
-  스낵: 'snack',
-  음료: 'drink',
-  생수: 'water',
-  간편식: 'simpleFood',
-  비품: 'equipment',
+const categories: CategoryType = {
+  snack: {
+    kor: '스낵',
+    items: [
+      { kor: '스낵', eng: 'snack' },
+      { kor: '파이', eng: 'pie' },
+      { kor: '초콜릿', eng: 'chocolate' },
+      { kor: '캔디', eng: 'candy' },
+      { kor: '젤리', eng: 'jelly' },
+    ],
+  },
+  drink: {
+    kor: '음료',
+    items: [
+      { kor: '청량・탄산음료', eng: 'soda' },
+      { kor: '과즙 음료', eng: 'juice' },
+      { kor: '에너지음료', eng: 'energy' },
+      { kor: '커피', eng: 'coffee' },
+      { kor: '건감음료', eng: 'health' },
+      { kor: '티', eng: 'tea' },
+    ],
+  },
+  water: {
+    kor: '생수',
+    items: [
+      { kor: '생수', eng: 'water' },
+      { kor: '스파클링', eng: 'sparkling' },
+    ],
+  },
+  simpleFood: {
+    kor: '간편식',
+    items: [
+      { kor: '면류', eng: 'noodle' },
+      { kor: '과일', eng: 'fruit' },
+      { kor: '밥', eng: 'rice' },
+      { kor: '시리얼', eng: 'cereal' },
+      { kor: '빵', eng: 'bread' },
+    ],
+  },
+  equipment: {
+    kor: '비품',
+    items: [
+      { kor: '생활용품', eng: 'life' },
+      { kor: '사무용품', eng: 'office' },
+      { kor: '친환경', eng: 'eco' },
+    ],
+  },
 };
 
 export default function TabMenu() {
-  const [activeKey, setActiveKey] = useState<string>('스낵');
-  const [activeUnder, setActiveUnder] = useState<string>('스낵');
+  const [activeMain, setActiveMain] = useState<string>('snack');
+  const [activeSub, setActiveSub] = useState<string>('스낵');
   const [value, setValue] = useState<string>('snack');
 
-  const handleValue = (korKey: string, item: string) => {
-    const engKey: string = categoryMap[korKey];
-    const engIndex: number = categoryKOR[korKey].indexOf(item);
-    const engItem: string = category[engKey][engIndex];
+  const handleValue = (categoryKey: string, itemKor: string) => {
+    const category = categories[categoryKey];
+    const engItem =
+      category.items.find((item) => item.kor === itemKor)?.eng || '';
     setValue(engItem);
   };
 
   const ulStyle =
     'flex h-16 text-gray-400 text-2lg font-medium px-[120px] gap-3 items-center border-b-1 border-line-200';
-
   const buttonStyle =
     'w-full h-full cursor-pointer transition-all duration-300';
 
   useEffect(() => {
-    const firstItem = categoryKOR[activeKey][0];
-    setActiveUnder(firstItem);
-  }, [activeKey]);
+    setActiveSub(categories[activeMain].items[0].kor);
+  }, [activeMain]);
 
   useEffect(() => {
-    handleValue(activeKey, activeUnder);
-  }, [activeUnder]);
+    handleValue(activeMain, activeSub);
+  }, [activeSub]);
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -66,41 +94,39 @@ export default function TabMenu() {
     <>
       <nav>
         <ul className={ulStyle}>
-          {Object.entries(categoryKOR).map(([korKey]) => (
+          {Object.entries(categories).map(([key, category]) => (
             <li
-              key={korKey}
+              key={key}
               className='h-full'
             >
               <button
                 className={cn(
                   buttonStyle,
-                  `${activeKey === korKey ? 'border-b-1 border-b-primary-400 text-primary-400' : ''}`,
+                  `${activeMain === key ? 'border-b-1 border-b-primary-400 text-primary-400' : ''}`,
                 )}
-                onClick={() => {
-                  setActiveKey(korKey);
-                }}
+                onClick={() => setActiveMain(key)}
               >
-                {korKey}
+                {category.kor}
               </button>
             </li>
           ))}
         </ul>
 
         <ul className={ulStyle}>
-          {categoryKOR[activeKey].map((item) => (
+          {categories[activeMain].items.map((item) => (
             <li
-              key={item}
+              key={item.kor}
               className='h-full'
             >
               <button
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
-                  `${activeUnder === item ? 'text-primary-400' : ''}`,
+                  `${activeSub === item.kor ? 'text-primary-400' : ''}`,
                 )}
-                onClick={() => setActiveUnder(item)}
+                onClick={() => setActiveSub(item.kor)}
               >
-                {item}
+                {item.kor}
               </button>
             </li>
           ))}
