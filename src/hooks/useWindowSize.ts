@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback,useEffect, useState } from 'react';
 
 interface WindowSize {
   width: number | undefined;
@@ -31,7 +31,7 @@ export function useWindowSize() {
 
   // 상태 업데이트 함수
   const updateSize = useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
 
     setWindowSize({
       width: window.innerWidth,
@@ -46,7 +46,7 @@ export function useWindowSize() {
 
   useEffect(() => {
     // 클라이언트 사이드에서만 실행되도록 함
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
 
     // 초기 사이즈 설정
     updateSize();

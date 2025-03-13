@@ -1,5 +1,7 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
-import { ChevronDown } from 'lucide-react';
 
 export type sortBy = 'newest' | 'sales' | 'lowest' | 'highest';
 

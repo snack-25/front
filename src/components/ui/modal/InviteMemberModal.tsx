@@ -1,7 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import BaseFormModal from '@/components/ui/modal/BaseFormModal';
+
 import { Input } from '@/components/ui/input';
+import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import {
   Select,
   SelectContent,

@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/TextArea';
-import { Button } from '@/components/ui/button';
 
 // 유저 이메일 (실제 상황에서는 API 또는 상태에서 가져올 것)
 const userEmail = '김스낵(sn@codeit.com)';

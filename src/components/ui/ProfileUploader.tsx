@@ -1,5 +1,5 @@
+import { ImageIcon,XCircle } from 'lucide-react';
 import { useState } from 'react';
-import { XCircle, ImageIcon } from 'lucide-react';
 
 interface ProfileUploaderProps {
   onChange?: (file: File | null) => void;
