@@ -56,7 +56,7 @@ export default function Header() {
   return (
     <>
       {user.isAuthenticated ? (
-        <header className='sticky top-0 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] max-lt:px-6 bg-background-400 whitespace-nowrap'>
+        <header className='sticky z-1000 top-0 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] max-lt:px-6 bg-background-400 whitespace-nowrap'>
           <div className='flex items-center justify-between text-gray-400 font-bold text-[1.4vw] w-full mx-auto'>
             <div className='flex items-center gap-6'>
               <HeaderMenu />
@@ -165,7 +165,7 @@ export default function Header() {
         </header>
       ) : (
         <header
-          className={`sticky top-0 bg-primary-400 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] tb:px-6 whitespace-nowrap
+          className={`sticky z-1000 top-0 bg-primary-400 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] tb:px-6 whitespace-nowrap
           ${isAuthPage ? 'justify-center' : 'justify-between max-tb:justify-center'}`}
         >
           <Link href='/'>

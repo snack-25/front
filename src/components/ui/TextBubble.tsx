@@ -72,7 +72,7 @@ const TextBubble: React.FC<TextBubbleProps> = ({
       style={{ aspectRatio }}
       preserveAspectRatio='xMidYMid meet'
     >
-      <g fill='#f97b22'>
+      <g fill='bg-primary'>
         {/* 메인 버블 영역(말풍선 밑 삼각형 제외) */}
         <path
           d={`
@@ -99,7 +99,7 @@ const TextBubble: React.FC<TextBubbleProps> = ({
         fontSize={current.fontSize}
         textAnchor='middle'
         dominantBaseline='middle'
-        fill='#fdf0df'
+        fill='--color-background-500'
       >
         {text}
       </text>

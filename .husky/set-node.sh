@@ -341,6 +341,10 @@ main() {
     install_package_manager "$os"
     install_or_update_node "$os" "$lts_version"
     exit 1
+  # CI 환경에서는 패키지매니저 선택을 건너뛰고 nvm을 사용 (CI에서는 사용자 입력이 불가능하기 때문)
+  elif [ -n "$CI" ]; then
+    PACKAGE_MANAGER="nvm"
+    exit 0
   else
     # node 명령어가 존재하는 경우, npm 명령어도 존재할 것이므로 npm 업데이트 후 셸 재시작
     npm up -g --silent
@@ -350,7 +354,6 @@ main() {
     # package manager가 하나면 바로 반환, 아니면 사용자 입력을 받아 패키지매니저 선택
     PACKAGE_MANAGER=$(get_package_manager)
     echo '\033[32m✅ [패키지매니저] '"$PACKAGE_MANAGER"'을 사용합니다 \033[0m'
-
   fi
 
   # Node.js 버전 체크 및 업데이트

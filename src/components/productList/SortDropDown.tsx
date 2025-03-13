@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/Dropdown-Menu';
 import { ChevronDown } from 'lucide-react';
 
+export type sortBy = 'newest' | 'sales' | 'lowest' | 'highest';
+
 const sortOption: Record<sortBy, string> = {
   newest: '최신순',
   sales: '판매순',
@@ -18,22 +20,12 @@ const sortOption: Record<sortBy, string> = {
   highest: '높은가격순',
 };
 
-export type sortBy =
-  | 'newest'
-  | 'sales'
-  | 'lowest'
-  | 'highest'; /* 최신순, 판매순, 낮은가격순, 높은가격순 */
-
 interface IProps {
   value: sortBy;
   setValue: (value: sortBy) => void;
 }
 
 export function SortDropDown({ value, setValue }: IProps) {
-  const handleSort = (value: sortBy) => {
-    setValue(value);
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -51,18 +43,14 @@ export function SortDropDown({ value, setValue }: IProps) {
       <DropdownMenuContent className='w-56'>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => handleSort('newest')}>
-            {sortOption.newest}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleSort('sales')}>
-            {sortOption.sales}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleSort('lowest')}>
-            {sortOption.lowest}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleSort('highest')}>
-            {sortOption.highest}
-          </DropdownMenuItem>
+          {Object.entries(sortOption).map(([key, label]) => (
+            <DropdownMenuItem
+              key={key}
+              onClick={() => setValue(key as sortBy)}
+            >
+              {label}
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
       </DropdownMenuContent>

@@ -188,6 +188,7 @@
   --color-gray-400: #c4c4c4;
   --color-gray-500: #ababab;
   --color-gray-600: #999;
+  --color-illustration-200: #fee8b0;
 }
 
 @layer utilities {
