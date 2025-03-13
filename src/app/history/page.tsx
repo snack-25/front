@@ -13,9 +13,9 @@ const OrdersPage = () => {
         <div className="flex justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="btn">최신순</button>
+              <button className="w-[136px] h-[50px] btn text-gray-500 text-left pl-[14px] border-2 bg-gray-50 rounded-sm">최신순</button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className={"text-gray-500"}>
               <DropdownMenuItem>최신순</DropdownMenuItem>
               <DropdownMenuItem>높은금액순</DropdownMenuItem>
               <DropdownMenuItem>낮은금액순</DropdownMenuItem>

@@ -3,34 +3,37 @@ import { Card, CardContent , CardHeader , CardTitle } from "@/components/ui/card
 
 const SummaryCards = () => {
   return (
-    <div className={'grid grid-cols-1 gap-6 md:grid-cols-3'}>
-      <Card>
+    <div className={'grid grid-cols-1  md:grid-cols-3'}>
+      <Card className={'w-[402] h-[210]'}>
         <CardHeader>
-          <CardTitle>이번 달 지출액</CardTitle>
+          <CardTitle className={'text-[24px]'}>이번 달 지출액</CardTitle>
+          <p className={'text-gray-400'}>지난 달: 2,000,000원</p>
         </CardHeader>
         <CardContent>
-          <p>지난 달: 2,000,000원</p>
-          <p>126,0000원</p>
+          
+          <p className={'text-[32px] font-bold'}>126,0000원</p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className={'w-[402] h-[210]'}>
         <CardHeader>
-          <CardTitle>이번 달 남은 예산</CardTitle>
+          <CardTitle className={'text-[24px]'}>이번 달 지출액</CardTitle>
+          <p className={'text-gray-400'}>지난 달: 2,000,000원</p>
         </CardHeader>
         <CardContent>
-          <p>지난 달보다 50,000원 더 많아요</p>
-          <p>126,0000원</p>
+          
+          <p className={'text-[32px] font-bold'}>126,0000원</p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className={'w-[402] h-[210]'}>
         <CardHeader>
-          <CardTitle>올해 총 지출액</CardTitle>
+          <CardTitle className={'text-[24px]'}>이번 달 지출액</CardTitle>
+          <p className={'text-gray-400'}>지난 달: 2,000,000원</p>
         </CardHeader>
         <CardContent>
-          <p>지난 해보다 1,000,000원 더 지출했어요</p>
-          <p>126,0000원</p>
+          
+          <p className={'text-[32px] font-bold'}>126,0000원</p>
         </CardContent>
       </Card>
     </div>

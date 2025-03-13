@@ -1,45 +1,68 @@
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+"use client";
 
-// 📌 임시 더미 데이터~ API 나오면 수정해야함
-const mockOrders = [
-  { id: 1, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "이영희", requestDate: "2024.07.04" },
-  { id: 2, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "이영희", requestDate: "2024.07.04" },
-  { id: 3, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "이영희", requestDate: "2024.07.04" },
-  { id: 100, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "하쉐리리", requestDate: "2024.07.04" },
-  { id: 101, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "하쉐리리", requestDate: "2024.07.04" },
-  { id: 102, date: "2024.07.04", product: "코카콜라 제로 외 1건", price: "21,000", requester: "김철수", handler: "하쉐리리", requestDate: "2024.07.04" }
-];
+import { useState, useEffect } from "react";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import Image from "next/image";
+
+interface Order {
+  id: number;
+  date: string;
+  product: string;
+  price: string;
+  requester: string;
+  handler: string;
+  requestDate: string;
+}
+
+const mockOrders: Order[] = []; // ❌ 데이터가 없을 경우
 
 const HistoryTable = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    setOrders(mockOrders); // 현재는 더미 데이터로 설정
+  }, []);
+
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>구매승인일</TableHead>
-            <TableHead>상품정보</TableHead>
-            <TableHead>주문 금액</TableHead>
-            <TableHead>요청인</TableHead>
-            <TableHead>담당자</TableHead>
-            <TableHead>구매요청일</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mockOrders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.date}</TableCell>
-              <TableCell>{order.product}</TableCell>
-              <TableCell>{order.price}원</TableCell>
-              <TableCell>{order.requester}</TableCell>
-              <TableCell>{order.handler}</TableCell>
-              <TableCell>{order.requestDate}</TableCell>
+    <div className="w-full">
+      {orders.length > 0 ? (
+        <Table className="w-full border-collapse">
+          <TableHeader className="bg-red-300 rounded-full">
+            <TableRow>
+              <TableHead className="rounded-l-full">구매승인일</TableHead>
+              <TableHead>상품정보</TableHead>
+              <TableHead>주문 금액</TableHead>
+              <TableHead>요청인</TableHead>
+              <TableHead>담당자</TableHead>
+              <TableHead className="rounded-r-full">구매요청일</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell>{order.date}</TableCell>
+                <TableCell>{order.product}</TableCell>
+                <TableCell>{order.price}원</TableCell>
+                <TableCell>{order.requester}</TableCell>
+                <TableCell>{order.handler}</TableCell>
+                <TableCell>{order.requestDate}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-10">
+          <Image
+            src="/img/order/order-nothing-admin-md.svg"
+            alt="구매 내역 없음"
+            width={300}
+            height={200}
+          />
+          <p className="text-gray-500 mt-4 text-lg">구매 내역이 없습니다.</p>
+        </div>
+      )}
     </div>
   );
 };
 
 export default HistoryTable;
-
