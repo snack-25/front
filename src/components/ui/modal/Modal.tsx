@@ -9,8 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-
-const MOBILE_BREAKPOINT = 768; // 화면 크기 기준값 정의
+import { MOBILE_BREAKPOINT } from '@/lib/constants';
 
 interface ModalProps {
   open: boolean;
@@ -62,6 +61,15 @@ const Modal = ({
 
     return () => window.removeEventListener('resize', handleResize);
   }, [imageSrc]);
+
+  // TODO: 위의 화면 크기에 따라 이미지 변경하는 로직을 이미지 컴포넌트로 대체.
+  // 예시:
+  //   <ResponsiveImage
+  //   imageSrc='/img/icons/warning-md.svg'
+  //   smallSize='w-[180px] h-[160px]'
+  //   largeSize='md:w-[230px] md:h-[200px]'
+  //   altText='경고 아이콘'
+  // />
 
   const finalDescription =
     userEmail && typeof description === 'string'

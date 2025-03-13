@@ -4,6 +4,7 @@ import { useState } from 'react';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
+import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import Modal from '@/components/ui/modal/Modal';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/TextArea';
@@ -54,6 +55,27 @@ export default function ModalTestPage() {
   }) => {
     console.log('변경된 정보:', data);
     setIsMemberRoleModalOpen(false);
+  };
+
+  // 상품 등록 모달 상태
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+
+  // 상품 등록 핸들러
+  const handleProductConfirm = (data: {
+    name: string;
+    category: string;
+    subCategory: string;
+    price: number;
+    image: File | null;
+    link: string;
+  }) => {
+    const formattedData = {
+      ...data,
+      price: Number(data.price), // 숫자로 변환하여 전달
+    };
+
+    console.log('등록된 상품 정보:', formattedData);
+    setIsProductModalOpen(false);
   };
 
   return (
@@ -171,7 +193,6 @@ export default function ModalTestPage() {
         >
           BaseFormModal 테스트 열기
         </Button>
-
         {/* BaseFormModal 적용 */}
         <BaseFormModal
           title='테스트 모달'
@@ -197,7 +218,6 @@ export default function ModalTestPage() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </BaseFormModal>
-
         {/* 회원 초대 버튼 */}
         <Button
           onClick={() => setIsInviteModalOpen(true)}
@@ -205,7 +225,6 @@ export default function ModalTestPage() {
         >
           회원 초대하기
         </Button>
-
         {/* 초대 모달 */}
         <InviteMemberModal
           isOpen={isInviteModalOpen}
@@ -219,13 +238,25 @@ export default function ModalTestPage() {
         >
           회원 권한 변경 열기
         </Button>
-
         {/* 회원 권한 변경 모달 */}
         <MemberRoleChangeModal
           isOpen={isMemberRoleModalOpen}
           onClose={() => setIsMemberRoleModalOpen(false)}
           onConfirm={handleRoleChangeConfirm}
           member={selectedMember}
+        />
+        {/* 상품 등록 버튼 */}
+        <Button
+          onClick={() => setIsProductModalOpen(true)}
+          className='bg-black text-white hover:bg-gray-800 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+        >
+          상품 등록 열기
+        </Button>
+        {/* 상품 등록 모달 추가 */}
+        <ProductFormModal
+          isOpen={isProductModalOpen}
+          onClose={() => setIsProductModalOpen(false)}
+          onConfirm={handleProductConfirm}
         />
       </div>
     </div>
