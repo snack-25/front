@@ -1,3 +1,4 @@
+'use client';
 import { IProps } from '@/app/playground/mock';
 import {
   Card,
@@ -51,8 +52,12 @@ export default function ProductCard({ data }: cardProps) {
               {purchase}회 구매
             </p>
           </div>
-          <h1 className='font-semibold lt:text-xl max-lt:text-md pb-4'>{productName}</h1>
-          <p className='lt:text-3xl max-lt:text-xl font-bold text-black-400'>{price}원</p>
+          <h1 className='font-semibold lt:text-xl max-lt:text-md pb-4'>
+            {productName}
+          </h1>
+          <p className='lt:text-3xl max-lt:text-xl font-bold text-black-400'>
+            {price}원
+          </p>
         </CardContent>
       </Card>
     </>

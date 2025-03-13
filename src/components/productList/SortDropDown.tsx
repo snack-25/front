@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
 import { ChevronDown } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export type sortBy = 'newest' | 'sales' | 'lowest' | 'highest';
 
@@ -20,12 +21,22 @@ const sortOption: Record<sortBy, string> = {
   highest: '높은가격순',
 };
 
-interface IProps {
-  value: sortBy;
-  setValue: (value: sortBy) => void;
-}
+export function SortDropDown() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-export function SortDropDown({ value, setValue }: IProps) {
+  const mainCategory = searchParams.get('mainCategory') || 'snack';
+  const subCategory = searchParams.get('subCategory') || 'snack';
+  const sort = (searchParams.get('sort') as sortBy) || 'newest';
+
+  const updateSort = (key: sortBy) => {
+    const params = new URLSearchParams();
+    params.set('mainCategory', mainCategory);
+    params.set('subCategory', subCategory);
+    params.set('sort', key);
+    router.replace(`?${params.toString()}`);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -36,7 +47,7 @@ export function SortDropDown({ value, setValue }: IProps) {
           variant='outline'
           className='group text-gray-500 text-md font-normal select-none'
         >
-          {sortOption[value]}
+          {sortOption[sort]}
           <ChevronDown className='transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>
       </DropdownMenuTrigger>
@@ -46,7 +57,7 @@ export function SortDropDown({ value, setValue }: IProps) {
           {Object.entries(sortOption).map(([key, label]) => (
             <DropdownMenuItem
               key={key}
-              onClick={() => setValue(key as sortBy)}
+              onClick={() => updateSort(key as sortBy)}
             >
               {label}
             </DropdownMenuItem>
