@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
+import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
+import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/TextArea';
@@ -23,6 +25,36 @@ export default function ModalTestPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const isConfirmDisabled = name.length < 3 || description.length < 8;
+
+  // InviteMemberModal
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  // 초대 확인 핸들러 (react-hook-form의 데이터 받기)
+  const handleInviteConfirm = (data: {
+    name: string;
+    email: string;
+    role: string;
+  }) => {
+    console.log('초대 정보:', data); // 입력한 값 확인
+    setIsInviteModalOpen(false); // 모달 닫기
+  };
+
+  // 회원 권한 변경 모달
+  const [isMemberRoleModalOpen, setIsMemberRoleModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState({
+    name: '김스낵',
+    email: 'sn@codeit.com',
+    role: '관리자',
+  });
+
+  const handleRoleChangeConfirm = (data: {
+    name: string;
+    email: string;
+    role: string;
+  }) => {
+    console.log('변경된 정보:', data);
+    setIsMemberRoleModalOpen(false);
+  };
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen space-y-6'>
@@ -165,6 +197,36 @@ export default function ModalTestPage() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </BaseFormModal>
+
+        {/* 회원 초대 버튼 */}
+        <Button
+          onClick={() => setIsInviteModalOpen(true)}
+          className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+        >
+          회원 초대하기
+        </Button>
+
+        {/* 초대 모달 */}
+        <InviteMemberModal
+          isOpen={isInviteModalOpen}
+          onClose={() => setIsInviteModalOpen(false)}
+          onConfirm={handleInviteConfirm}
+        />
+        {/* 회원 권한 변경 버튼 */}
+        <Button
+          onClick={() => setIsMemberRoleModalOpen(true)}
+          className='bg-black text-white hover:bg-gray-800 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+        >
+          회원 권한 변경 열기
+        </Button>
+
+        {/* 회원 권한 변경 모달 */}
+        <MemberRoleChangeModal
+          isOpen={isMemberRoleModalOpen}
+          onClose={() => setIsMemberRoleModalOpen(false)}
+          onConfirm={handleRoleChangeConfirm}
+          member={selectedMember}
+        />
       </div>
     </div>
   );
