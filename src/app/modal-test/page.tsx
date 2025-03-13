@@ -8,7 +8,7 @@ import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import Modal from '@/components/ui/modal/Modal';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/TextArea';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 // 유저 이메일 (실제 상황에서는 API 또는 상태에서 가져올 것)
 const userEmail = '김스낵(sn@codeit.com)';
