@@ -43,10 +43,14 @@ export default function MemberRoleChangeModal({
       onConfirm={handleSubmit(onConfirm)}
       confirmText='변경하기'
       cancelText='취소'
-      confirmDisabled={isConfirmDisabled} // 버튼 비활성화 로직 적용
+      confirmDisabled={isConfirmDisabled}
+      smallSize='w-[375px] h-[524px]'
+      largeSize='md:w-[688px] md:h-[672px]'
+      confirmButtonProps='w-[150px] h-[50px] md:w-[300px] md:h-[64px]'
+      cancelButtonProps='w-[150px] h-[50px] md:w-[300px] md:h-[64px]'
     >
       {/* 입력 필드 컨테이너 */}
-      <div className='flex flex-col gap-6 w-[327px] md:w-[640px]'>
+      <div className='flex flex-col gap-10 md:gap-16 w-[327px] md:w-[640px]'>
         {/* 이름 입력 필드 (읽기 전용) */}
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold text-[#1F1F1F]'>

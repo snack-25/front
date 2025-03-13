@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 import { HeaderMenu } from './HeaderMenu';
 import { cn } from '@/lib/utils';
 
@@ -137,6 +137,7 @@ export default function Header() {
               </NavItem>
               <Button
                 className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
+                font='tb:text-[1.4vw]'
               >
                 Logout
               </Button>

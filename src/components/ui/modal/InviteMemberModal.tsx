@@ -51,9 +51,13 @@ export default function InviteMemberModal({
       cancelText='취소'
       confirmDisabled={isConfirmDisabled}
       showCloseButton={false}
+      smallSize='w-[375px] h-[500px]'
+      largeSize='md:w-[688px] md:h-[664px]'
+      confirmButtonProps='w-[140px] h-[50px] md:w-[280px] md:h-[60px]'
+      cancelButtonProps='w-[140px] h-[50px] md:w-[280px] md:h-[60px]'
     >
       {/* 입력 필드 */}
-      <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-6 md:gap-16'>
         {/* 이름 */}
         <div className='flex flex-col gap-2 w-[327px] md:w-[640px]'>
           <label className='text-[20px] font-semibold text-[#1F1F1F]'>
