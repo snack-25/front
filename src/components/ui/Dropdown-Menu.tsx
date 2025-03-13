@@ -199,3 +199,5 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 };
+
+export default DropdownMenu;
