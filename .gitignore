@@ -285,3 +285,4 @@ aws-logs/
 ### 배포(PM2) 관련 ###
 ecosystem.config.js
 .pm2/
+# pnpm-lock.yaml

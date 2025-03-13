@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { cn } from '@/lib/utils';
 
 interface TextInputProps {

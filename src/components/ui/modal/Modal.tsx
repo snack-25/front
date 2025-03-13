@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-
-const MOBILE_BREAKPOINT = 768; // 화면 크기 기준값 정의
+} from '@/components/ui/Dialog';
+import { MOBILE_BREAKPOINT } from '@/lib/constants';
 
 interface ModalProps {
   open: boolean;
@@ -66,6 +65,15 @@ const Modal = ({
     return () => window.removeEventListener('resize', handleResize);
   }, [imageSrc]);
 
+  // TODO: 위의 화면 크기에 따라 이미지 변경하는 로직을 이미지 컴포넌트로 대체.
+  // 예시:
+  //   <ResponsiveImage
+  //   imageSrc='/img/icons/warning-md.svg'
+  //   smallSize='w-[180px] h-[160px]'
+  //   largeSize='md:w-[230px] md:h-[200px]'
+  //   altText='경고 아이콘'
+  // />
+
   const finalDescription =
     userEmail && typeof description === 'string'
       ? description.replace('{userEmail}', userEmail) // e.g. '김스낵(sn@codeit.com)' ->'김스낵(sn@codeit.com)님의 계정을 탈퇴시킬까요?',
@@ -88,8 +96,8 @@ const Modal = ({
       {/* Mobile First:모바일 크기 기본, 화면이 md(MOBILE_BREAKPOINT 이상)일 때 데스크톱 크기 (704px x 528px)로 확대 */}
       <DialogContent
         className='
-          modal-container bg-[#FBF8F4] shadow-lg rounded-2xl 
-          flex flex-col justify-between items-center 
+          modal-container bg-[#FBF8F4] shadow-lg rounded-2xl
+          flex flex-col justify-between items-center
           w-[375px] h-[484px] md:w-[704px] md:h-[528px]'
       >
         <div className='w-full flex flex-col items-center justify-between h-full'>

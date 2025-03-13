@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/Dialog';
 
 interface BaseFormModalProps {
   isOpen: boolean;
@@ -20,6 +20,10 @@ interface BaseFormModalProps {
   confirmDisabled?: boolean;
   children: React.ReactNode;
   showCloseButton?: boolean; // X 버튼 표시 여부 추가
+  smallSize?: string;
+  largeSize?: string;
+  confirmButtonProps?: string;
+  cancelButtonProps?: string;
 }
 
 const BaseFormModal: React.FC<BaseFormModalProps> = ({
@@ -32,7 +36,11 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
   cancelText = '취소',
   confirmDisabled = false,
   children,
-  showCloseButton = false, // 기본값 false
+  showCloseButton = false,
+  smallSize = 'w-[375px] h-[456px]',
+  largeSize = 'md:w-[688px] md:h-[528px]',
+  confirmButtonProps = 'w-[158px] h-[54px] md:w-[310px] md:h-[64px]',
+  cancelButtonProps = 'w-[158px] h-[54px] md:w-[310px] md:h-[64px]',
 }) => {
   return (
     <Dialog
@@ -41,10 +49,11 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
     >
       <DialogContent
         showCloseButton={showCloseButton} // X 버튼 여부 전달
-        className='
-          flex flex-col p-6 md:p-[32px_24px_40px] gap-6 md:gap-14 
-          w-[375px] h-[500px] md:w-[688px] md:h-[664px] 
-          bg-[#FBF8F4] shadow-lg rounded-3xl'
+        className={`
+          flex flex-col p-6 md:p-[32px_24px_40px] gap-4 md:gap-8
+          bg-[#FBF8F4] shadow-lg rounded-3xl
+          ${smallSize} ${largeSize}
+        `}
       >
         {/* 모달 헤더 */}
         <DialogHeader className='w-full text-left border-b border-[#E5E5E5] pb-2'>
@@ -64,15 +73,15 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
         </div>
 
         {/* 버튼 컨테이너 */}
-        <div className='flex flex-row justify-between gap-4 w-[327px] md:w-[640px]'>
+        <div className='grid grid-cols-2 gap-4 w-full'>
           <Button
-            className='w-[158px] h-[54px] md:w-[310px] md:h-[64px] bg-[#FDF0DF] text-[#F97B22] rounded-lg'
+            className={`bg-[#FDF0DF] text-[#F97B22] rounded-lg ${cancelButtonProps}`}
             onClick={onClose}
           >
             {cancelText}
           </Button>
           <Button
-            className='w-[158px] h-[54px] md:w-[310px] md:h-[64px] bg-[#F97B22] text-white rounded-lg'
+            className={`bg-[#F97B22] text-white rounded-lg ${confirmButtonProps}`}
             onClick={onConfirm}
             disabled={confirmDisabled}
           >

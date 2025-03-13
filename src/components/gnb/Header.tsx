@@ -4,20 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 import { HeaderMenu } from './HeaderMenu';
-import { Button } from '../ui/button';
-
-
-
-
-
-
-
-
-
-
 
 /* ### 사용자 타입(UserTypes)
 
@@ -149,6 +139,7 @@ export default function Header() {
               </NavItem>
               <Button
                 className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
+                font='tb:text-[1.4vw]'
               >
                 Logout
               </Button>
