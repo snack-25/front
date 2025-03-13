@@ -1,16 +1,26 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
 import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/Input';
 
 export default function Login() {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
-  const [confrim, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+
+  useEffect(() => {
+    const test = Object.values(form).filter((x) => {
+      return x.length === 0;
+    });
+    console.log(test);
+    const confirm =
+      Object.values(form).filter((v) => v.length === 0).length === 0;
+    setConfirm(confirm);
+  }, [form]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({
@@ -27,47 +37,51 @@ export default function Login() {
       return;
     }
 
-    loginApi(form).then((res) => {
-      console.log('회원가입 데이터', res);
-      alert(res.msg);
-    });
-  };
+    // 이메일 형식 검증 (RFC 6531) - 불필요한 이스케이프 문자 제거
+    const emailRegex =
+      /^(?<localPart>(?<dotString>[0-9a-z!#$%&'*+-/=?^_`{|}~\u{80}-\u{10FFFF}]+(\.[0-9a-z!#$%&'*+-/=?^_`{|}~\u{80}-\u{10FFFF}]+)*)|(?<quotedString>"([\x20-\x21\x23-\x5B\x5D-\x7E\u{80}-\u{10FFFF}]|\\[\x20-\x7E])*"))(?<!.{64,})@(?<domainOrAddressLiteral>(?<addressLiteral>\[((?<IPv4>\d{1,3}(\.\d{1,3}){3})|(?<IPv6Full>IPv6:[0-9a-f]{1,4}(:[0-9a-f]{1,4}){7})|(?<IPv6Comp>IPv6:([0-9a-f]{1,4}(:[0-9a-f]{1,4}){0,5})?::([0-9a-f]{1,4}(:[0-9a-f]{1,4}){0,5})?)|(?<IPv6v4Full>IPv6:[0-9a-f]{1,4}(:[0-9a-f]{1,4}){5}:\d{1,3}(\.\d{1,3}){3})|(?<IPv6v4Comp>IPv6:([0-9a-f]{1,4}(:[0-9a-f]{1,4}){0,3})?::([0-9a-f]{1,4}(:[0-9a-f]{1,4}){0,3}:)?\d{1,3}(\.\d{1,3}){3})|(?<generalAddressLiteral>[a-z0-9-]*[[a-z0-9]:[\x21-\x5A\x5E-\x7E]+))\])|(?<Domain>(?!.{256,})(([0-9a-z\u{80}-\u{10FFFF}]([0-9a-z-\u{80}-\u{10FFFF}]*[0-9a-z\u{80}-\u{10FFFF}])?))(\.([0-9a-z\u{80}-\u{10FFFF}]([0-9a-z-\u{80}-\u{10FFFF}]*[0-9a-z\u{80}-\u{10FFFF}])?))*))$/iu;
+    if (!emailRegex.test(email)) {
+      alert('유효한 이메일 형식이 아닙니다.');
+      return;
+    }
 
-  useEffect(() => {
-    const test = Object.values(form).filter((x) => {
-      return x.length === 0;
-    });
-    console.log(test);
-    const confirm =
-      Object.values(form) // 자바스크립트 기본 문법 객체를 배열로 만드는거 Object.keys Object.values Object.entries
-        .filter((v) => v.length === 0).length === 0; // 자바스크립트 내장 함수 배열에서 원하는 값을 가져오는 거야
-    setConfirm(confirm);
-  }, [form]);
+    loginApi(form)
+      .then((res) => {
+        console.log('회원가입 데이터', res);
+        alert(res.msg);
+      })
+      .catch((err) => {
+        console.error('로그인 오류', err);
+        alert('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+      });
+  };
 
   return (
     <div className='pt-[80px] pb-[80px]'>
-      <div className='w-[640px] m-auto flex flex-col gap-[56px]'>
+      <form
+        className='w-[640px] m-auto flex flex-col gap-[56px]'
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleClick();
+        }}
+      >
         <Input
           name='email'
           placeholder='이메일을 입력해주세요'
           onChange={handleChange}
-        >
-          이메일
-        </Input>
+        />
         <Input
           name='password'
           placeholder='비밀번호를 입력해주세요'
           onChange={handleChange}
-        >
-          비밀번호
-        </Input>
+        />
         <Button
-          filled={confrim ? 'orange' : 'gray'}
+          filled={confirm ? 'orange' : 'gray'}
           onClick={handleClick}
         >
           시작하기
         </Button>
-      </div>
+      </form>
     </div>
   );
 }

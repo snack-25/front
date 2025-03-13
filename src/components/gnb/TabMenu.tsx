@@ -1,9 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { it } from 'node:test';
-import { useEffect } from 'react';
+
+import { cn } from '@/lib/utils';
 
 type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
 
@@ -76,7 +75,7 @@ export default function TabMenu() {
 
     params.set('mainCategory', mainCategory);
     params.set(key, value);
-    params.set('sort',sort);
+    params.set('sort', sort);
     router.replace(`?${params.toString()}`);
   };
 
@@ -86,7 +85,7 @@ export default function TabMenu() {
 
     params.set('mainCategory', main);
     params.set('subCategory', firstSubCategory);
-    params.set('sort',sort);
+    params.set('sort', sort);
     router.replace(`?${params.toString()}`);
   };
 

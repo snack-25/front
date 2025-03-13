@@ -1,4 +1,9 @@
-import { Card, CardContent , CardHeader , CardTitle } from "@/components/ui/cards";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/Cards';
 //api 나오면 바꿔라!! 신혜야!!
 
 const SummaryCards = () => {
@@ -10,7 +15,6 @@ const SummaryCards = () => {
           <p className={'text-gray-400'}>지난 달: 2,000,000원</p>
         </CardHeader>
         <CardContent>
-          
           <p className={'text-[32px] font-bold'}>126,0000원</p>
         </CardContent>
       </Card>
@@ -21,7 +25,6 @@ const SummaryCards = () => {
           <p className={'text-gray-400'}>지난 달: 2,000,000원</p>
         </CardHeader>
         <CardContent>
-          
           <p className={'text-[32px] font-bold'}>126,0000원</p>
         </CardContent>
       </Card>
@@ -32,13 +35,11 @@ const SummaryCards = () => {
           <p className={'text-gray-400'}>지난 달: 2,000,000원</p>
         </CardHeader>
         <CardContent>
-          
           <p className={'text-[32px] font-bold'}>126,0000원</p>
         </CardContent>
       </Card>
     </div>
   );
-
 };
 
 export default SummaryCards;

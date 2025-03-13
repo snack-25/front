@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
-import { Input } from '@/components/ui/input';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import ResponsiveImage from '@/components/ui/ResponsiveImage';
+} from '@/components/ui/Select';
 
 // 카테고리 데이터
 const mainCategories = [
@@ -71,15 +72,31 @@ export default function ProductFormModal({
 
   const [selectedCategory, setSelectedCategory] = useState<string>(''); // 선택된 대분류 카테고리 상태
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [objectUrl, setObjectUrl] = useState<string | null>(null); // 이미지 URL 상태
 
   // 파일 업로드 핸들러
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // 이전 URL 메모리에서 해제
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+      const newUrl = URL.createObjectURL(file);
       setValue('image', file);
-      setPreviewImage(URL.createObjectURL(file)); // 이미지 미리보기
+      setPreviewImage(newUrl); // 이미지 미리보기
+      setObjectUrl(newUrl);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // 컴포넌트가 언마운트될 때 URL 해제
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [objectUrl]);
 
   return (
     <BaseFormModal

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+
 import { useWindowSize } from '@/hooks/useWindowSize';
 
 interface TextBubbleProps {

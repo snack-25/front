@@ -1,14 +1,9 @@
 'use client';
-import { IProps } from '@/app/playground/mock';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import Image from 'next/image';
+
+import { IProps } from '@/app/playground/mock';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+
 import { categories } from '../gnb/TabMenu';
 
 type cardProps = {
