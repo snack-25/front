@@ -51,16 +51,12 @@ export default function Login() {
           name='email'
           placeholder='이메일을 입력해주세요'
           onChange={handleChange}
-        >
-          이메일
-        </Input>
+        />
         <Input
           name='password'
           placeholder='비밀번호를 입력해주세요'
           onChange={handleChange}
-        >
-          비밀번호
-        </Input>
+        />
         <Button
           filled={confrim ? 'orange' : 'gray'}
           onClick={handleClick}
