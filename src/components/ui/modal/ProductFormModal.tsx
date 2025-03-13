@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Input } from '@/components/ui/Input';
@@ -86,6 +86,13 @@ export default function ProductFormModal({
       setObjectUrl(newUrl);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // 컴포넌트가 언마운트될 때 URL 해제
+      if (objectUrl) { URL.revokeObjectURL(objectUrl); }
+    };
+  }, [objectUrl]);
 
   return (
     <BaseFormModal
