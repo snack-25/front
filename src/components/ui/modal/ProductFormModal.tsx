@@ -79,7 +79,9 @@ export default function ProductFormModal({
     const file = event.target.files?.[0];
     if (file) {
       // 이전 URL 메모리에서 해제
-      if (objectUrl) {URL.revokeObjectURL(objectUrl);}
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
       const newUrl = URL.createObjectURL(file);
       setValue('image', file);
       setPreviewImage(newUrl); // 이미지 미리보기
@@ -90,7 +92,9 @@ export default function ProductFormModal({
   useEffect(() => {
     return () => {
       // 컴포넌트가 언마운트될 때 URL 해제
-      if (objectUrl) { URL.revokeObjectURL(objectUrl); }
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
     };
   }, [objectUrl]);
 
