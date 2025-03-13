@@ -43,7 +43,9 @@ const Modal = ({
   // 화면 크기에 따라 이미지 변경
   useEffect(() => {
     const handleResize = () => {
-      if (!imageSrc) {return;} // imageSrc가 없을 경우 처리 방지
+      if (!imageSrc) {
+        return;
+      } // imageSrc가 없을 경우 처리 방지
 
       const isSmallScreen = window.innerWidth <= MOBILE_BREAKPOINT; // 현재 화면 크기 확인
 
@@ -74,7 +76,9 @@ const Modal = ({
     : [finalDescription]; // 항상 배열로 변환하여 처리 <- HTML 중첩 오류 방지
 
   // 모달이 닫힌 상태면 렌더링하지 않음
-  if (!open) {return null;}
+  if (!open) {
+    return null;
+  }
 
   return (
     <Dialog

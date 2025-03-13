@@ -1,4 +1,4 @@
-import { ChevronDown,ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
 interface NumberInputProps {
@@ -22,7 +22,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
     if (inputValue < max) {
       const newValue = inputValue + step;
       setInputValue(newValue);
-      if (onChange) {onChange(newValue);}
+      if (onChange) {
+        onChange(newValue);
+      }
     }
   };
 
@@ -30,7 +32,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
     if (inputValue > min) {
       const newValue = inputValue - step;
       setInputValue(newValue);
-      if (onChange) {onChange(newValue);}
+      if (onChange) {
+        onChange(newValue);
+      }
     }
   };
 

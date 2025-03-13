@@ -1,11 +1,7 @@
 import Image from 'next/image';
 
 import { IProps } from '@/app/playground/mock';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 import { categories } from '../gnb/TabMenu';
 

@@ -1,4 +1,4 @@
-import { ImageIcon,XCircle } from 'lucide-react';
+import { ImageIcon, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface ProfileUploaderProps {
