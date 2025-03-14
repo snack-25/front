@@ -2,10 +2,8 @@
 
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { it } from 'node:test';
-import { useEffect } from 'react';
 
-type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
+export type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
 
 type CategoryType = {
   [key in TMain]: {

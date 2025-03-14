@@ -1,12 +1,8 @@
-
 import TabMenu from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
 import { SortDropDown } from '@/components/productList/SortDropDown';
 
-
 export default function ProductList() {
-
-
   return (
     <>
       <TabMenu />
