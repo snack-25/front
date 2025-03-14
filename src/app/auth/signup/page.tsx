@@ -13,6 +13,7 @@ export default function Signup() {
     password: '',
     validatePassword: '',
     company: '',
+    bizno: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,9 +24,16 @@ export default function Signup() {
   };
 
   const handleClick = () => {
-    const { name, email, password, validatePassword, company } = form;
+    const { name, email, password, validatePassword, company, bizno } = form;
 
-    if (!name || !email || !password || !validatePassword || !company) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !validatePassword ||
+      !company ||
+      !bizno
+    ) {
       alert('모든 항목을 입력해주세요!');
       return;
     }
@@ -46,7 +54,7 @@ export default function Signup() {
     <div className=''>
       <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col '>
         <div className='pr-[10px]'>
-          <h2 className='text-2[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
+          <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
             기업 담당자 회원가입
           </h2>
           <span className='text-[var(--color-gray-600)] text-[14px] tb:text-[20px]'>
@@ -83,11 +91,18 @@ export default function Signup() {
             비밀번호 확인
           </Input>
           <Input
-            name='companyId'
+            name='company'
             placeholder='회사명을 입력해주세요'
             onChange={handleChange}
           >
             회사명
+          </Input>
+          <Input
+            name='bizno'
+            placeholder='사업자 번호를 입력해주세요'
+            onChange={handleChange}
+          >
+            사업자 번호
           </Input>
           <Button
             className='mt-[16px] tb:mt-[40px]'
