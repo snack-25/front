@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 
-type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
+export type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
 
 type CategoryType = {
   [key in TMain]: {
