@@ -85,8 +85,8 @@ export default function ProductDetail() {
               </p>
             </div>
             <div className='flex'>
-              <NumberInput />             {/* 추후에 prop 삽입 필요 */}
-            </div>
+              <NumberInput className='lt:w-[200px] max-lt:w-[118px]' />             {/* 추후에 prop 삽입 필요 */}
+            </div> 
           </div>
         </div>
       </div>
