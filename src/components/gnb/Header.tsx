@@ -124,7 +124,7 @@ export default function Header() {
               )}
             </div>
 
-            <div className='flex items-center gap-12 mx-auto max-tb:hidden'>
+            <div className='flex items-center gap-12 ml-auto max-tb:hidden'>
               <NavItem
                 href='/'
                 currentPath={pathname}
