@@ -4,13 +4,14 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/TextArea';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
 import ProductEditModal from '@/components/ui/modal/ProductEditModal';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
-import { Textarea } from '@/components/ui/TextArea';
+import PurchaseRequestModal from '@/components/ui/modal/PurchaseRequestModal';
 
 // 유저 이메일 (실제 상황에서는 API 또는 상태에서 가져올 것)
 const userEmail = '김스낵(sn@codeit.com)';
@@ -23,6 +24,7 @@ export default function ModalTestPage() {
   const [isApprovalCompleteOpen, setIsApprovalCompleteOpen] = useState(false);
   const [isRejectRequestOpen, setIsRejectRequestOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
 
   // BaseForm
   const [isBaseFormOpen, setIsBaseFormOpen] = useState(false);
@@ -97,6 +99,53 @@ export default function ModalTestPage() {
   const handleUpdate = (updatedData: any) => {
     console.log('수정된 상품 데이터:', updatedData);
     setIsEditModalOpen(false);
+  };
+
+  // 구매 요청 모달
+  // 테스트용 상품 데이터
+  const testPurchaseData = {
+    requester: '김스낵',
+    items: [
+      {
+        id: '1',
+        name: '코카콜라 제로',
+        category: '청량 · 탄산음료',
+        quantity: 4,
+        price: 2000,
+        imageUrl: '/img/card/item-coke-zero.png',
+      },
+      {
+        id: '2',
+        name: '코카콜라 제로',
+        category: '청량 · 탄산음료',
+        quantity: 4,
+        price: 2000,
+        imageUrl: '/img/card/item-coke-zero.png',
+      },
+      {
+        id: '3',
+        name: '코카콜라 제로',
+        category: '청량 · 탄산음료',
+        quantity: 4,
+        price: 2000,
+        imageUrl: '/img/card/item-coke-zero.png',
+      },
+      {
+        id: '4',
+        name: '코카콜라 제로',
+        category: '청량 · 탄산음료',
+        quantity: 4,
+        price: 2000,
+        imageUrl: '/img/card/item-coke-zero.png',
+      },
+    ],
+    totalAmount: 86000, // 총합 수정
+  };
+
+  // 구매 요청 버튼 클릭 핸들러
+  const handlePurchaseRequest = () => {
+    console.log('🛒 구매 요청 완료:', testPurchaseData);
+    setIsPurchaseModalOpen(false); // 모달 닫기
   };
 
   return (
@@ -283,7 +332,7 @@ export default function ModalTestPage() {
         {/* 상품 수정 모달 열기 버튼 */}
         <Button
           onClick={() => setIsEditModalOpen(true)}
-          className='bg-black text-white px-6 py-3 rounded-lg'
+          className='bg-black text-white hover:bg-gray-800 px-6 py-3 text-lg min-w-[180px] rounded-lg'
         >
           상품 수정 모달 열기
         </Button>
@@ -294,6 +343,22 @@ export default function ModalTestPage() {
           onClose={() => setIsEditModalOpen(false)}
           onUpdate={handleUpdate}
           product={testProduct}
+        />
+
+        {/* 구매 요청 모달 테스트 버튼 */}
+        <Button
+          onClick={() => setIsPurchaseModalOpen(true)}
+          className='bg-black text-white hover:bg-gray-800 px-6 py-3 text-lg min-w-[180px] rounded-lg'
+        >
+          구매 요청 모달 열기
+        </Button>
+
+        {/* 구매 요청 모달 */}
+        <PurchaseRequestModal
+          isOpen={isPurchaseModalOpen}
+          onClose={() => setIsPurchaseModalOpen(false)}
+          onConfirm={handlePurchaseRequest} // 구매 요청 버튼 클릭 시 동작
+          {...testPurchaseData} // 테스트 데이터 전달
         />
       </div>
     </div>
