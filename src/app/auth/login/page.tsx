@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useState } from 'react';
 
 export default function Login() {
   const [form, setForm] = useState({
