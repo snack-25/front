@@ -1,5 +1,5 @@
 import { FlatCompat } from '@eslint/eslintrc';
-import eslintJs from '@eslint/js';
+// import eslintJs from '@eslint/js';
 import importPlugin from 'eslint-plugin-import';
 import security from 'eslint-plugin-security';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -22,8 +22,8 @@ const eslintConfig = [
     ignores: ['node_modules/', 'dist/', '.next/'],
   },
 
-  // ESLint 기본 권장 설정
-  eslintJs.configs.recommended,
+  // ESLint 기본 권장 설정(일부 PC 오류로 미사용)
+  // eslintJs.configs.recommended,
   // Next.js + Core Web Vitals + Typescript 관련 설정
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   // TypeScript + React + Next.js 관련 설정
@@ -132,7 +132,7 @@ const eslintConfig = [
       'sonarjs/cognitive-complexity': ['warn', 15],
 
       // ✅ 일반적인 규칙
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['off', { allow: ['warn', 'error'] }],
       'no-unused-vars': 'off', // TypeScript 버전을 대신 사용
       'prefer-const': 'error',
       eqeqeq: 'error',
