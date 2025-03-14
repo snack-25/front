@@ -1,8 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import Image from "next/image";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/Table';
 
 interface Order {
   id: number;
@@ -24,17 +32,17 @@ const HistoryTable = () => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       {orders.length > 0 ? (
-        <Table className="w-full border-collapse">
-          <TableHeader className="bg-red-300 rounded-full">
+        <Table className='w-full border-collapse'>
+          <TableHeader className='bg-red-300 rounded-full'>
             <TableRow>
-              <TableHead className="rounded-l-full">구매승인일</TableHead>
+              <TableHead className='rounded-l-full'>구매승인일</TableHead>
               <TableHead>상품정보</TableHead>
               <TableHead>주문 금액</TableHead>
               <TableHead>요청인</TableHead>
               <TableHead>담당자</TableHead>
-              <TableHead className="rounded-r-full">구매요청일</TableHead>
+              <TableHead className='rounded-r-full'>구매요청일</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -51,14 +59,14 @@ const HistoryTable = () => {
           </TableBody>
         </Table>
       ) : (
-        <div className="flex flex-col items-center justify-center py-10">
+        <div className='flex flex-col items-center justify-center py-10'>
           <Image
-            src="/img/order/order-nothing-admin-md.svg"
-            alt="구매 내역 없음"
+            src='/img/order/order-nothing-admin-md.svg'
+            alt='구매 내역 없음'
             width={300}
             height={200}
           />
-          <p className="text-gray-500 mt-4 text-lg">구매 내역이 없습니다.</p>
+          <p className='text-gray-500 mt-4 text-lg'>구매 내역이 없습니다.</p>
         </div>
       )}
     </div>

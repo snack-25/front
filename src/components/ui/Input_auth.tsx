@@ -1,5 +1,7 @@
+import type { VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import * as React from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
+
 import { cn } from '@/lib/utils';
 
 // base 클래스와 variant 옵션을 설정합니다.

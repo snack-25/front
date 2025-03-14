@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
-import { Input } from '@/components/ui/input';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import ResponsiveImage from '@/components/ui/ResponsiveImage';
+} from '@/components/ui/Select';
 
 // 카테고리 데이터
 const mainCategories = [

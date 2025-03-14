@@ -1,6 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
-import { ChevronDown } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 export type sortBy = 'newest' | 'sales' | 'lowest' | 'highest';
 
@@ -47,6 +48,7 @@ export function SortDropDown() {
           variant='outline'
           className='group text-gray-500 text-md font-normal select-none'
         >
+          {sortOption[sort]}
           {sortOption[sort]}
           <ChevronDown className='transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>

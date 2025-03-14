@@ -1,7 +1,8 @@
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import { Search, XCircle } from 'lucide-react';
 import { useState } from 'react';
+
+import { Input } from '@/components/ui/Input';
+import { cn } from '@/lib/utils';
 
 interface TextIconProps {
   placeholder?: string;
@@ -41,7 +42,9 @@ const TextIcon: React.FC<TextIconProps> = ({
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);
-          if (onChange) onChange(e);
+          if (onChange) {
+            onChange(e);
+          }
         }}
         className={cn(
           'pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500',

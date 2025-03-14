@@ -1,14 +1,14 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
+
+import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/Select';
 
 interface MemberRoleChangeModalProps {
   isOpen: boolean;
