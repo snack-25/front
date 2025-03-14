@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { cn } from '@/lib/utils';
 
 export interface TextareaProps
@@ -23,7 +24,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setInputValue(e.target.value);
-      if (props.onChange) props.onChange(e);
+      if (props.onChange) {
+        props.onChange(e);
+      }
     };
 
     return (

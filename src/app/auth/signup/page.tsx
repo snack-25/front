@@ -1,9 +1,10 @@
 'use client';
 
-import { Input } from '@/components/ui/Input_auth';
-import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
+
 import { signupApi } from '@/app/api/auth/api';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input_auth';
 
 export default function Signup() {
   const [form, setForm] = useState({

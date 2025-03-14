@@ -1,12 +1,13 @@
 import React from 'react';
+
+import { Button } from '@/components/ui/Button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/Button';
+} from '@/components/ui/Dialog';
 
 interface BaseFormModalProps {
   isOpen: boolean;

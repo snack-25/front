@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button } from '../ui/Button';
-import { HeaderMenu } from './HeaderMenu';
+
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+
+import { HeaderMenu } from './HeaderMenu';
 
 /* ### 사용자 타입(UserTypes)
 

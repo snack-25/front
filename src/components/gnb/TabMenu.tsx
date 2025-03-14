@@ -1,10 +1,13 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { cn } from '@/lib/utils';
-import { useEffect } from 'react';
+
+type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
 
 type CategoryType = {
-  [key: string]: {
+  [key in TMain]: {
     kor: string;
     items: { kor: string; eng: string }[];
   };
@@ -59,30 +62,37 @@ export const categories: CategoryType = {
   },
 };
 
-interface IProps {
-  mainCategory: string;
-  subCategory: string;
-  setMain: (value: string) => void;
-  setSub: (value: string) => void;
-}
+export default function TabMenu() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-export default function TabMenu({
-  mainCategory,
-  subCategory,
-  setMain,
-  setSub,
-}: IProps) {
+  const mainCategory = searchParams.get('mainCategory') || 'snack';
+  const subCategory = searchParams.get('subCategory') || 'snack';
+  const sort = searchParams.get('sort') || 'newest';
+
+  const updateParams = (key: string, value: string) => {
+    const params = new URLSearchParams();
+
+    params.set('mainCategory', mainCategory);
+    params.set(key, value);
+    params.set('sort', sort);
+    router.replace(`?${params.toString()}`);
+  };
+
+  const handleMainChange = (main: string) => {
+    const firstSubCategory = categories[main as TMain].items[0].eng;
+    const params = new URLSearchParams(searchParams);
+
+    params.set('mainCategory', main);
+    params.set('subCategory', firstSubCategory);
+    params.set('sort', sort);
+    router.replace(`?${params.toString()}`);
+  };
+
   const ulStyle =
     'flex h-16 text-gray-400 text-2lg font-medium px-[120px] gap-3 items-center border-b-1 border-line-200';
   const buttonStyle =
     'w-full h-full cursor-pointer transition-all duration-300';
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('상위 카테고리:', mainCategory);
-      console.log('하위 카테고리:', subCategory);
-    }
-  }, [subCategory]);
 
   return (
     <nav>
@@ -101,8 +111,7 @@ export default function TabMenu({
                   : '',
               )}
               onClick={() => {
-                setMain(key);
-                setSub(categories[key].items[0].eng); // 상위 카테고리 변경시 하위 카테고리 첫번째를 디폴트
+                handleMainChange(key);
               }}
             >
               {category.kor}
@@ -113,7 +122,7 @@ export default function TabMenu({
 
       {/* 하위 카테고리 */}
       <ul className={ulStyle}>
-        {categories[mainCategory]?.items.map((item) => (
+        {categories[mainCategory as TMain]?.items.map((item) => (
           <li
             key={item.kor}
             className='h-full'
@@ -124,7 +133,7 @@ export default function TabMenu({
                 'text-lg font-semibold',
                 subCategory === item.eng ? 'text-primary-400' : '',
               )}
-              onClick={() => setSub(item.eng)}
+              onClick={() => updateParams('subCategory', item.eng)}
             >
               {item.kor}
             </button>

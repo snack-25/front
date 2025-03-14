@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { MOBILE_BREAKPOINT } from '@/lib/constants';
 
 interface ResponsiveImageProps {
@@ -18,7 +19,9 @@ export default function ResponsiveImage({
 
   useEffect(() => {
     const handleResize = () => {
-      if (!imageSrc) return;
+      if (!imageSrc) {
+        return;
+      }
       const isSmallScreen = window.innerWidth <= MOBILE_BREAKPOINT;
       setCurrentImage(
         isSmallScreen

@@ -1,14 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
-import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import Modal from '@/components/ui/modal/Modal';
-import { Input } from '@/components/ui/input';
+import ProductEditModal from '@/components/ui/modal/ProductEditModal';
+import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import { Textarea } from '@/components/ui/TextArea';
-import { Button } from '@/components/ui/Button';
 
 // 유저 이메일 (실제 상황에서는 API 또는 상태에서 가져올 것)
 const userEmail = '김스낵(sn@codeit.com)';
@@ -20,6 +22,7 @@ export default function ModalTestPage() {
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
   const [isApprovalCompleteOpen, setIsApprovalCompleteOpen] = useState(false);
   const [isRejectRequestOpen, setIsRejectRequestOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // BaseForm
   const [isBaseFormOpen, setIsBaseFormOpen] = useState(false);
@@ -76,6 +79,24 @@ export default function ModalTestPage() {
 
     console.log('등록된 상품 정보:', formattedData);
     setIsProductModalOpen(false);
+  };
+
+  // 상품 수정 모달
+  // 테스트용 상품 데이터
+  const testProduct = {
+    id: '1',
+    name: '테스트 상품',
+    category: '스낵',
+    subCategory: '과자',
+    price: 1500,
+    imageUrl: '/img/input/profile/upload-filled-md.svg',
+    link: 'https://example.com',
+  };
+
+  // 상품 수정 핸들러
+  const handleUpdate = (updatedData: any) => {
+    console.log('수정된 상품 데이터:', updatedData);
+    setIsEditModalOpen(false);
   };
 
   return (
@@ -223,7 +244,7 @@ export default function ModalTestPage() {
           onClick={() => setIsInviteModalOpen(true)}
           className='bg-black text-white hover:bg-gray-800 active:bg-gray-900 px-6 py-3 text-lg min-w-[180px] rounded-lg'
         >
-          회원 초대하기
+          회원 초대하기 열기
         </Button>
         {/* 초대 모달 */}
         <InviteMemberModal
@@ -257,6 +278,22 @@ export default function ModalTestPage() {
           isOpen={isProductModalOpen}
           onClose={() => setIsProductModalOpen(false)}
           onConfirm={handleProductConfirm}
+        />
+
+        {/* 상품 수정 모달 열기 버튼 */}
+        <Button
+          onClick={() => setIsEditModalOpen(true)}
+          className='bg-black text-white px-6 py-3 rounded-lg'
+        >
+          상품 수정 모달 열기
+        </Button>
+
+        {/* 상품 수정 모달 */}
+        <ProductEditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onUpdate={handleUpdate}
+          product={testProduct}
         />
       </div>
     </div>
