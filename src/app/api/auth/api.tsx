@@ -13,13 +13,6 @@ interface loginProps {
   password: string;
 }
 
-// export async function signupApi(body: SignProps) {
-//   return await fetchApi('/auth/signup', {
-//     method: 'POST',
-//     body: JSON.stringify(body),
-//   });
-// }
-
 export async function signupApi(body: SignProps) {
   // 여기에서 body를 문자열로 변환 (JSON.stringify)해서 보내야 함
   return await fetchApi('/auth/signup', {
@@ -32,14 +25,17 @@ export async function signupApi(body: SignProps) {
 }
 
 export async function loginApi(body: loginProps) {
-  return await fetchApi('/api/auth/login', {
+  return await fetchApi('/auth/login', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   });
 }
 
 export async function getUserApi() {
-  return await fetchApi('/api/auth/user', {
+  return await fetchApi('/auth/user', {
     method: 'GET',
   });
 }
