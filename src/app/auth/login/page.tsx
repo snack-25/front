@@ -2,15 +2,14 @@
 import React from 'react';
 import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/Input_auth';
+import { useState } from 'react';
 
 export default function Login() {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
-  const [confrim, setConfirm] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({
@@ -33,40 +32,47 @@ export default function Login() {
     });
   };
 
-  useEffect(() => {
-    const test = Object.values(form).filter((x) => {
-      return x.length === 0;
-    });
-    console.log(test);
-    const confirm =
-      Object.values(form) // 자바스크립트 기본 문법 객체를 배열로 만드는거 Object.keys Object.values Object.entries
-        .filter((v) => v.length === 0).length === 0; // 자바스크립트 내장 함수 배열에서 원하는 값을 가져오는 거야
-    setConfirm(confirm);
-  }, [form]);
+  const isFormValid = Object.values(form).every((value) => value.length > 0);
 
   return (
-    <div className='pt-[80px] pb-[80px]'>
-      <div className='w-[640px] m-auto flex flex-col gap-[56px]'>
-        <Input
-          name='email'
-          placeholder='이메일을 입력해주세요'
-          onChange={handleChange}
-        >
-          이메일
-        </Input>
-        <Input
-          name='password'
-          placeholder='비밀번호를 입력해주세요'
-          onChange={handleChange}
-        >
-          비밀번호
-        </Input>
-        <Button
-          filled={confrim ? 'orange' : 'gray'}
-          onClick={handleClick}
-        >
-          시작하기
-        </Button>
+    <div className=''>
+      <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col '>
+        <div className='pr-[10px]'>
+          <h2 className='text-[24px] tb:text-[32px] font-semibold text-center'>
+            로그인
+          </h2>
+        </div>
+        <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px] '>
+          <Input
+            name='email'
+            placeholder='이메일을 입력해주세요'
+            onChange={handleChange}
+          >
+            이메일
+          </Input>
+          <Input
+            name='password'
+            placeholder='비밀번호를 입력해주세요'
+            onChange={handleChange}
+          >
+            비밀번호
+          </Input>
+          <Button
+            className='mt-[16px] tb:mt-[40px]'
+            filled={isFormValid ? 'orange' : 'gray'}
+            onClick={handleClick}
+          >
+            시작하기
+          </Button>
+          <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
+            <span className='text-[12px tb:text-[20px] text-[var(--color-gray-600)]'>
+              기업 담당자이신가요?
+            </span>
+            <a className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'>
+              가입하기
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
