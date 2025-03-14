@@ -139,7 +139,7 @@ export default function ModalTestPage() {
         imageUrl: '/img/card/item-coke-zero.png',
       },
     ],
-    totalAmount: 86000, // 총합 수정
+    totalAmount: 32000, // 총합 수정
   };
 
   // 구매 요청 버튼 클릭 핸들러
