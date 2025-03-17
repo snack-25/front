@@ -49,7 +49,6 @@ export function SortDropDown() {
           className='group text-gray-500 text-md font-normal select-none'
         >
           {sortOption[sort]}
-          {sortOption[sort]}
           <ChevronDown className='transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>
       </DropdownMenuTrigger>

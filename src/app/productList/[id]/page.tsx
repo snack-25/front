@@ -55,7 +55,7 @@ export default function ProductDetail() {
                 <h1 className='lt:text-3xl max-lt:text-2xl font-semibold text-black-400 mb-6'>
                   {productName}
                 </h1>
-                <p className='bg-illustration-200 lt:text-xl max-lt:text-xs font-semibold mb-6 text-orange-400 text-center py-1 w-[98px] h-[40px] max-lt:w-[62px] max-lt:h-6'>
+                <p className='bg-illustration-02 lt:text-xl max-lt:text-xs font-semibold mb-6 text-orange-400 text-center py-1 w-[98px] h-[40px] max-lt:w-[62px] max-lt:h-6'>
                   {purchase}회 구매
                 </p>
                 <p className='lt:text-3xl max-lt:text-2xl font-bold text-black-400 mb-6'>

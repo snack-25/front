@@ -43,7 +43,7 @@ export default function ProductCard({ data }: cardProps) {
             <p className='max-tb:hidden font-normal text-gray-500 text-[1vw]'>
               {subCategory}
             </p>
-            <p className='text-primary-400 bg-illustration-200 px-2 py-1 w-auto lt:text-lg max-lt:text-xs font-semibold'>
+            <p className='text-primary-400 bg-illustration-02 px-2 py-1 w-auto lt:text-lg max-lt:text-xs font-semibold'>
               {purchase}회 구매
             </p>
           </div>
