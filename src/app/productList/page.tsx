@@ -6,6 +6,7 @@ import CardList from '@/components/productList/CardList';
 import { SortDropDown } from '@/components/productList/SortDropDown';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import FloatingButton from '@/components/productList/FloatingButton';
+import MoreButton from '@/components/productList/MoreButton';
 
 export default function ProductList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -43,6 +44,11 @@ export default function ProductList() {
         isOpen={isOpen}
         onClose={handleOpen}
         onConfirm={handleSubmit}
+      />
+
+      <MoreButton
+        className='w-full flex items-center justify-center my-16'
+        onClick={() => {}}
       />
     </>
   );
