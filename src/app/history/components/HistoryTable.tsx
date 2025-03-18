@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -13,7 +12,7 @@ import {
 } from '@/components/ui/Table';
 
 interface Order {
-  id: number;
+  id: string;
   date: string;
   product: string;
   price: string;
@@ -22,14 +21,12 @@ interface Order {
   requestDate: string;
 }
 
-const mockOrders: Order[] = []; // ❌ 데이터가 없을 경우
+interface HistoryTableProps {
+  orders: Order[]; // ✅ 부모 컴포넌트에서 전달받을 props 타입 정의
+}
 
-const HistoryTable = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    setOrders(mockOrders); // 현재는 더미 데이터로 설정
-  }, []);
+const HistoryTable: React.FC<HistoryTableProps> = ({ orders }) => {
+  const router = useRouter();
 
   return (
     <div className='w-full'>
@@ -47,7 +44,11 @@ const HistoryTable = () => {
           </TableHeader>
           <TableBody>
             {orders.map((order) => (
-              <TableRow key={order.id}>
+              <TableRow 
+                key={order.id} 
+                className="cursor-pointer hover:bg-gray-50" 
+                onClick={() => router.push(`/history/${order.id}`)}
+              >
                 <TableCell>{order.date}</TableCell>
                 <TableCell>{order.product}</TableCell>
                 <TableCell>{order.price}원</TableCell>
