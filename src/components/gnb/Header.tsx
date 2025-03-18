@@ -109,7 +109,7 @@ export default function Header() {
                 </div>
               )}
               <NavItem
-                href='/'
+                href='/productEntry'
                 currentPath={pathname}
               >
                 상품 등록 내역

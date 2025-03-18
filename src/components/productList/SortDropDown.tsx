@@ -46,22 +46,24 @@ export function SortDropDown() {
       >
         <Button
           variant='outline'
-          className='group text-gray-500 text-md font-normal select-none'
+          className='group text-gray-500 flex justify-around font-normal select-none bg-white w-[136px] h-[50px] max-lt:w-[87px] max-lt:h-9 border-1 border-gray-200 cursor-pointer'
         >
-          {sortOption[sort]}
-          {sortOption[sort]}
+          <span className='lt:text-2lg max-lt:text-md'>{sortOption[sort]}</span>
           <ChevronDown className='transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-56'>
+      <DropdownMenuContent className='w-full'>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {Object.entries(sortOption).map(([key, label]) => (
             <DropdownMenuItem
               key={key}
               onClick={() => updateSort(key as sortBy)}
+              className='w-full'
             >
-              {label}
+              <span className='text-gray-500 lt:text-2lg max-lt:text-md'>
+                {label}
+              </span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
