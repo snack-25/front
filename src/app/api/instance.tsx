@@ -14,19 +14,9 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const data = await response.json();
 
   if (!response.ok) {
+    console.log(data);
     throw new Error(data.message || 'API 요청 실패');
   }
 
   return data;
 }
-
-// export async function fetchApi(url: string, options: RequestInit = {}) {
-//   const response = await fetch(url, {
-//     ...options,
-//     headers: {
-//       'Content-Type': 'application/json', // JSON 전송을 위한 헤더 설정
-//       ...(options.headers || {}),
-//     },
-//   });
-//   return await response.json();
-// }

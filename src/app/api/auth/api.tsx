@@ -34,8 +34,11 @@ export async function loginApi(body: loginProps) {
   });
 }
 
-export async function getUserApi() {
-  return await fetchApi('/auth/user', {
-    method: 'GET',
+export async function logoutApi() {
+  return await fetchApi('/auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+    // refreshToken이 필요한 경우, 예: body에 담거나 헤더에 포함
+    body: JSON.stringify({}),
   });
 }
