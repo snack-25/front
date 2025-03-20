@@ -2,6 +2,16 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+      },
+    ],
+    dangerouslyAllowSVG: true, // SVG 허용
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // 보안 강화
+  },
 };
 
 export default nextConfig;

@@ -1,11 +1,12 @@
 import Header from '@/components/gnb/Header';
+import { Loader2 } from 'lucide-react';
 
 export default function PlayGround() {
   return (
     <>
       <Header />
       <div className='text-white text-xl bg-black'>
-        브레이크 포인트 테스트용
+        <Loader2/>
       </div>
     </>
   );

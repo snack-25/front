@@ -3,142 +3,152 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
+import { fetchApi } from '@/app/api/instance';
+import { Loader2 } from 'lucide-react';
 
-export type TMain = 'snack' | 'drink' | 'water' | 'simpleFood' | 'equipment';
+export interface Category {
+  id: string;
+  parentId: string | null;
+  companyId: string;
+  name: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-type CategoryType = {
-  [key in TMain]: {
-    kor: string;
-    items: { kor: string; eng: string }[];
-  };
-};
+interface ITabMenu {
+  activeSub: string;
+  setActiveSub: (value: string) => void;
+}
 
-export const categories: CategoryType = {
-  snack: {
-    kor: '스낵',
-    items: [
-      { kor: '스낵', eng: 'snack' },
-      { kor: '파이', eng: 'pie' },
-      { kor: '초콜릿', eng: 'chocolate' },
-      { kor: '캔디', eng: 'candy' },
-      { kor: '젤리', eng: 'jelly' },
-    ],
-  },
-  drink: {
-    kor: '음료',
-    items: [
-      { kor: '청량・탄산음료', eng: 'soda' },
-      { kor: '과즙 음료', eng: 'juice' },
-      { kor: '에너지음료', eng: 'energy' },
-      { kor: '커피', eng: 'coffee' },
-      { kor: '건강음료', eng: 'health' },
-      { kor: '티', eng: 'tea' },
-    ],
-  },
-  water: {
-    kor: '생수',
-    items: [
-      { kor: '생수', eng: 'water' },
-      { kor: '스파클링', eng: 'sparkling' },
-    ],
-  },
-  simpleFood: {
-    kor: '간편식',
-    items: [
-      { kor: '면류', eng: 'noodle' },
-      { kor: '과일', eng: 'fruit' },
-      { kor: '밥', eng: 'rice' },
-      { kor: '시리얼', eng: 'cereal' },
-      { kor: '빵', eng: 'bread' },
-    ],
-  },
-  equipment: {
-    kor: '비품',
-    items: [
-      { kor: '생활용품', eng: 'life' },
-      { kor: '사무용품', eng: 'office' },
-      { kor: '친환경', eng: 'eco' },
-    ],
-  },
-};
+export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선택된 하위 카테고리 상태
+  const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 배열
+  const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 배열
+  const [activeCat, setActiveCat] = useState<string>('cat-스낵');   //선택된 상위 카테고리 상태
 
-export default function TabMenu() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const getSub = async (parentId: Category['id']) => {
+    try {
+      const sub: Category[] = await fetchApi(
+        `/api/categories/parents/${parentId}`,
+        {
+          method: 'GET',
+        },
+      );
 
-  const mainCategory = searchParams.get('mainCategory') || 'snack';
-  const subCategory = searchParams.get('subCategory') || 'snack';
-  const sort = searchParams.get('sort') || 'newest';
-
-  const updateParams = (key: string, value: string) => {
-    const params = new URLSearchParams();
-
-    params.set('mainCategory', mainCategory);
-    params.set(key, value);
-    params.set('sort', sort);
-    router.replace(`?${params.toString()}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('초기 하위 카테고리 패칭 완료:', sub);
+        setSub(sub);
+      }
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('초기 하위 카테고리 패칭 실패:', err);
+      }
+    }
   };
 
-  const handleMainChange = (main: string) => {
-    const firstSubCategory = categories[main as TMain].items[0].eng;
-    const params = new URLSearchParams(searchParams);
+  useEffect(() => {
+    const getParents = async () => {
+      try {
+        const parents: Category[] = await fetchApi('/api/categories/parents', {
+          method: 'GET',
+        });
 
-    params.set('mainCategory', main);
-    params.set('subCategory', firstSubCategory);
-    params.set('sort', sort);
-    router.replace(`?${params.toString()}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('상위 카테고리 패칭 완료:', parents);
+          setParents(parents);
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('상위 카테고리 패칭 실패:', err);
+        }
+      }
+    };
+
+    getParents();
+  }, []);
+
+  useEffect(() => {
+    getSub(activeCat);
+  }, [activeCat]);
+
+  useEffect(() => {
+    if (sub) {
+      handleSub(sub[0].id);
+    }
+  }, [sub]);
+
+  const handleSub = (sub: string) => {
+    setActiveSub(sub);
+  };
+
+  const handleCat = (cat: string) => {
+    setActiveCat(cat);
   };
 
   const ulStyle =
-    'flex h-16 text-gray-400 text-2lg font-medium px-[120px] gap-3 items-center border-b-1 border-line-200';
+    'flex h-16 text-gray-400 text-2lg font-medium px-[120px] max-lt:px-6 gap-3 items-center border-b-1 border-line-200 overflow-x-scroll whitespace-nowrap no-scrollbar';
   const buttonStyle =
     'w-full h-full cursor-pointer transition-all duration-300';
 
   return (
     <nav>
       {/* 상위 카테고리 */}
+
       <ul className={ulStyle}>
-        {Object.entries(categories).map(([key, category]) => (
-          <li
-            key={key}
-            className='h-full'
-          >
-            <button
-              className={cn(
-                buttonStyle,
-                mainCategory === key
-                  ? 'border-b-1 border-b-primary-400 text-primary-400'
-                  : '',
-              )}
-              onClick={() => {
-                handleMainChange(key);
-              }}
+        {parents === null ? (
+          <div className='flex justify-center items-center h-full'>
+            <Loader2 className='animate-spin text-gray-500' />
+          </div>
+        ) : (
+          parents.map((parent) => (
+            <li
+              key={parent.id}
+              className='h-full'
             >
-              {category.kor}
-            </button>
-          </li>
-        ))}
+              <button
+                className={cn(
+                  buttonStyle,
+                  activeCat === parent.id
+                    ? 'border-b-1 border-b-primary-400 text-primary-400'
+                    : '',
+                )}
+                onClick={() => {
+                  handleCat(parent.id);
+                }}
+              >
+                {parent.name}
+              </button>
+            </li>
+          ))
+        )}
       </ul>
 
       {/* 하위 카테고리 */}
       <ul className={ulStyle}>
-        {categories[mainCategory as TMain]?.items.map((item) => (
-          <li
-            key={item.kor}
-            className='h-full'
-          >
-            <button
-              className={cn(
-                buttonStyle,
-                'text-lg font-semibold',
-                subCategory === item.eng ? 'text-primary-400' : '',
-              )}
-              onClick={() => updateParams('subCategory', item.eng)}
+        {sub === null ? (
+          <div className='flex justify-center items-center h-full'>
+            <Loader2 className='animate-spin text-gray-500' />
+          </div>
+        ) : (
+          sub.map((item) => (
+            <li
+              key={item.id}
+              className='h-full'
             >
-              {item.kor}
-            </button>
-          </li>
-        ))}
+              <button
+                className={cn(
+                  buttonStyle,
+                  'text-lg font-semibold',
+                  activeSub === item.id ? 'text-primary-400' : '',
+                )}
+                onClick={() => handleSub(item.id)}
+              >
+                {item.name}
+              </button>
+            </li>
+          ))
+        )}
       </ul>
     </nav>
   );
