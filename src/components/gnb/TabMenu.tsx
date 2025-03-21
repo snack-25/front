@@ -17,7 +17,11 @@ export interface Category {
   updatedAt: string;
 }
 
-export default function TabMenu() {
+interface ITabMenu {
+  setPage : (page:number) => void;
+}
+
+export default function TabMenu({setPage}:ITabMenu) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -64,6 +68,7 @@ export default function TabMenu() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
     getSub(activeCat);
   }, [activeCat]);
 
