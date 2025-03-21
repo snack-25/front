@@ -21,15 +21,15 @@ const sortOption: Record<Tsort, string> = {
   'price:desc': '높은 가격 순',
 };
 
-interface ITabMenu {
-  sort: Tsort;
-  setSort: (value: Tsort) => void;
-}
+export function SortDropDown() {
+  const router = useRouter();
 
-export function SortDropDown({ sort, setSort }: ITabMenu) {
   const updateSort = (value: Tsort) => {
-    setSort(value);
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('sort', value);
+    router.replace(`?${searchParams.toString()}`);
   };
+  const sort = (useSearchParams().get('sort') as Tsort) || 'createdAt:desc';
 
   return (
     <DropdownMenu>
