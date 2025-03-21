@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/TextArea';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
@@ -12,6 +11,7 @@ import Modal from '@/components/ui/modal/Modal';
 import ProductEditModal from '@/components/ui/modal/ProductEditModal';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import PurchaseRequestModal from '@/components/ui/modal/PurchaseRequestModal';
+import { Textarea } from '@/components/ui/TextArea';
 
 // 유저 이메일 (실제 상황에서는 API 또는 상태에서 가져올 것)
 const userEmail = '김스낵(sn@codeit.com)';

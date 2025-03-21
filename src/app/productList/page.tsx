@@ -3,10 +3,11 @@ import { act, Suspense, useCallback, useEffect, useState } from 'react';
 
 import TabMenu, { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
-import { SortDropDown } from '@/components/productList/SortDropDown';
-import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import FloatingButton from '@/components/productList/FloatingButton';
 import MoreButton from '@/components/productList/MoreButton';
+import { SortDropDown } from '@/components/productList/SortDropDown';
+import ProductFormModal from '@/components/ui/modal/ProductFormModal';
+
 import { fetchApi } from '../api/instance';
 import Image from 'next/image';
 import { Loader2, Router } from 'lucide-react';

@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 
 import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
-import { Textarea } from '@/components/ui/TextArea';
 import PurchaseItem from '@/components/ui/modal/PurchaseItem';
+import { Textarea } from '@/components/ui/TextArea';
 
 interface PurchaseRequestModalProps {
   isOpen: boolean;

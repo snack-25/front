@@ -1,10 +1,11 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { fetchApi } from '@/app/api/instance';
 import { Loader2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import { fetchApi } from '@/app/api/instance';
+import { cn } from '@/lib/utils';
 
 export interface Category {
   id: string;
