@@ -1,11 +1,11 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
-import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { fetchApi } from '@/app/api/instance';
 import { Loader2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import { fetchApi } from '@/app/api/instance';
+import { cn } from '@/lib/utils';
 
 export interface Category {
   id: string;
@@ -22,10 +22,11 @@ interface ITabMenu {
   setActiveSub: (value: string) => void;
 }
 
-export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선택된 하위 카테고리 상태
+export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {
+  //선택된 하위 카테고리 상태
   const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 배열
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 배열
-  const [activeCat, setActiveCat] = useState<string>('cat-스낵');   //선택된 상위 카테고리 상태
+  const [activeCat, setActiveCat] = useState<string>('cat-스낵'); //선택된 상위 카테고리 상태
 
   const getSub = async (parentId: Category['id']) => {
     try {

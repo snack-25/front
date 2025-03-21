@@ -1,15 +1,16 @@
 'use client';
-import { act, Suspense, useEffect, useState } from 'react';
+import Image from 'next/image';
+import { Suspense, useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 import TabMenu, { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
-import { SortDropDown } from '@/components/productList/SortDropDown';
-import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import FloatingButton from '@/components/productList/FloatingButton';
 import MoreButton from '@/components/productList/MoreButton';
+import { SortDropDown } from '@/components/productList/SortDropDown';
+import ProductFormModal from '@/components/ui/modal/ProductFormModal';
+
 import { fetchApi } from '../api/instance';
-import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -45,7 +46,7 @@ export default function ProductList() {
         }
         setProducts(data.items);
       } catch (err) {
-        if (process.env.NODE_ENV == 'development') {
+        if (process.env.NODE_ENV === 'development') {
           console.log('전체 목록 조회 실패:', err);
         }
       }
@@ -83,7 +84,7 @@ export default function ProductList() {
 
           <CardList data={products} />
 
-          {products?.length == 0 ? (
+          {products?.length === 0 ? (
             <div className='absolute flex flex-col items-center justify-center h-auto w-1/2 left-1/2 -translate-x-1/2'>
               <div className='absolute w-full h-40'>
                 <Image
@@ -102,7 +103,7 @@ export default function ProductList() {
               onClick={() => {}}
             />
           )}
-          
+
           {isAuthenticated /* 관리자 이상의 권한일때만 보임 */ && (
             <FloatingButton
               handleClick={handleOpen}
