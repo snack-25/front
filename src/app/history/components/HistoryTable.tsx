@@ -67,7 +67,6 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders }) => {
             width={300}
             height={200}
           />
-          <p className='text-gray-500 mt-4 text-lg'>구매 내역이 없습니다.</p>
         </div>
       )}
     </div>
