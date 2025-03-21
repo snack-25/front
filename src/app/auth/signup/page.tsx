@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { signupApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
+import Image from 'next/image';
 
 interface InvitedUser {
   email: string;
@@ -18,8 +19,17 @@ export default function Signup() {
   const searchParams = useSearchParams();
   const tokenFromUrl = searchParams.get('token'); // URL에 토큰이 있으면 초대 모드로 전환
 
+  // 이메일 작성 오류
   const [emailError, setEmailError] = useState<string | null>(null);
+  // 빈칸 오류
   const [nullError, setNullError] = useState<{ [key: string]: string }>({});
+  // 비밀번호 불일치
+  const [passwordError, setPasswordError] = useState('');
+  // 비밀번호 눈 껐다켜기
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    password: false,
+    validatePassword: false,
+  });
 
   // 초대 모드 여부를 관리하는 상태
   const [isInvitation, setIsInvitation] = useState<boolean>(false);
@@ -65,18 +75,42 @@ export default function Signup() {
 
   // 폼 입력값 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
     if (isInvitation) {
       setClientForm((prev) => ({
         ...prev,
-        [e.target.name]: e.target.value,
+        [name]: value,
       }));
     } else {
       setForm((prev) => ({
         ...prev,
-        [e.target.name]: e.target.value,
+        [name]: value,
       }));
     }
+    // 비밀번호 확인과 비교
+    if (name === 'validatePassword' || name === 'password') {
+      if (name === 'validatePassword' && value !== form.password) {
+        setPasswordError('비밀번호가 일치하지 않습니다.');
+      } else if (
+        name === 'password' &&
+        form.validatePassword &&
+        value !== form.validatePassword
+      ) {
+        setPasswordError('비밀번호가 일치하지 않습니다.');
+      } else {
+        setPasswordError(''); // 일치하면 오류 메시지 제거
+      }
+    }
   };
+
+  const toggleVisibility = (field: 'password' | 'validatePassword') => {
+    setPasswordVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
   const handleEmailBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
 
@@ -208,79 +242,39 @@ export default function Signup() {
           <>
             <div className='flex flex-col gap-[4px]'>
               <Input
+                titleClassName='이메일'
                 name='email'
                 placeholder='이메일을 입력해주세요'
                 onChange={handleChange}
                 onBlur={handleEmailBlur}
-              >
-                이메일
-              </Input>
+              />
               {emailError && <span className={errorFont}>{emailError}</span>}
             </div>
             <div className='flex flex-col gap-[4px]'>
               <Input
+                titleClassName='비밀번호'
                 name='password'
-                placeholder='비밀번호를 입력해주세요'
-                onChange={handleChange}
-                onBlur={handleNullBlur}
-              >
-                비밀번호
-              </Input>
-              {nullError.password && (
-                <span className={errorFont}> {nullError.password}</span>
-              )}
-            </div>
-            <div className='flex flex-col gap-[4px]'>
-              <Input
-                name='validatePassword'
-                placeholder='비밀번호를 다시 한 번 입력해주세요'
-                onChange={handleChange}
-                value={clientForm.validatePassword}
-                onBlur={handleNullBlur}
-              >
-                비밀번호 확인
-              </Input>
-              {nullError.validatePassword && (
-                <span className={errorFont}>{nullError.validatePassword}</span>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <div className='flex flex-col gap-[4px]'>
-              <Input
-                name='name'
-                placeholder='이름을 입력해주세요'
-                onChange={handleChange}
-                value={form.name}
-                onBlur={handleNullBlur}
-              >
-                이름(기업 담당자)
-              </Input>
-              {nullError.name && (
-                <span className={errorFont}>{nullError.name}</span>
-              )}
-            </div>
-            <div className='flex flex-col gap-[4px]'>
-              <Input
-                name='email'
-                placeholder='이메일을 입력해주세요'
-                onChange={handleChange}
-                onBlur={handleEmailBlur}
-              >
-                이메일
-              </Input>
-              {emailError && <span className={errorFont}>{emailError}</span>}
-            </div>
-            <div className='flex flex-col gap-[4px]'>
-              <Input
-                name='password'
+                type={passwordVisibility.password ? 'text' : 'password'}
                 placeholder='비밀번호를 입력해주세요'
                 onChange={handleChange}
                 value={form.password}
                 onBlur={handleNullBlur}
               >
-                비밀번호
+                <Image
+                  src={
+                    passwordVisibility.password
+                      ? '/icon/lined/visibility-on.svg'
+                      : '/icon/lined/visibility-off.svg'
+                  }
+                  alt={
+                    passwordVisibility.password
+                      ? '비밀번호 보이기'
+                      : '비밀번호 숨기기'
+                  }
+                  width={24}
+                  height={24}
+                  onClick={() => toggleVisibility('password')}
+                />
               </Input>
               {nullError.password && (
                 <span className={errorFont}>{nullError.password}</span>
@@ -288,42 +282,148 @@ export default function Signup() {
             </div>
             <div className='flex flex-col gap-[4px]'>
               <Input
+                titleClassName='비밀번호 확인'
                 name='validatePassword'
+                type={passwordVisibility.validatePassword ? 'text' : 'password'}
                 placeholder='비밀번호를 다시 한 번 입력해주세요'
                 onChange={handleChange}
                 value={form.validatePassword}
                 onBlur={handleNullBlur}
               >
-                비밀번호 확인
+                <Image
+                  src={
+                    passwordVisibility.validatePassword
+                      ? '/icon/lined/visibility-on.svg'
+                      : '/icon/lined/visibility-off.svg'
+                  }
+                  alt={
+                    passwordVisibility.validatePassword
+                      ? '비밀번호 확인 보이기'
+                      : '비밀번호 확인 숨기기'
+                  }
+                  width={24}
+                  height={24}
+                  onClick={() => toggleVisibility('validatePassword')}
+                />
               </Input>
               {nullError.validatePassword && (
                 <span className={errorFont}>{nullError.validatePassword}</span>
               )}
+              {passwordError && (
+                <span className={errorFont}>{passwordError}</span>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className='flex flex-col gap-[4px]'>
+              <Input
+                titleClassName='이름(기업 담당자)'
+                name='name'
+                placeholder='이름을 입력해주세요'
+                onChange={handleChange}
+                value={form.name}
+                onBlur={handleNullBlur}
+              />
+              {nullError.name && (
+                <span className={errorFont}>{nullError.name}</span>
+              )}
             </div>
             <div className='flex flex-col gap-[4px]'>
               <Input
+                titleClassName='이메일'
+                name='email'
+                placeholder='이메일을 입력해주세요'
+                onChange={handleChange}
+                onBlur={handleEmailBlur}
+              />
+              {emailError && <span className={errorFont}>{emailError}</span>}
+            </div>
+            <div className='flex flex-col gap-[4px]'>
+              <Input
+                titleClassName='비밀번호'
+                name='password'
+                type={passwordVisibility.password ? 'text' : 'password'}
+                placeholder='비밀번호를 입력해주세요'
+                onChange={handleChange}
+                value={form.password}
+                onBlur={handleNullBlur}
+              >
+                <Image
+                  src={
+                    passwordVisibility.password
+                      ? '/icon/lined/visibility-on.svg'
+                      : '/icon/lined/visibility-off.svg'
+                  }
+                  alt={
+                    passwordVisibility.password
+                      ? '비밀번호 보이기'
+                      : '비밀번호 숨기기'
+                  }
+                  width={24}
+                  height={24}
+                  onClick={() => toggleVisibility('password')}
+                />
+              </Input>
+              {nullError.password && (
+                <span className={errorFont}>{nullError.password}</span>
+              )}
+            </div>
+            <div className='flex flex-col gap-[4px]'>
+              <Input
+                titleClassName='비밀번호 확인'
+                name='validatePassword'
+                type={passwordVisibility.validatePassword ? 'text' : 'password'}
+                placeholder='비밀번호를 다시 한 번 입력해주세요'
+                onChange={handleChange}
+                value={form.validatePassword}
+                onBlur={handleNullBlur}
+              >
+                <Image
+                  src={
+                    passwordVisibility.validatePassword
+                      ? '/icon/lined/visibility-on.svg'
+                      : '/icon/lined/visibility-off.svg'
+                  }
+                  alt={
+                    passwordVisibility.validatePassword
+                      ? '비밀번호 확인 보이기'
+                      : '비밀번호 확인 숨기기'
+                  }
+                  width={24}
+                  height={24}
+                  onClick={() => toggleVisibility('validatePassword')}
+                />
+              </Input>
+              {nullError.validatePassword && (
+                <span className={errorFont}>{nullError.validatePassword}</span>
+              )}
+              {passwordError && (
+                <span className={errorFont}>{passwordError}</span>
+              )}
+            </div>
+            <div className='flex flex-col gap-[4px]'>
+              <Input
+                titleClassName='회사명'
                 name='company'
                 placeholder='회사명을 입력해주세요'
                 onChange={handleChange}
                 value={form.company}
                 onBlur={handleNullBlur}
-              >
-                회사명
-              </Input>
+              />
               {nullError.company && (
                 <span className={errorFont}>{nullError.company}</span>
               )}
             </div>
             <div className='flex flex-col gap-[4px]'>
               <Input
+                titleClassName='사업자 번호'
                 name='bizno'
                 placeholder='사업자 번호를 입력해주세요'
                 onChange={handleChange}
                 value={form.bizno}
                 onBlur={handleNullBlur}
-              >
-                사업자 번호
-              </Input>
+              />
               {nullError.bizno && (
                 <span className={errorFont}>{nullError.bizno}</span>
               )}
@@ -354,3 +454,130 @@ export default function Signup() {
     </div>
   );
 }
+
+// 'use client';
+
+// import { useState } from 'react';
+
+// import { signupApi } from '@/app/api/auth/api';
+// import { Button } from '@/components/ui/Button';
+// import { Input } from '@/components/ui/Input_auth';
+
+// export default function Signup() {
+//   const [form, setForm] = useState({
+//     name: '',
+//     email: '',
+//     password: '',
+//     validatePassword: '',
+//     company: '',
+//     bizno: '',
+//   });
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setForm((prev) => ({
+//       ...prev,
+//       [e.target.name]: e.target.value,
+//     }));
+//   };
+
+//   const handleClick = () => {
+//     const { name, email, password, validatePassword, company, bizno } = form;
+
+//     if (
+//       !name ||
+//       !email ||
+//       !password ||
+//       !validatePassword ||
+//       !company ||
+//       !bizno
+//     ) {
+//       alert('모든 항목을 입력해주세요!');
+//       return;
+//     }
+//     console.log(form);
+//     if (password !== validatePassword) {
+//       alert('비밀번호를 다시 확인해주세요');
+//       return;
+//     }
+
+//     signupApi(form).then((res) => {
+//       console.log('res', res);
+//     });
+//   };
+
+//   const isFormValid = Object.values(form).every((value) => value.length > 0);
+
+//   return (
+//     <div className=''>
+//       <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col '>
+//         <div className='pr-[10px]'>
+//           <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
+//             기업 담당자 회원가입
+//           </h2>
+//           <span className='text-[var(--color-gray-600)] text-[14px] tb:text-[20px]'>
+//             *그룹 내 유저는 기업 담당자의 초대 메일을 통해 가입이 가능합니다.
+//           </span>
+//         </div>
+//         <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px] '>
+//           <Input
+//             name='name'
+//             placeholder='이름을 입력해주세요'
+//             onChange={handleChange}
+//           >
+//             이름(기업 담당자)
+//           </Input>
+//           <Input
+//             name='email'
+//             placeholder='이메일을 입력해주세요'
+//             onChange={handleChange}
+//           >
+//             이메일
+//           </Input>
+//           <Input
+//             name='password'
+//             placeholder='비밀번호를 입력해주세요'
+//             onChange={handleChange}
+//           >
+//             비밀번호
+//           </Input>
+//           <Input
+//             name='validatePassword'
+//             placeholder='비밀번호를 다시 한 번 입력해주세요'
+//             onChange={handleChange}
+//           >
+//             비밀번호 확인
+//           </Input>
+//           <Input
+//             name='company'
+//             placeholder='회사명을 입력해주세요'
+//             onChange={handleChange}
+//           >
+//             회사명
+//           </Input>
+//           <Input
+//             name='bizno'
+//             placeholder='사업자 번호를 입력해주세요'
+//             onChange={handleChange}
+//           >
+//             사업자 번호
+//           </Input>
+//           <Button
+//             className='mt-[16px] tb:mt-[40px]'
+//             filled={isFormValid ? 'orange' : 'gray'}
+//             onClick={handleClick}
+//           >
+//             시작하기
+//           </Button>
+//           <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
+//             <span className='text-[12px tb:text-[20px] text-[var(--color-gray-600)]'>
+//               이미 계정이 있으신가요?
+//             </span>
+//             <a className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'>
+//               로그인
+//             </a>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

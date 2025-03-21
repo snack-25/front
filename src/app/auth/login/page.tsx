@@ -5,6 +5,7 @@ import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Login() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function Login() {
 
   const [emailError, setEmailError] = useState<string | null>(null);
   const [nullError, setNullError] = useState<string>('');
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({
@@ -80,36 +82,48 @@ export default function Login() {
   const isFormValid = Object.values(form).every((value) => value.length > 0);
 
   return (
-    <div className=''>
-      <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col '>
-        <div className='pr-[10px]'>
-          <h2 className='text-[24px] tb:text-[32px] font-semibold text-center'>
-            로그인
-          </h2>
+    <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col '>
+      <div className='pr-[10px]'>
+        <h2 className='text-[24px] tb:text-[32px] font-semibold text-center'>
+          로그인
+        </h2>
+      </div>
+      <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px] '>
+        <div className='flex flex-col gap-[4px]'>
+          <Input
+            titleClassName='이메일'
+            name='email'
+            placeholder='이메일을 입력해주세요'
+            onChange={handleChange}
+            onBlur={handleEmailBlur}
+          />
+          {emailError && <span className={errorFont}>{emailError}</span>}
         </div>
-        <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px] '>
-          <div className='flex flex-col gap-[4px]'>
-            <Input
-              name='email'
-              placeholder='이메일을 입력해주세요'
-              onChange={handleChange}
-              onBlur={handleEmailBlur}
-            >
-              이메일
-            </Input>
-            {emailError && <span className={errorFont}>{emailError}</span>}
-          </div>
-          <div className='flex flex-col gap-[4px]'>
-            <Input
-              name='password'
-              placeholder='비밀번호를 입력해주세요'
-              onChange={handleChange}
-              onBlur={handleNullBlur}
-            >
-              비밀번호
-            </Input>
-            {nullError && <span className={errorFont}>{nullError}</span>}
-          </div>
+        <div className='flex flex-col gap-[4px]'>
+          <Input
+            titleClassName='비밀번호'
+            name='password'
+            type={passwordVisibility ? 'text' : 'password'}
+            placeholder='비밀번호를 입력해주세요'
+            onChange={handleChange}
+            value={form.password}
+            onBlur={handleNullBlur}
+          >
+            <Image
+              src={
+                passwordVisibility
+                  ? '/icon/lined/visibility-on.svg'
+                  : '/icon/lined/visibility-off.svg'
+              }
+              alt={passwordVisibility ? '비밀번호 보이기' : '비밀번호 숨기기'}
+              width={24}
+              height={24}
+              onClick={() => {
+                setPasswordVisibility((prev) => !prev);
+              }}
+            />
+          </Input>
+          {nullError && <span className={errorFont}>{nullError}</span>}
           <Button
             className='mt-[16px] tb:mt-[40px]'
             filled={isFormValid ? 'orange' : 'gray'}
