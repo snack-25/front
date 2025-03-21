@@ -1,8 +1,8 @@
 'use client';
-import { cn } from '@/lib/utils';
-import { Button } from '../ui/Button';
-import { ChevronDown } from 'lucide-react';
 import { useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
+
+import { Button } from '../ui/Button';
 
 interface IProps {
   className: string;

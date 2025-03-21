@@ -3,6 +3,7 @@
 import { ChevronDown } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { Tsort } from '@/app/productList/page';
 import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
@@ -13,29 +14,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
 
-export type sortBy = 'newest' | 'sales' | 'lowest' | 'highest';
-
-const sortOption: Record<sortBy, string> = {
-  newest: '최신순',
-  sales: '판매순',
-  lowest: '낮은가격순',
-  highest: '높은가격순',
+const sortOption: Record<Tsort, string> = {
+  'createdAt:desc': '최신 순',
+  'createdAt:asc': '오래된 순',
+  'price:asc': '낮은 가격 순',
+  'price:desc': '높은 가격 순',
 };
 
-export function SortDropDown() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+interface ITabMenu {
+  sort: Tsort;
+  setSort: (value: Tsort) => void;
+}
 
-  const mainCategory = searchParams.get('mainCategory') || 'snack';
-  const subCategory = searchParams.get('subCategory') || 'snack';
-  const sort = (searchParams.get('sort') as sortBy) || 'newest';
-
-  const updateSort = (key: sortBy) => {
-    const params = new URLSearchParams();
-    params.set('mainCategory', mainCategory);
-    params.set('subCategory', subCategory);
-    params.set('sort', key);
-    router.replace(`?${params.toString()}`);
+export function SortDropDown({ sort, setSort }: ITabMenu) {
+  const updateSort = (value: Tsort) => {
+    setSort(value);
   };
 
   return (
@@ -58,7 +51,7 @@ export function SortDropDown() {
           {Object.entries(sortOption).map(([key, label]) => (
             <DropdownMenuItem
               key={key}
-              onClick={() => updateSort(key as sortBy)}
+              onClick={() => updateSort(key as Tsort)}
               className='w-full'
             >
               <span className='text-gray-500 lt:text-2lg max-lt:text-md'>
