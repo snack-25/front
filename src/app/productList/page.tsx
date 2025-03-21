@@ -1,5 +1,5 @@
 'use client';
-import { act, Suspense, useEffect, useState } from 'react';
+import { act, Suspense, useCallback, useEffect, useState } from 'react';
 
 import TabMenu, { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -9,7 +9,10 @@ import FloatingButton from '@/components/productList/FloatingButton';
 import MoreButton from '@/components/productList/MoreButton';
 import { fetchApi } from '../api/instance';
 import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Router } from 'lucide-react';
+import { useFetchProducts } from '@/hooks/product/useFetchProduct';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -26,32 +29,48 @@ export interface IProducts {
   imageUrl: string;
 }
 
+interface IFetchData {
+  items: IProducts[];
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
 export default function ProductList() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated: boolean = true;
-  const [activeSub, setActiveSub] = useState<string>('sub-과자');
-  const [sort, setSort] = useState<Tsort>('createdAt:desc');
-  const [products, setProducts] = useState<IProducts[] | null>(null);
+
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(8);
+  const [products, setProducts] = useState<IFetchData | null>(null);
+  const fetchProducts = useFetchProducts();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    if (!searchParams.get('sort')) {
+      currentParams.set('sort', 'createdAt:desc');
+      router.replace(`?${currentParams.toString()}`);
+    }
+  }, [searchParams.get('sort'), router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        const url = `/api/products?&page=${page}&limit=${limit}&categoryId=${activeSub}`;
-        const data = await fetchApi(url, { method: 'GET' });
-        if (process.env.NODE_ENV === 'development') {
-          console.log('전체 목록 조회 성공:', data);
-        }
-        setProducts(data.items);
+        const data = await fetchProducts(page);
+        if (!data) throw new Error('fetchData 없음');
+
+        const { items, hasNextPage, hasPrevPage } = await fetchProducts(page);
+        setProducts({ items, hasNextPage, hasPrevPage });
       } catch (err) {
-        if (process.env.NODE_ENV == 'development') {
-          console.log('전체 목록 조회 실패:', err);
-        }
+        console.log('상품 목록 가져오기 실패:', err);
       }
     };
-    fetchProducts();
-  }, [activeSub]);
+    fetchData();
+  }, [page, fetchProducts]);
+
+  const handleMoreButton = () => {
+    setPage((prev) => prev + 1);
+  };
 
   const handleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -67,23 +86,17 @@ export default function ProductList() {
       {products ? (
         <div className='relative'>
           <Suspense fallback={<div>로딩중...</div>}>
-            <TabMenu
-              activeSub={activeSub}
-              setActiveSub={setActiveSub}
-            />
+            <TabMenu />
           </Suspense>
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex  items-center justify-end'>
             <Suspense fallback={<div>로딩중...</div>}>
-              <SortDropDown
-                sort={sort}
-                setSort={setSort}
-              />
+              <SortDropDown />
             </Suspense>
           </div>
 
-          <CardList data={products} />
+          <CardList data={products.items} />
 
-          {products?.length == 0 ? (
+          {products.items.length == 0 ? (
             <div className='absolute flex flex-col items-center justify-center h-auto w-1/2 left-1/2 -translate-x-1/2'>
               <div className='absolute w-full h-40'>
                 <Image
@@ -98,11 +111,11 @@ export default function ProductList() {
             </div>
           ) : (
             <MoreButton
-              className='w-full flex items-center justify-center my-16'
-              onClick={() => {}}
+              className='w-full flex items-center justify-center my-16 fixed bottom-0'
+              onClick={handleMoreButton}
             />
           )}
-          
+
           {isAuthenticated /* 관리자 이상의 권한일때만 보임 */ && (
             <FloatingButton
               handleClick={handleOpen}

@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { fetchApi } from '@/app/api/instance';
@@ -17,29 +16,26 @@ export interface Category {
   updatedAt: string;
 }
 
-interface ITabMenu {
-  activeSub: string;
-  setActiveSub: (value: string) => void;
-}
+export default function TabMenu() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선택된 하위 카테고리 상태
-  const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 배열
-  const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 배열
-  const [activeCat, setActiveCat] = useState<string>('cat-스낵');   //선택된 상위 카테고리 상태
+  const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 목록
+  const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
+  const [activeCat, setActiveCat] = useState<string>('cat-스낵'); //활성화된 상위 카테고ㄴ리
+  const [activeSub, setActiveSub] = useState<string>('sub-과자'); //활성화된 하위 카테고리
 
   const getSub = async (parentId: Category['id']) => {
+    //하위 카테고리 목록 패칭 함수
     try {
       const sub: Category[] = await fetchApi(
         `/api/categories/parents/${parentId}`,
-        {
-          method: 'GET',
-        },
+        { method: 'GET' },
       );
-
       if (process.env.NODE_ENV === 'development') {
         console.log('초기 하위 카테고리 패칭 완료:', sub);
-        setSub(sub);
       }
+      setSub(sub);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.log('초기 하위 카테고리 패칭 실패:', err);
@@ -53,18 +49,16 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선
         const parents: Category[] = await fetchApi('/api/categories/parents', {
           method: 'GET',
         });
-
         if (process.env.NODE_ENV === 'development') {
           console.log('상위 카테고리 패칭 완료:', parents);
-          setParents(parents);
         }
+        setParents(parents);
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
           console.log('상위 카테고리 패칭 실패:', err);
         }
       }
     };
-
     getParents();
   }, []);
 
@@ -74,16 +68,22 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선
 
   useEffect(() => {
     if (sub) {
-      handleSub(sub[0].id);
+      //상위 카테고리가 변했을 때 초기 하위 카테고리를 첫 번째로 지정
+      setActiveSub(sub[0].id);
+      router.replace(`?categoryId=${sub[0].id}`);
     }
   }, [sub]);
 
-  const handleSub = (sub: string) => {
-    setActiveSub(sub);
+  const handleSub = (subId: string) => {
+    setActiveSub(subId);
+    router.replace(`?categoryId=${subId}`);
   };
 
   const handleCat = (cat: string) => {
     setActiveCat(cat);
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set('sort', 'createdAt:desc');
+    router.replace(`?${currentParams.toString()}`);
   };
 
   const ulStyle =
@@ -94,7 +94,6 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선
   return (
     <nav>
       {/* 상위 카테고리 */}
-
       <ul className={ulStyle}>
         {parents === null ? (
           <div className='flex justify-center items-center h-full'>
@@ -113,9 +112,7 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {   //선
                     ? 'border-b-1 border-b-primary-400 text-primary-400'
                     : '',
                 )}
-                onClick={() => {
-                  handleCat(parent.id);
-                }}
+                onClick={() => handleCat(parent.id)}
               >
                 {parent.name}
               </button>
