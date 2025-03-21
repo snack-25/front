@@ -3,6 +3,7 @@
 import { ChevronDown } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { Tsort } from '@/app/productList/page';
 import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
@@ -12,8 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
-
-import { Tsort } from '@/app/productList/page';
 
 const sortOption: Record<Tsort, string> = {
   'createdAt:desc': '최신 순',

@@ -1,25 +1,15 @@
 'use client';
 import Image from 'next/image';
 
-import { IProps } from '@/app/playground/mock';
-import { Card, CardContent, CardHeader } from '@/components/ui/Card';
-
-import { Category } from '../gnb/TabMenu';
 import { IProducts } from '@/app/productList/page';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 
 type cardProps = {
   data: IProducts;
 };
 
 export default function ProductCard({ data }: cardProps) {
-  const {
-    id,
-    name,
-    price,
-    description,
-    categoryId,
-    imageUrl,
-  } = data;
+  const { id, name, price, description, categoryId, imageUrl } = data;
   const subIndex = 1;
   const subCategory = 'sub-과자';
 
