@@ -1,10 +1,11 @@
 import { fetchApi } from '../instance';
+import { useSearchParams } from 'next/navigation';
 
 interface SignProps {
   name: string;
   email: string;
   password: string;
-  validatePassword: string;
+  validatePassword?: string;
   company: string;
 }
 
@@ -41,4 +42,20 @@ export async function logoutApi() {
     // refreshToken이 필요한 경우, 예: body에 담거나 헤더에 포함
     body: JSON.stringify({}),
   });
+}
+export async function invitationSignupApi(params: {
+  token: string;
+}): Promise<any> {
+  try {
+    // token을 URL 쿼리 파라미터에 포함하여 요청 (혹은 body에 함께 보내도 됨)
+    const res = await fetch(`/api/auth/signup/getinfo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+    return await res.json();
+  } catch (error) {
+    console.error('회원가입 요청 에러:', error);
+    return { msg: '회원가입 요청 중 오류가 발생했습니다.' };
+  }
 }
