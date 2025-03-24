@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
 import { cn } from '@/lib/utils';
-import { Tsort } from '@/app/productList/page';
+import { useProvider } from '../productList/ProductProvider';
 
 export interface Category {
   id: string;
@@ -18,19 +18,12 @@ export interface Category {
 }
 
 interface ITabMenu {
-  categoryID: string;
-  setPage: (page: number) => void;
-  setCategoryId: (categoryId: string) => void;
-  setSort: (sort: Tsort) => void;
+  setPage?: (page: number) => void;
 }
 
-export default function TabMenu({
-  setPage,
-  setSort,
-  categoryID,
-  setCategoryId,
-}: ITabMenu) {
-  const [parentId, setParentId] = useState<string>('cat-스낵');
+export default function TabMenu({ setPage }: ITabMenu) {
+  const { categoryId, setCategoryId, sort, setSort, parentId, setParentId } =
+    useProvider();
   const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
 
@@ -84,12 +77,12 @@ export default function TabMenu({
 
   const handleSub = (subId: string) => {
     setCategoryId(subId);
-    setPage(1);
+    setPage?.(1);
   };
 
   const handleCat = (cat: string) => {
     setParentId(cat);
-    setSort('createdAt:asc');
+    setSort('createdAt:desc');
   };
 
   const ulStyle =
@@ -143,7 +136,7 @@ export default function TabMenu({
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
-                  categoryID === item.id ? 'text-primary-400' : '',
+                  categoryId === item.id ? 'text-primary-400' : '',
                 )}
                 onClick={() => handleSub(item.id)}
               >

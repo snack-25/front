@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
+import { useProvider } from './ProductProvider';
 
 const sortOption: Record<Tsort, string> = {
   'createdAt:desc': '최신 순',
@@ -19,12 +20,8 @@ const sortOption: Record<Tsort, string> = {
   'price:desc': '높은 가격 순',
 };
 
-interface ISortDropDown {
-  sort: Tsort;
-  setSort: (sort: Tsort) => void;
-}
-
-export function SortDropDown({ sort, setSort }: ISortDropDown) {
+export function SortDropDown() {
+  const { sort, setSort } = useProvider();
   const updateSort = (value: Tsort) => {
     setSort(value);
   };

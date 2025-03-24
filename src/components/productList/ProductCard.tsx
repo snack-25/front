@@ -14,7 +14,7 @@ export default function ProductCard({ data }: cardProps) {
   return (
     <>
       <Card className='relative w-full bg-background-400 shadow-none border-none py-0 lt:gap-6 max-lt:gap-4'>
-        <CardHeader className='bg-white w-auto aspect-square flex items-center justify-center rounded-2xl'>
+        <CardHeader className='bg-white w-auto aspect-square flex items-center justify-center rounded-2xl hover:shadow-xl'>
           <div className='relative w-1/2 h-1/2'>
             <Image
               src={imageUrl}
