@@ -1,5 +1,5 @@
 'use client';
-import { act, Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import TabMenu, { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -8,10 +8,8 @@ import MoreButton from '@/components/productList/MoreButton';
 import { SortDropDown } from '@/components/productList/SortDropDown';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import Image from 'next/image';
-import { Loader2, Router } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
 import CloseButton from '@/components/productList/CloseButton';
 
 export type Tsort =
@@ -38,26 +36,19 @@ interface IFetchData {
 const DEBOUNCE_DELAY = 300;
 
 export default function ProductList() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const [categoryId, setCategoryId] = useState<string>('sub-과자');
+  const [sort, setSort] = useState<Tsort>('createdAt:desc');
+  const { fetchProducts } = useFetchProducts();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated: boolean = true;
   const [page, setPage] = useState<number>(1);
   const [products, setProducts] = useState<IFetchData | null>(null);
-  const { fetchProducts } = useFetchProducts();
-
-  useEffect(() => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    if (!searchParams.get('sort')) {
-      currentParams.set('sort', 'createdAt:desc');
-      router.replace(`?${currentParams.toString()}`);
-    }
-  }, [searchParams.get('sort'), router]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchProducts(page);
+        const data = await fetchProducts(page, categoryId, sort);
         if (!data) throw new Error('fetchData 없음');
 
         const { items, hasNextPage, hasPrevPage } = data;
@@ -77,7 +68,7 @@ export default function ProductList() {
       }
     };
     fetchData();
-  }, [page, fetchProducts]);
+  }, [page, categoryId, sort, fetchProducts]);
 
   const handleMoreButton = () => {
     setPage((prev) => prev + 1);
@@ -101,11 +92,19 @@ export default function ProductList() {
       {products ? (
         <div className='relative'>
           <Suspense fallback={<div>로딩중...</div>}>
-            <TabMenu setPage={setPage} />
+            <TabMenu
+              setPage={setPage}
+              setSort={setSort}
+              categoryID={categoryId}
+              setCategoryId={setCategoryId}
+            />
           </Suspense>
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex  items-center justify-end'>
             <Suspense fallback={<div>로딩중...</div>}>
-              <SortDropDown />
+              <SortDropDown
+                sort={sort}
+                setSort={setSort}
+              />
             </Suspense>
           </div>
 
