@@ -1,11 +1,11 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
 import { cn } from '@/lib/utils';
+import { Tsort } from '@/app/productList/page';
 
 export interface Category {
   id: string;
@@ -18,17 +18,21 @@ export interface Category {
 }
 
 interface ITabMenu {
-  setPage : (page:number) => void;
+  categoryID: string;
+  setPage: (page: number) => void;
+  setCategoryId: (categoryId: string) => void;
+  setSort: (sort: Tsort) => void;
 }
 
-export default function TabMenu({setPage}:ITabMenu) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
+export default function TabMenu({
+  setPage,
+  setSort,
+  categoryID,
+  setCategoryId,
+}: ITabMenu) {
+  const [parentId, setParentId] = useState<string>('cat-스낵');
   const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
-  const [activeCat, setActiveCat] = useState<string>('cat-스낵'); //활성화된 상위 카테고ㄴ리
-  const [activeSub, setActiveSub] = useState<string>('sub-과자'); //활성화된 하위 카테고리
 
   const getSub = async (parentId: Category['id']) => {
     //하위 카테고리 목록 패칭 함수
@@ -68,28 +72,24 @@ export default function TabMenu({setPage}:ITabMenu) {
   }, []);
 
   useEffect(() => {
-    setPage(1);
-    getSub(activeCat);
-  }, [activeCat]);
+    getSub(parentId);
+  }, [parentId]);
 
   useEffect(() => {
-    if (sub) {
+    if (sub && sub.length > 0) {
       //상위 카테고리가 변했을 때 초기 하위 카테고리를 첫 번째로 지정
-      setActiveSub(sub[0].id);
-      router.replace(`?categoryId=${sub[0].id}`);
+      setCategoryId(sub[0].id);
     }
   }, [sub]);
 
   const handleSub = (subId: string) => {
-    setActiveSub(subId);
-    router.replace(`?categoryId=${subId}`);
+    setCategoryId(subId);
+    setPage(1);
   };
 
   const handleCat = (cat: string) => {
-    setActiveCat(cat);
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.set('sort', 'createdAt:desc');
-    router.replace(`?${currentParams.toString()}`);
+    setParentId(cat);
+    setSort('createdAt:asc');
   };
 
   const ulStyle =
@@ -114,7 +114,7 @@ export default function TabMenu({setPage}:ITabMenu) {
               <button
                 className={cn(
                   buttonStyle,
-                  activeCat === parent.id
+                  parentId === parent.id
                     ? 'border-b-1 border-b-primary-400 text-primary-400'
                     : '',
                 )}
@@ -143,7 +143,7 @@ export default function TabMenu({setPage}:ITabMenu) {
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
-                  activeSub === item.id ? 'text-primary-400' : '',
+                  categoryID === item.id ? 'text-primary-400' : '',
                 )}
                 onClick={() => handleSub(item.id)}
               >

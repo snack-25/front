@@ -1,8 +1,6 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { Tsort } from '@/app/productList/page';
 import { Button } from '@/components/ui/Button';
 import {
@@ -21,15 +19,15 @@ const sortOption: Record<Tsort, string> = {
   'price:desc': '높은 가격 순',
 };
 
-export function SortDropDown() {
-  const router = useRouter();
+interface ISortDropDown {
+  sort: Tsort;
+  setSort: (sort: Tsort) => void;
+}
 
+export function SortDropDown({ sort, setSort }: ISortDropDown) {
   const updateSort = (value: Tsort) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set('sort', value);
-    router.replace(`?${searchParams.toString()}`);
+    setSort(value);
   };
-  const sort = (useSearchParams().get('sort') as Tsort) || 'createdAt:desc';
 
   return (
     <DropdownMenu>
