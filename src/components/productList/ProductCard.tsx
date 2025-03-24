@@ -9,9 +9,7 @@ type cardProps = {
 };
 
 export default function ProductCard({ data }: cardProps) {
-  const { id, name, price, description, categoryId, imageUrl } = data;
-  const subIndex = 1;
-  const subCategory = 'sub-과자';
+  const { name, price, description, categoryId, imageUrl } = data;
 
   return (
     <>
@@ -30,7 +28,7 @@ export default function ProductCard({ data }: cardProps) {
         <CardContent className='w-auto p-0'>
           <div className='flex items-center justify-between max-tb:justify-start'>
             <p className='max-tb:hidden font-normal text-gray-500 text-[1vw]'>
-              {categoryId}
+              {categoryId.slice(4)}
             </p>
             <p className='text-primary-400 bg-illustration-02 px-2 py-1 w-auto lt:text-lg max-lt:text-xs font-semibold'>
               {999}회 구매
