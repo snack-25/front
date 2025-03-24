@@ -11,6 +11,9 @@ import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import CloseButton from '@/components/productList/CloseButton';
+import { notFound } from 'next/navigation';
+import { useProvider } from '@/components/productList/ProductProvider';
+import EmptyImage from '@/components/productList/EmptyImage';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -36,9 +39,8 @@ interface IFetchData {
 const DEBOUNCE_DELAY = 300;
 
 export default function ProductList() {
-  const [categoryId, setCategoryId] = useState<string>('sub-과자');
-  const [sort, setSort] = useState<Tsort>('createdAt:desc');
   const { fetchProducts } = useFetchProducts();
+  const { categoryId, setCategoryId, sort, setSort } = useProvider();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated: boolean = true;
@@ -49,7 +51,7 @@ export default function ProductList() {
     const fetchData = async () => {
       try {
         const data = await fetchProducts(page, categoryId, sort);
-        if (!data) throw new Error('fetchData 없음');
+        if (!data) notFound();
 
         const { items, hasNextPage, hasPrevPage } = data;
 
@@ -64,7 +66,7 @@ export default function ProductList() {
           };
         });
       } catch (err) {
-        console.log('상품 목록 가져오기 실패:', err);
+        notFound();
       }
     };
     fetchData();
@@ -92,37 +94,19 @@ export default function ProductList() {
       {products ? (
         <div className='relative'>
           <Suspense fallback={<div>로딩중...</div>}>
-            <TabMenu
-              setPage={setPage}
-              setSort={setSort}
-              categoryID={categoryId}
-              setCategoryId={setCategoryId}
-            />
+            <TabMenu setPage={setPage} />
           </Suspense>
+
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex  items-center justify-end'>
             <Suspense fallback={<div>로딩중...</div>}>
-              <SortDropDown
-                sort={sort}
-                setSort={setSort}
-              />
+              <SortDropDown />
             </Suspense>
           </div>
 
           <CardList data={products.items} />
 
           {products?.items.length === 0 ? (
-            <div className='absolute flex flex-col items-center justify-center h-auto w-1/2 left-1/2 -translate-x-1/2'>
-              <div className='absolute w-full h-40'>
-                <Image
-                  src={'/img/card/WarningImage.svg'}
-                  fill
-                  alt='데이터 없음 이미지'
-                />
-              </div>
-              <p className='relative top-[120px] text-2xl text-black-100'>
-                상품이 없습니다
-              </p>
-            </div>
+            <EmptyImage />
           ) : products?.hasNextPage ? (
             <MoreButton
               className='w-full flex items-center justify-center my-16 fixed bottom-0'
