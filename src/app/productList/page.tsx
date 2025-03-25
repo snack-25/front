@@ -68,6 +68,7 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
+    if(!categoryId || !sort) return;
     const fetchData = async () => {
       setIsLoading(true);
       try {

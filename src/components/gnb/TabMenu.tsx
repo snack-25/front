@@ -29,13 +29,11 @@ export default function TabMenu({ setPage, setSubLoading }: ITabMenu) {
   const searchParams = useSearchParams();
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId') || 'sub-과자';
-
   const [parents, setParents] = useState<Category[]>([]); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
 
   const handleLoading = (value: boolean) => {
     if (setSubLoading) setSubLoading(value);
-    console.log('제발 출력되라');
   };
 
   useEffect(() => {
@@ -98,7 +96,6 @@ export default function TabMenu({ setPage, setSubLoading }: ITabMenu) {
       router.replace(`?${newParams.toString()}`);
       return;
     }
-    handleLoading(false);
   }, [sub]);
 
   const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
@@ -108,7 +105,6 @@ export default function TabMenu({ setPage, setSubLoading }: ITabMenu) {
     setPage?.(1);
 
     if (pathName.includes('detail')) {
-      handleLoading(false);
       router.push(`/productList?${newParams.toString()}`);
     } else {
       router.replace(`?${newParams.toString()}`);
