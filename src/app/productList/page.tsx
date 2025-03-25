@@ -13,6 +13,7 @@ import CloseButton from '@/components/productList/CloseButton';
 import { notFound, useSearchParams } from 'next/navigation';
 import EmptyImage from '@/components/productList/EmptyImage';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -39,15 +40,25 @@ const DEBOUNCE_DELAY = 300;
 
 export default function ProductList() {
   const { fetchProducts } = useFetchProducts();
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const parentId = searchParams.get('parentId') || 'cat-스낵';
   const categoryId = searchParams.get('categoryId') || 'sub-과자';
-  const sort: Tsort = (searchParams.get('sort') as Tsort) || 'createdAt:desc';
+  const sort: Tsort = searchParams.get('sort') as Tsort;
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated: boolean = true;
   const [page, setPage] = useState<number>(1);
   const [products, setProducts] = useState<IFetchData | null>(null);
+
+  useEffect(() => {
+    if (!sort) {
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set('sort', 'createdAt:desc');
+      router.replace(`?${newParams.toString()}`);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {

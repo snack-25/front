@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 
 type cardProps = {
   data: IProducts;
+  parentId: string;
 };
 
-export default function ProductCard({ data }: cardProps) {
+export default function ProductCard({ data, parentId }: cardProps) {
   const { name, price, description, categoryId, imageUrl } = data;
 
   return (
