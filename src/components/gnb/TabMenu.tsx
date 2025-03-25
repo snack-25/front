@@ -25,15 +25,21 @@ interface ITabMenu {
 export default function TabMenu({ setPage }: ITabMenu) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const parentId = searchParams.get('parentId') || 'cat-스낵';
+  const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId') || 'sub-과자';
 
-  const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 목록
+  const [parents, setParents] = useState<Category[]>([]); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
 
   useEffect(() => {
     const getParents = async () => {
       try {
+        if (!searchParams.get('parentId')) {
+          const newParams = new URLSearchParams(searchParams.toString());
+          newParams.set('parentId', 'cat-스낵'); // 초기 상위 카테고리 디폴트값 지정
+          router.replace(`?${newParams.toString()}`);
+        }
+
         const parents: Category[] = await fetchApi('/api/categories/parents', {
           method: 'GET',
         });
@@ -47,6 +53,7 @@ export default function TabMenu({ setPage }: ITabMenu) {
         }
       }
     };
+
     getParents();
   }, []);
 
@@ -73,24 +80,23 @@ export default function TabMenu({ setPage }: ITabMenu) {
 
   useEffect(() => {
     if (!sub || sub.length === 0) return;
-  
+
     const currentCategoryId = searchParams.get('categoryId');
     const isCurrentValid = sub.some((s) => s.id === currentCategoryId);
-    
+
     if (!isCurrentValid) {
       const newParams = new URLSearchParams(searchParams.toString());
       newParams.set('categoryId', sub[0].id);
       router.replace(`?${newParams.toString()}`);
     }
   }, [sub]);
-  
 
   const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set(level, value);
-    newParams.set('sort', 'createdAt:desc');
+    // newParams.set('sort', 'createdAt:desc');
     setPage?.(1);
-    router.push(`?${newParams.toString()}`);
+    router.replace(`?${newParams.toString()}`);
   };
 
   const ulStyle =
@@ -113,7 +119,7 @@ export default function TabMenu({ setPage }: ITabMenu) {
               className='h-full'
             >
               <motion.button
-              whileHover={{scale:1.15}}
+                whileHover={{ scale: 1.15 }}
                 className={cn(
                   buttonStyle,
                   parentId === parent.id
@@ -142,7 +148,7 @@ export default function TabMenu({ setPage }: ITabMenu) {
               className='h-full'
             >
               <motion.button
-              whileHover={{scale:1.15}}  
+                whileHover={{ scale: 1.15 }}
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',

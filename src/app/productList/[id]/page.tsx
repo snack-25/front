@@ -1,7 +1,12 @@
 'use client';
 import { mockData } from '@/app/playground/mock';
 import TabMenu from '@/components/gnb/TabMenu';
-import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation';
+import {
+  notFound,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import NumberInput from '@/components/ui/NumberInput';
@@ -63,7 +68,7 @@ export default function ProductDetail() {
           <ChevronRight className='text-gray-300' />
           <div>{mainCategory}</div>
           <ChevronRight className='text-gray-300' />
-          <div className='text-black-400'>{categoryId}</div>
+          <div className='text-black-400'>{categoryId.slice(4)}</div>
         </div>
 
         <div className='relative w-full flex gap-20 max-tb:gap-6 max-tb:flex-col'>
@@ -82,7 +87,7 @@ export default function ProductDetail() {
             <div className='flex justify-between'>
               <div>
                 <p className='lt:text-xl max-lt:text-xs font-medium text-gray-500 mb-2'>
-                  {categoryId}
+                  {categoryId.slice(4)}
                 </p>
                 <h1 className='lt:text-3xl max-lt:text-2xl font-semibold text-black-400 mb-6'>
                   {name}
