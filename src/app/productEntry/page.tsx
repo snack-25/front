@@ -16,7 +16,7 @@ const headList: string[] = [
 
 export default function ProductEntry() {
   const datas = entryMock;
-  const [sort, setSort] = useState<Tsort>('createdAt:desc');
+  
   return (
     <>
       <div className='flex flex-col px-[120px] max-lt:px-6 w-full lt:py-10 max-lt:py-[14px]'>
@@ -24,7 +24,7 @@ export default function ProductEntry() {
           <h1 className='lt:text-3xl max-lt:text-xl font-semibold text-black-400'>
             상품 등록 내역
           </h1>
-          <SortDropDown sort={sort} setSort={setSort} />
+          <SortDropDown />
         </div>
 
         <section className='flex flex-col gap-4'>

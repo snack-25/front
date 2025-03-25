@@ -1,11 +1,12 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
 import { cn } from '@/lib/utils';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export interface Category {
   id: string;
@@ -18,39 +19,28 @@ export interface Category {
 }
 
 interface ITabMenu {
-  setPage : (page:number) => void;
+  setPage?: (page: number) => void;
 }
 
-export default function TabMenu({setPage}:ITabMenu) {
+export default function TabMenu({ setPage }: ITabMenu) {
   const router = useRouter();
+  const pathName = usePathname();
   const searchParams = useSearchParams();
+  const parentId = searchParams.get('parentId');
+  const categoryId = searchParams.get('categoryId') || 'sub-과자';
 
-  const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 목록
+  const [parents, setParents] = useState<Category[]>([]); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
-  const [activeCat, setActiveCat] = useState<string>('cat-스낵'); //활성화된 상위 카테고ㄴ리
-  const [activeSub, setActiveSub] = useState<string>('sub-과자'); //활성화된 하위 카테고리
-
-  const getSub = async (parentId: Category['id']) => {
-    //하위 카테고리 목록 패칭 함수
-    try {
-      const sub: Category[] = await fetchApi(
-        `/api/categories/parents/${parentId}`,
-        { method: 'GET' },
-      );
-      if (process.env.NODE_ENV === 'development') {
-        console.log('초기 하위 카테고리 패칭 완료:', sub);
-      }
-      setSub(sub);
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('초기 하위 카테고리 패칭 실패:', err);
-      }
-    }
-  };
 
   useEffect(() => {
     const getParents = async () => {
       try {
+        // if (!searchParams.get('parentId')) {
+        //   const newParams = new URLSearchParams(searchParams.toString());
+        //   newParams.set('parentId', 'cat-스낵'); // 초기 상위 카테고리 디폴트값 지정
+        //   router.replace(`?${newParams.toString()}`);
+        // }
+
         const parents: Category[] = await fetchApi('/api/categories/parents', {
           method: 'GET',
         });
@@ -64,38 +54,62 @@ export default function TabMenu({setPage}:ITabMenu) {
         }
       }
     };
+
     getParents();
   }, []);
 
   useEffect(() => {
-    setPage(1);
-    getSub(activeCat);
-  }, [activeCat]);
+    const getSub = async () => {
+      //하위 카테고리 목록 패칭 함수
+      try {
+        const sub: Category[] = await fetchApi(
+          `/api/categories/parents/${parentId}`,
+          { method: 'GET' },
+        );
+        if (process.env.NODE_ENV === 'development') {
+          console.log('초기 하위 카테고리 패칭 완료:', sub);
+        }
+        setSub(sub);
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('초기 하위 카테고리 패칭 실패:', err);
+        }
+      }
+    };
+    getSub();
+  }, [parentId]);
 
   useEffect(() => {
-    if (sub) {
-      //상위 카테고리가 변했을 때 초기 하위 카테고리를 첫 번째로 지정
-      setActiveSub(sub[0].id);
-      router.replace(`?categoryId=${sub[0].id}`);
+    if (!sub || sub.length === 0) return;
+
+    const currentCategoryId = searchParams.get('categoryId');
+    const isCurrentValid = sub.some((s) => s.id === currentCategoryId);
+
+    if (!isCurrentValid) {
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set('categoryId', sub[0].id);
+      newParams.set('sort', 'createdAt:desc');
+      router.replace(`?${newParams.toString()}`);
     }
   }, [sub]);
 
-  const handleSub = (subId: string) => {
-    setActiveSub(subId);
-    router.replace(`?categoryId=${subId}`);
-  };
+  const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set(level, value);
+    newParams.set('sort', 'createdAt:desc');
+    setPage?.(1);
 
-  const handleCat = (cat: string) => {
-    setActiveCat(cat);
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.set('sort', 'createdAt:desc');
-    router.replace(`?${currentParams.toString()}`);
+    if (pathName.includes('detail')) {
+      router.push(`/productList?${newParams.toString()}`);
+    } else {
+      router.replace(`?${newParams.toString()}`);
+    }
   };
 
   const ulStyle =
     'flex h-16 text-gray-400 text-2lg font-medium px-[120px] max-lt:px-6 gap-3 items-center border-b-1 border-line-200 overflow-x-scroll whitespace-nowrap no-scrollbar';
   const buttonStyle =
-    'w-full h-full cursor-pointer transition-all duration-300';
+    'w-full h-full cursor-pointer transition-all duration-75 hover:text-primary-400';
 
   return (
     <nav>
@@ -111,17 +125,18 @@ export default function TabMenu({setPage}:ITabMenu) {
               key={parent.id}
               className='h-full'
             >
-              <button
+              <motion.button
+                whileHover={{ scale: 1.15 }}
                 className={cn(
                   buttonStyle,
-                  activeCat === parent.id
+                  parentId === parent.id
                     ? 'border-b-1 border-b-primary-400 text-primary-400'
                     : '',
                 )}
-                onClick={() => handleCat(parent.id)}
+                onClick={() => handleCategory('parentId', parent.id)}
               >
                 {parent.name}
-              </button>
+              </motion.button>
             </li>
           ))
         )}
@@ -139,16 +154,17 @@ export default function TabMenu({setPage}:ITabMenu) {
               key={item.id}
               className='h-full'
             >
-              <button
+              <motion.button
+                whileHover={{ scale: 1.15 }}
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
-                  activeSub === item.id ? 'text-primary-400' : '',
+                  categoryId === item.id ? 'text-primary-400' : '',
                 )}
-                onClick={() => handleSub(item.id)}
+                onClick={() => handleCategory('categoryId', item.id)}
               >
                 {item.name}
-              </button>
+              </motion.button>
             </li>
           ))
         )}

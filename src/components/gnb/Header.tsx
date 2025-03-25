@@ -39,7 +39,7 @@ const hoverStyle: string =
   'transition-all ease-in-out duration-300 hover:text-primary-400';
 
 const NavItem = ({ href, currentPath, children }: navItemProps) => {
-  const isActive = href === currentPath;
+  const isActive = currentPath.includes(href);
   return (
     <Link
       href={href}
@@ -86,7 +86,7 @@ export default function Header() {
               </NavItem>
               {user.userType === 'basicUser' && (
                 <NavItem
-                  href='/'
+                  href='/tmp'
                   currentPath={pathname}
                 >
                   구매 요청 내역
@@ -95,13 +95,13 @@ export default function Header() {
               {user.userType !== 'basicUser' && (
                 <div className='flex gap-12'>
                   <NavItem
-                    href='/'
+                    href='/tmp'
                     currentPath={pathname}
                   >
                     구매 요청 관리
                   </NavItem>
                   <NavItem
-                    href='/'
+                    href='/tmp'
                     currentPath={pathname}
                   >
                     구매 내역 확인
@@ -116,7 +116,7 @@ export default function Header() {
               </NavItem>
               {user.userType === 'superAdmin' && (
                 <NavItem
-                  href='/'
+                  href='/tmp'
                   currentPath={pathname}
                 >
                   관리
@@ -126,13 +126,13 @@ export default function Header() {
 
             <div className='flex items-center gap-12 ml-auto max-tb:hidden'>
               <NavItem
-                href='/'
+                href='/tmp'
                 currentPath={pathname}
               >
                 Cart
               </NavItem>
               <NavItem
-                href='/'
+                href='/tmp'
                 currentPath={pathname}
               >
                 Profile
