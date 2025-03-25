@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { fetchApi } from '@/app/api/instance';
 import { Tsort } from '@/app/productList/page';
-import { notFound } from 'next/navigation';
+import EmptyImage from '@/components/productList/EmptyImage';
 
 export const useFetchProducts = () => {
   const fetchProducts = useCallback(
@@ -19,7 +19,7 @@ export const useFetchProducts = () => {
         if (process.env.NODE_ENV === 'development') {
           console.log('상품 목록 조회 실패:', err);
         }
-        notFound();
+        return <EmptyImage />;
       }
     },
     [],
