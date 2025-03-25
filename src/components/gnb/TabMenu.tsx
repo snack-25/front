@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
 import { cn } from '@/lib/utils';
-import { useProvider } from '../productList/ProductProvider';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export interface Category {
   id: string;
@@ -22,28 +23,13 @@ interface ITabMenu {
 }
 
 export default function TabMenu({ setPage }: ITabMenu) {
-  const { categoryId, setCategoryId, sort, setSort, parentId, setParentId } =
-    useProvider();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const parentId = searchParams.get('parentId') || 'cat-스낵';
+  const categoryId = searchParams.get('categoryId') || 'sub-과자';
+
   const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
-
-  const getSub = async (parentId: Category['id']) => {
-    //하위 카테고리 목록 패칭 함수
-    try {
-      const sub: Category[] = await fetchApi(
-        `/api/categories/parents/${parentId}`,
-        { method: 'GET' },
-      );
-      if (process.env.NODE_ENV === 'development') {
-        console.log('초기 하위 카테고리 패칭 완료:', sub);
-      }
-      setSub(sub);
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('초기 하위 카테고리 패칭 실패:', err);
-      }
-    }
-  };
 
   useEffect(() => {
     const getParents = async () => {
@@ -65,30 +51,52 @@ export default function TabMenu({ setPage }: ITabMenu) {
   }, []);
 
   useEffect(() => {
-    getSub(parentId);
+    const getSub = async () => {
+      //하위 카테고리 목록 패칭 함수
+      try {
+        const sub: Category[] = await fetchApi(
+          `/api/categories/parents/${parentId}`,
+          { method: 'GET' },
+        );
+        if (process.env.NODE_ENV === 'development') {
+          console.log('초기 하위 카테고리 패칭 완료:', sub);
+        }
+        setSub(sub);
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('초기 하위 카테고리 패칭 실패:', err);
+        }
+      }
+    };
+    getSub();
   }, [parentId]);
 
   useEffect(() => {
-    if (sub && sub.length > 0) {
-      //상위 카테고리가 변했을 때 초기 하위 카테고리를 첫 번째로 지정
-      setCategoryId(sub[0].id);
+    if (!sub || sub.length === 0) return;
+  
+    const currentCategoryId = searchParams.get('categoryId');
+    const isCurrentValid = sub.some((s) => s.id === currentCategoryId);
+    
+    if (!isCurrentValid) {
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set('categoryId', sub[0].id);
+      router.replace(`?${newParams.toString()}`);
     }
   }, [sub]);
+  
 
-  const handleSub = (subId: string) => {
-    setCategoryId(subId);
+  const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set(level, value);
+    newParams.set('sort', 'createdAt:desc');
     setPage?.(1);
-  };
-
-  const handleCat = (cat: string) => {
-    setParentId(cat);
-    setSort('createdAt:desc');
+    router.push(`?${newParams.toString()}`);
   };
 
   const ulStyle =
     'flex h-16 text-gray-400 text-2lg font-medium px-[120px] max-lt:px-6 gap-3 items-center border-b-1 border-line-200 overflow-x-scroll whitespace-nowrap no-scrollbar';
   const buttonStyle =
-    'w-full h-full cursor-pointer transition-all duration-300';
+    'w-full h-full cursor-pointer transition-all duration-75 hover:text-primary-400';
 
   return (
     <nav>
@@ -104,17 +112,18 @@ export default function TabMenu({ setPage }: ITabMenu) {
               key={parent.id}
               className='h-full'
             >
-              <button
+              <motion.button
+              whileHover={{scale:1.15}}
                 className={cn(
                   buttonStyle,
                   parentId === parent.id
                     ? 'border-b-1 border-b-primary-400 text-primary-400'
                     : '',
                 )}
-                onClick={() => handleCat(parent.id)}
+                onClick={() => handleCategory('parentId', parent.id)}
               >
                 {parent.name}
-              </button>
+              </motion.button>
             </li>
           ))
         )}
@@ -132,16 +141,17 @@ export default function TabMenu({ setPage }: ITabMenu) {
               key={item.id}
               className='h-full'
             >
-              <button
+              <motion.button
+              whileHover={{scale:1.15}}  
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
                   categoryId === item.id ? 'text-primary-400' : '',
                 )}
-                onClick={() => handleSub(item.id)}
+                onClick={() => handleCategory('categoryId', item.id)}
               >
                 {item.name}
-              </button>
+              </motion.button>
             </li>
           ))
         )}

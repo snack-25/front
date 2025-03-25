@@ -1,13 +1,12 @@
 'use client';
 import { mockData } from '@/app/playground/mock';
 import TabMenu from '@/components/gnb/TabMenu';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import NumberInput from '@/components/ui/NumberInput';
 import { Button } from '@/components/ui/Button';
 import ProductMenu from '@/components/productList/ProductMenu';
-import { useProvider } from '@/components/productList/ProductProvider';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { useEffect, useState } from 'react';
 import { IProducts } from '../page';
@@ -16,9 +15,9 @@ import EmptyImage from '@/components/productList/EmptyImage';
 export default function ProductDetail() {
   const { id } = useParams();
   const router = useRouter();
-  const context = useProvider();
-  const mainCategory = context.parentId;
-  const subCategory = context.categoryId;
+  const searchParams = useSearchParams();
+  const mainCategory = searchParams.get('parentId') as string;
+  const subCategory = searchParams.get('categoryId') as string;
   const { fetchProductDetail, isLoading, setIsLoading } = useFetchProducts();
   const [detail, setDetail] = useState<IProducts | null>(null);
 
@@ -62,9 +61,9 @@ export default function ProductDetail() {
         <div className='flex text-gray-400 items-center text-xl font-medium gap-2 mb-6'>
           <div>홈</div>
           <ChevronRight className='text-gray-300' />
-          <div>{mainCategory.slice(4)}</div>
+          <div>{mainCategory}</div>
           <ChevronRight className='text-gray-300' />
-          <div className='text-black-400'>{categoryId.slice(4)}</div>
+          <div className='text-black-400'>{categoryId}</div>
         </div>
 
         <div className='relative w-full flex gap-20 max-tb:gap-6 max-tb:flex-col'>
@@ -83,7 +82,7 @@ export default function ProductDetail() {
             <div className='flex justify-between'>
               <div>
                 <p className='lt:text-xl max-lt:text-xs font-medium text-gray-500 mb-2'>
-                  {categoryId.slice(4)}
+                  {categoryId}
                 </p>
                 <h1 className='lt:text-3xl max-lt:text-2xl font-semibold text-black-400 mb-6'>
                   {name}
