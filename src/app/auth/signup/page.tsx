@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signupApi, invitationSignupApi } from '@/app/api/auth/api';
+import {
+  signupApi,
+  invitationCodeApi,
+  invitationSignupApi,
+} from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import Image from 'next/image';
-import Modal from '@/components/ui/modal/Modal';
 
 interface InvitedUser {
   email: string;
@@ -63,27 +66,20 @@ export default function Signup() {
 
   // URL에 토큰이 있으면 초대 모드로 전환 및 사용자 정보 설정
   useEffect(() => {
-    console.log('tokenFromUrl', tokenFromUrl);
     if (!tokenFromUrl) return;
-    invitationSignupApi({ token: tokenFromUrl })
+    setIsInvitation(true);
+    invitationCodeApi({ token: tokenFromUrl })
       .then((data) => {
-        console.log(data);
-        if (data.valid) {
+        if (data) {
           setIsTokenValid(true);
+          setInvitedUser(data);
+          setClientForm((prev) => ({ ...prev, email: data.email }));
         } else {
           setError('유효하지 않은 초대 토큰입니다.');
         }
       })
-      .catch(() => setError('토큰 검증 중 오류가 발생했습니다.'));
-    if (tokenFromUrl) {
-      setIsInvitation(true);
-      const fetchInvitedUser = async () => {
-        const userInfo = { email: 'invited@example.com', name: '홍길동' };
-        setInvitedUser(userInfo);
-        setClientForm((prev) => ({ ...prev, email: userInfo.email }));
-      };
-      fetchInvitedUser();
-    }
+      .catch((err) => setError(err.msg));
+    console.log('clientForm', clientForm);
   }, [tokenFromUrl]);
 
   // 폼 입력값 변경 핸들러
@@ -168,27 +164,19 @@ export default function Signup() {
         alert('비밀번호를 다시 확인해주세요');
         return;
       }
-      // 초대 모드 가입 시, 백엔드에서 이미 초대된 사용자 정보(이메일, 이름)가 있으므로
-      // 추가 정보는 최소한의 정보만 전달 (여기서는 비밀번호만 업데이트하는 것으로 가정)
-      try {
-        const payload = {
-          email,
-          password,
-          // 이름은 invitedUser.name로 사용하고, 회사 관련 정보는 생략
-          name: invitedUser.name,
-          company: '',
-          bizno: '',
-        };
-        const res = await signupApi(payload);
-        console.log('회원가입 응답', res);
-        alert(res.msg);
-        router.replace('/auth/login');
-      } catch (err) {
-        console.error(err);
-        alert(err);
+      if (!tokenFromUrl) {
+        alert('초대 코드가 없습니다.');
+        return;
       }
+      console.log('회원가입 성공');
+      router.replace(`/login?token=${tokenFromUrl}`);
+      invitationSignupApi({ password, token: tokenFromUrl! })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => console.error(err));
     } else {
-      // 일반 회원가입 모드
+      // 최고 관리자 회원가입 모드
       const { name, email, password, validatePassword, company, bizno } = form;
       if (
         !name ||
@@ -219,8 +207,8 @@ export default function Signup() {
 
   // 입력값 유효성 체크
   const isFormValid = isInvitation
-    ? Object.values(clientForm).every((value) => value.length > 0)
-    : Object.values(form).every((value) => value.length > 0);
+    ? Object.values(clientForm).every((value) => (value ?? '').length > 0)
+    : Object.values(form).every((value) => (value ?? '').length > 0);
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -257,6 +245,7 @@ export default function Signup() {
                 onChange={handleChange}
                 value={clientForm.email}
                 onBlur={handleEmailBlur}
+                disabled={true}
               />
               {emailError && <span className={errorFont}>{emailError}</span>}
             </div>
@@ -346,6 +335,7 @@ export default function Signup() {
                 placeholder='이메일을 입력해주세요'
                 onChange={handleChange}
                 onBlur={handleEmailBlur}
+                value={form.email}
               />
               {emailError && <span className={errorFont}>{emailError}</span>}
             </div>

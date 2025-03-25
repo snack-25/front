@@ -10,10 +10,11 @@ declare module 'js-cookie' {
 
 export default function Home() {
   const handleLogout = () => {
+    console.log('zmfflr');
     logoutApi()
       .then((res) => {
         console.log('res', res);
-        console.log('얜 성공');
+        console.log('안가지는거니?');
       })
       .catch((err) => {
         console.error('로그아웃 오류', err);
