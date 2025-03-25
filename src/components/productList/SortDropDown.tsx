@@ -1,8 +1,6 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { Tsort } from '@/app/productList/page';
 import { Button } from '@/components/ui/Button';
 import {
@@ -13,6 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 const sortOption: Record<Tsort, string> = {
   'createdAt:desc': '최신 순',
@@ -21,14 +21,16 @@ const sortOption: Record<Tsort, string> = {
   'price:desc': '높은 가격 순',
 };
 
-interface ITabMenu {
-  sort: Tsort;
-  setSort: (value: Tsort) => void;
-}
+export function SortDropDown() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentSort: Tsort =
+    (searchParams.get('sort') as Tsort) || 'createdAt:desc';
 
-export function SortDropDown({ sort, setSort }: ITabMenu) {
   const updateSort = (value: Tsort) => {
-    setSort(value);
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set('sort', value);
+    router.push(`?${newParams.toString()}`);
   };
 
   return (
@@ -41,7 +43,9 @@ export function SortDropDown({ sort, setSort }: ITabMenu) {
           variant='outline'
           className='group text-gray-500 flex justify-around font-normal select-none bg-white w-[136px] h-[50px] max-lt:w-[87px] max-lt:h-9 border-1 border-gray-200 cursor-pointer'
         >
-          <span className='lt:text-2lg max-lt:text-md'>{sortOption[sort]}</span>
+          <span className='lt:text-2lg max-lt:text-md'>
+            {sortOption[currentSort]}
+          </span>
           <ChevronDown className='transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>
       </DropdownMenuTrigger>

@@ -1,11 +1,12 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
 import { cn } from '@/lib/utils';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export interface Category {
   id: string;
@@ -18,47 +19,35 @@ export interface Category {
 }
 
 interface ITabMenu {
-  activeSub: string;
-  setActiveSub: (value: string) => void;
+  setPage?: (page: number) => void;
 }
 
-export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {
-  //선택된 하위 카테고리 상태
-  const [parents, setParents] = useState<Category[] | null>(null); //상위 카테고리 배열
-  const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 배열
-  const [activeCat, setActiveCat] = useState<string>('cat-스낵'); //선택된 상위 카테고리 상태
+export default function TabMenu({ setPage }: ITabMenu) {
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  const parentId = searchParams.get('parentId');
+  const categoryId = searchParams.get('categoryId') || 'sub-과자';
 
-  const getSub = async (parentId: Category['id']) => {
-    try {
-      const sub: Category[] = await fetchApi(
-        `/api/categories/parents/${parentId}`,
-        {
-          method: 'GET',
-        },
-      );
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('초기 하위 카테고리 패칭 완료:', sub);
-        setSub(sub);
-      }
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('초기 하위 카테고리 패칭 실패:', err);
-      }
-    }
-  };
+  const [parents, setParents] = useState<Category[]>([]); //상위 카테고리 목록
+  const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
 
   useEffect(() => {
     const getParents = async () => {
       try {
+        // if (!searchParams.get('parentId')) {
+        //   const newParams = new URLSearchParams(searchParams.toString());
+        //   newParams.set('parentId', 'cat-스낵'); // 초기 상위 카테고리 디폴트값 지정
+        //   router.replace(`?${newParams.toString()}`);
+        // }
+
         const parents: Category[] = await fetchApi('/api/categories/parents', {
           method: 'GET',
         });
-
         if (process.env.NODE_ENV === 'development') {
           console.log('상위 카테고리 패칭 완료:', parents);
-          setParents(parents);
         }
+        setParents(parents);
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
           console.log('상위 카테고리 패칭 실패:', err);
@@ -70,32 +59,61 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {
   }, []);
 
   useEffect(() => {
-    getSub(activeCat);
-  }, [activeCat]);
+    const getSub = async () => {
+      //하위 카테고리 목록 패칭 함수
+      try {
+        const sub: Category[] = await fetchApi(
+          `/api/categories/parents/${parentId}`,
+          { method: 'GET' },
+        );
+        if (process.env.NODE_ENV === 'development') {
+          console.log('초기 하위 카테고리 패칭 완료:', sub);
+        }
+        setSub(sub);
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('초기 하위 카테고리 패칭 실패:', err);
+        }
+      }
+    };
+    getSub();
+  }, [parentId]);
 
   useEffect(() => {
-    if (sub) {
-      handleSub(sub[0].id);
+    if (!sub || sub.length === 0) return;
+
+    const currentCategoryId = searchParams.get('categoryId');
+    const isCurrentValid = sub.some((s) => s.id === currentCategoryId);
+
+    if (!isCurrentValid) {
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set('categoryId', sub[0].id);
+      newParams.set('sort', 'createdAt:desc');
+      router.replace(`?${newParams.toString()}`);
     }
   }, [sub]);
 
-  const handleSub = (sub: string) => {
-    setActiveSub(sub);
-  };
+  const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set(level, value);
+    newParams.set('sort', 'createdAt:desc');
+    setPage?.(1);
 
-  const handleCat = (cat: string) => {
-    setActiveCat(cat);
+    if (pathName.includes('detail')) {
+      router.push(`/productList?${newParams.toString()}`);
+    } else {
+      router.replace(`?${newParams.toString()}`);
+    }
   };
 
   const ulStyle =
     'flex h-16 text-gray-400 text-2lg font-medium px-[120px] max-lt:px-6 gap-3 items-center border-b-1 border-line-200 overflow-x-scroll whitespace-nowrap no-scrollbar';
   const buttonStyle =
-    'w-full h-full cursor-pointer transition-all duration-300';
+    'w-full h-full cursor-pointer transition-all duration-75 hover:text-primary-400';
 
   return (
     <nav>
       {/* 상위 카테고리 */}
-
       <ul className={ulStyle}>
         {parents === null ? (
           <div className='flex justify-center items-center h-full'>
@@ -107,19 +125,18 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {
               key={parent.id}
               className='h-full'
             >
-              <button
+              <motion.button
+                whileHover={{ scale: 1.15 }}
                 className={cn(
                   buttonStyle,
-                  activeCat === parent.id
+                  parentId === parent.id
                     ? 'border-b-1 border-b-primary-400 text-primary-400'
                     : '',
                 )}
-                onClick={() => {
-                  handleCat(parent.id);
-                }}
+                onClick={() => handleCategory('parentId', parent.id)}
               >
                 {parent.name}
-              </button>
+              </motion.button>
             </li>
           ))
         )}
@@ -137,16 +154,17 @@ export default function TabMenu({ activeSub, setActiveSub }: ITabMenu) {
               key={item.id}
               className='h-full'
             >
-              <button
+              <motion.button
+                whileHover={{ scale: 1.15 }}
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
-                  activeSub === item.id ? 'text-primary-400' : '',
+                  categoryId === item.id ? 'text-primary-400' : '',
                 )}
-                onClick={() => handleSub(item.id)}
+                onClick={() => handleCategory('categoryId', item.id)}
               >
                 {item.name}
-              </button>
+              </motion.button>
             </li>
           ))
         )}

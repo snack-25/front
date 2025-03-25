@@ -1,7 +1,5 @@
 'use client';
-import Image from 'next/image';
 import { Suspense, useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
 
 import TabMenu, { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -9,8 +7,13 @@ import FloatingButton from '@/components/productList/FloatingButton';
 import MoreButton from '@/components/productList/MoreButton';
 import { SortDropDown } from '@/components/productList/SortDropDown';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
-
-import { fetchApi } from '../api/instance';
+import { Loader2 } from 'lucide-react';
+import { useFetchProducts } from '@/hooks/product/useFetchProduct';
+import CloseButton from '@/components/productList/CloseButton';
+import { notFound, useSearchParams } from 'next/navigation';
+import EmptyImage from '@/components/productList/EmptyImage';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -27,32 +30,77 @@ export interface IProducts {
   imageUrl: string;
 }
 
+interface IFetchData {
+  items: IProducts[];
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+const DEBOUNCE_DELAY = 300;
+
 export default function ProductList() {
+  const { fetchProducts } = useFetchProducts();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const parentId = searchParams.get('parentId');
+  const categoryId = searchParams.get('categoryId');
+  const sort: Tsort = searchParams.get('sort') as Tsort;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated: boolean = true;
-  const [activeSub, setActiveSub] = useState<string>('sub-과자');
-  const [sort, setSort] = useState<Tsort>('createdAt:desc');
-  const [products, setProducts] = useState<IProducts[] | null>(null);
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(8);
+  const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    if (!sort) {
+      newParams.set('sort', 'createdAt:desc');
+    }
+    if (!parentId) {
+      newParams.set('parentId', 'cat-스낵');
+    }
+    if (!categoryId) {
+      newParams.set('categoryId', 'sub-과자');
+    }
+    router.replace(`?${newParams.toString()}`);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const url = `/api/products?&page=${page}&limit=${limit}&categoryId=${activeSub}`;
-        const data = await fetchApi(url, { method: 'GET' });
-        if (process.env.NODE_ENV === 'development') {
-          console.log('전체 목록 조회 성공:', data);
-        }
-        setProducts(data.items);
+        const data = await fetchProducts(page, categoryId as string, sort);
+        if (!data) notFound();
+
+        const { items, hasNextPage, hasPrevPage } = data;
+
+        setProducts((prev) => {
+          if (page === 1) {
+            return { items, hasNextPage, hasPrevPage };
+          }
+          return {
+            items: prev ? [...prev.items, ...data.items] : items,
+            hasNextPage,
+            hasPrevPage,
+          };
+        });
       } catch (err) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('전체 목록 조회 실패:', err);
-        }
+        notFound();
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchProducts();
-  }, [activeSub]);
+    fetchData();
+  }, [page, categoryId, sort, fetchProducts]);
+
+  const handleMoreButton = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const handleCloseButton = () => {
+    setPage(1);
+  };
 
   const handleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -65,62 +113,59 @@ export default function ProductList() {
 
   return (
     <>
-      {products ? (
+      {isLoading ? (
+        <div className='absolute flex justify-center items-center h-full left-1/2 -translate-x-1/2'>
+          <Loader2 className='animate-spin text-gray-500 w-[120px] h-[120px]' />
+        </div>
+      ) : products?.items ? (
         <div className='relative'>
           <Suspense fallback={<div>로딩중...</div>}>
-            <TabMenu
-              activeSub={activeSub}
-              setActiveSub={setActiveSub}
-            />
+            <TabMenu setPage={setPage} />
           </Suspense>
-          <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex  items-center justify-end'>
+
+          <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex items-center justify-end'>
             <Suspense fallback={<div>로딩중...</div>}>
-              <SortDropDown
-                sort={sort}
-                setSort={setSort}
-              />
+              <SortDropDown />
             </Suspense>
           </div>
 
-          <CardList data={products} />
+          <CardList data={products.items} />
 
-          {products?.length === 0 ? (
-            <div className='absolute flex flex-col items-center justify-center h-auto w-1/2 left-1/2 -translate-x-1/2'>
-              <div className='absolute w-full h-40'>
-                <Image
-                  src={'/img/card/WarningImage.svg'}
-                  fill
-                  alt='데이터 없음 이미지'
-                />
-              </div>
-              <p className='relative top-[120px] text-2xl text-black-100'>
-                상품이 없습니다
-              </p>
-            </div>
-          ) : (
+          {products.items.length === 0 ? (
+            <EmptyImage />
+          ) : products.hasNextPage ? (
             <MoreButton
-              className='w-full flex items-center justify-center my-16'
-              onClick={() => {}}
+              className='w-full flex items-center justify-center my-16 fixed bottom-0'
+              onClick={handleMoreButton}
+            />
+          ) : (
+            <CloseButton
+              className='w-full flex items-center justify-center my-16 fixed bottom-0'
+              onClick={handleCloseButton}
             />
           )}
 
-          {isAuthenticated /* 관리자 이상의 권한일때만 보임 */ && (
-            <FloatingButton
-              handleClick={handleOpen}
+          {isAuthenticated && ( // 관리자 이상 권한일때만 표시
+            <motion.div
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
               className='fixed bottom-[10vh] right-[120px] max-lt:right-6'
-            />
+            >
+              <FloatingButton
+                handleClick={handleOpen}
+                className=''
+              />
+            </motion.div>
           )}
+
           <ProductFormModal
             isOpen={isOpen}
             onClose={handleOpen}
             onConfirm={handleSubmit}
           />
         </div>
-      ) : (
-        <div className='absolute flex justify-center items-center h-full left-1/2 -translate-x-1/2'>
-          <Loader2 className='animate-spin text-gray-500 w-[120px] h-[120px]' />
-        </div>
-      )}
+      ) : null}
     </>
   );
 }

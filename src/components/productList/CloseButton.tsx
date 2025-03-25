@@ -9,7 +9,7 @@ interface IProps {
   onClick: () => void;
 }
 
-export default function MoreButton({ className, onClick }: IProps) {
+export default function CloseButton({ className, onClick }: IProps) {
   const iconRef = useRef<SVGSVGElement | null>(null);
 
   return (
@@ -21,12 +21,10 @@ export default function MoreButton({ className, onClick }: IProps) {
           className='lt:w-[640px] lt:h-16 max-lt:w-[327px] max-lt:h-[54px] text-primary-400 border border-primary-400 bg-gray-50 flex gap-2 cursor-pointer 
              transition-colors duration-300 hover:bg-primary-100 [&_svg]:w-6 [&_svg]:h-6'
         >
-          <span className='lt:text-xl font-semibold max-lt:text-lg'>
-            더보기
-          </span>
+          <span className='lt:text-xl font-semibold max-lt:text-lg'>접기</span>
           <ChevronDown
             ref={iconRef}
-            className='transform transition-transform duration-300'
+            className='transform transition-transform duration-300 -rotate-180'
           />
         </Button>
       </div>
