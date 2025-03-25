@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getOrders, Order } from "@/lib/api/orders"; // ✅ API 함수 import
+import { useState } from "react";
+import { Order } from "@/lib/api/orders"; // ✅ Order 타입만 import
 import DropdownMenu, {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -11,21 +11,33 @@ import DropdownMenu, {
 import HistoryTable from './components/HistoryTable';
 import SummaryCards from './components/SummaryCards';
 
+const mockOrders: Order[] = [ // ✅ Mock 데이터 추가
+  {
+    id: '1',
+    date: '2025-03-20',
+    product: '노트북',
+    price: '1,500,000',
+    requester: '홍길동',
+    handler: '김철수',
+    requestDate: '2025-03-18',
+  },
+  {
+    id: '2',
+    date: '2025-03-19',
+    product: '모니터',
+    price: '300,000',
+    requester: '이영희',
+    handler: '박영수',
+    requestDate: '2025-03-17',
+  },
+];
+
 const OrdersPage = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const userId = "현재 로그인된 유저 ID"; // ✅ 실제 로그인된 사용자 ID 가져와야 함
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const data = await getOrders(userId); // ✅ API 함수 호출
-      setOrders(data); // ✅ 가져온 데이터 상태 업데이트
-    };
-
-    fetchOrders();
-  }, [userId]);
+  const [orders] = useState<Order[]>(mockOrders); // ✅ mockOrders를 그대로 사용
+  const [isError] = useState(false); // ✅ 에러 상태는 더 이상 필요하지 않음
 
   return (
-    <div className={'w-full px-8 lg:px-16 pt-10 pb-10'}>
+    <div className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4]'}>
       <div className={'w-full h-[114px] flex justify-between items-center'}>
         <h1 className={'text-[42px] font-bold'}>구매 내역 확인</h1>
       </div>
