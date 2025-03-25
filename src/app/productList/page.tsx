@@ -46,6 +46,7 @@ export default function ProductList() {
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [subLoading, setSubLoading] = useState<boolean>(false);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated: boolean = true;
@@ -113,14 +114,17 @@ export default function ProductList() {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || subLoading ? (
         <div className='absolute flex justify-center items-center h-full left-1/2 -translate-x-1/2'>
           <Loader2 className='animate-spin text-gray-500 w-[120px] h-[120px]' />
         </div>
       ) : products?.items ? (
         <div className='relative'>
           <Suspense fallback={<div>로딩중...</div>}>
-            <TabMenu setPage={setPage} />
+            <TabMenu
+              setPage={setPage}
+              setSubLoading={setSubLoading}
+            />
           </Suspense>
 
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex items-center justify-end'>

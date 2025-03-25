@@ -20,9 +20,10 @@ export interface Category {
 
 interface ITabMenu {
   setPage?: (page: number) => void;
+  setSubLoading?: (value: boolean) => void;
 }
 
-export default function TabMenu({ setPage }: ITabMenu) {
+export default function TabMenu({ setPage, setSubLoading }: ITabMenu) {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -31,6 +32,11 @@ export default function TabMenu({ setPage }: ITabMenu) {
 
   const [parents, setParents] = useState<Category[]>([]); //상위 카테고리 목록
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
+
+  const handleLoading = (value: boolean) => {
+    if (setSubLoading) setSubLoading(value);
+    console.log('제발 출력되라');
+  };
 
   useEffect(() => {
     const getParents = async () => {
@@ -90,19 +96,23 @@ export default function TabMenu({ setPage }: ITabMenu) {
       newParams.set('categoryId', sub[0].id);
       newParams.set('sort', 'createdAt:desc');
       router.replace(`?${newParams.toString()}`);
+      return;
     }
+    handleLoading(false);
   }, [sub]);
 
   const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
+    handleLoading(true);
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set(level, value);
-    newParams.set('sort', 'createdAt:desc');
     setPage?.(1);
 
     if (pathName.includes('detail')) {
+      handleLoading(false);
       router.push(`/productList?${newParams.toString()}`);
     } else {
       router.replace(`?${newParams.toString()}`);
+      handleLoading(false);
     }
   };
 
@@ -126,7 +136,9 @@ export default function TabMenu({ setPage }: ITabMenu) {
               className='h-full'
             >
               <motion.button
+                type='button'
                 whileHover={{ scale: 1.15 }}
+                style={{ pointerEvents: 'auto' }} // ✅ 명시적으로 허용
                 className={cn(
                   buttonStyle,
                   parentId === parent.id
@@ -155,7 +167,9 @@ export default function TabMenu({ setPage }: ITabMenu) {
               className='h-full'
             >
               <motion.button
+                type='button'
                 whileHover={{ scale: 1.15 }}
+                style={{ pointerEvents: 'auto' }} // ✅ 명시적으로 허용
                 className={cn(
                   buttonStyle,
                   'text-lg font-semibold',
