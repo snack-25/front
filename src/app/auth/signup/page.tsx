@@ -169,7 +169,7 @@ export default function Signup() {
         return;
       }
       console.log('회원가입 성공');
-      router.replace(`/login?token=${tokenFromUrl}`);
+      router.replace(`/auth/login?token=${tokenFromUrl}`);
       invitationSignupApi({ password, token: tokenFromUrl! })
         .then((res) => {
           console.log(res);

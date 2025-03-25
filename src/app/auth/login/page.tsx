@@ -15,33 +15,33 @@ export default function Login() {
   const router = useRouter();
   const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
-  const searchParams = useSearchParams();
-  const tokenFromUrl = searchParams.get('token');
+  // const searchParams = useSearchParams();
+  // const tokenFromUrl = searchParams.get('token');
 
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
   const [form, setForm] = useState({ email: '', password: '' });
   const [emailError, setEmailError] = useState<string | null>(null);
   const [nullError, setNullError] = useState<string>('');
   const [passwordVisibility, setPasswordVisibility] = useState(false);
 
-  const [invitedUser, setInvitedUser] = useState<InvitedUser>({
-    email: '',
-    name: '',
-  });
+  // const [invitedUser, setInvitedUser] = useState<InvitedUser>({
+  //   email: '',
+  //   name: '',
+  // });
 
-  useEffect(() => {
-    if (!tokenFromUrl) return;
-    invitationCodeApi({ token: tokenFromUrl })
-      .then((data) => {
-        if (data) {
-          setInvitedUser({ email: data.email, name: data.name });
-          setForm((prev) => ({ ...prev, email: data.email }));
-        } else {
-          setError('유효하지 않은 초대 토큰입니다.');
-        }
-      })
-      .catch((err) => setError(err.msg));
-  }, [tokenFromUrl]);
+  // useEffect(() => {
+  //   if (!tokenFromUrl) return;
+  //   invitationCodeApi({ token: tokenFromUrl })
+  //     .then((data) => {
+  //       if (data) {
+  //         setInvitedUser({ email: data.email, name: data.name });
+  //         setForm((prev) => ({ ...prev, email: data.email }));
+  //       } else {
+  //         setError('유효하지 않은 초대 토큰입니다.');
+  //       }
+  //     })
+  //     .catch((err) => setError(err.msg));
+  // }, [tokenFromUrl]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -79,9 +79,9 @@ export default function Login() {
       });
   };
 
-  const isFormValid = tokenFromUrl
-    ? invitedUser.email.length > 0 && form.password.length > 0
-    : form.email.length > 0 && form.password.length > 0;
+  const isFormValid =
+    // ? invitedUser.email.length > 0 && form.password.length > 0 :
+    form.email.length > 0 && form.password.length > 0;
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -99,7 +99,7 @@ export default function Login() {
             onChange={handleChange}
             onBlur={handleEmailBlur}
             value={form.email}
-            disabled={!!tokenFromUrl} // 초대된 경우 입력 비활성화
+            // disabled={!!tokenFromUrl} // 초대된 경우 입력 비활성화
           />
           {emailError && <span className={errorFont}>{emailError}</span>}
         </div>
