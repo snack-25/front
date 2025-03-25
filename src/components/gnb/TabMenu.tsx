@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
 import { cn } from '@/lib/utils';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export interface Category {
@@ -24,6 +24,7 @@ interface ITabMenu {
 
 export default function TabMenu({ setPage }: ITabMenu) {
   const router = useRouter();
+  const pathName = usePathname();
   const searchParams = useSearchParams();
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId') || 'sub-과자';
@@ -34,11 +35,11 @@ export default function TabMenu({ setPage }: ITabMenu) {
   useEffect(() => {
     const getParents = async () => {
       try {
-        if (!searchParams.get('parentId')) {
-          const newParams = new URLSearchParams(searchParams.toString());
-          newParams.set('parentId', 'cat-스낵'); // 초기 상위 카테고리 디폴트값 지정
-          router.replace(`?${newParams.toString()}`);
-        }
+        // if (!searchParams.get('parentId')) {
+        //   const newParams = new URLSearchParams(searchParams.toString());
+        //   newParams.set('parentId', 'cat-스낵'); // 초기 상위 카테고리 디폴트값 지정
+        //   router.replace(`?${newParams.toString()}`);
+        // }
 
         const parents: Category[] = await fetchApi('/api/categories/parents', {
           method: 'GET',
@@ -87,6 +88,7 @@ export default function TabMenu({ setPage }: ITabMenu) {
     if (!isCurrentValid) {
       const newParams = new URLSearchParams(searchParams.toString());
       newParams.set('categoryId', sub[0].id);
+      newParams.set('sort', 'createdAt:desc');
       router.replace(`?${newParams.toString()}`);
     }
   }, [sub]);
@@ -94,9 +96,14 @@ export default function TabMenu({ setPage }: ITabMenu) {
   const handleCategory = (level: 'parentId' | 'categoryId', value: string) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set(level, value);
-    // newParams.set('sort', 'createdAt:desc');
+    newParams.set('sort', 'createdAt:desc');
     setPage?.(1);
-    router.replace(`?${newParams.toString()}`);
+
+    if (pathName.includes('detail')) {
+      router.push(`/productList?${newParams.toString()}`);
+    } else {
+      router.replace(`?${newParams.toString()}`);
+    }
   };
 
   const ulStyle =

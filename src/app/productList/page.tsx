@@ -42,8 +42,8 @@ export default function ProductList() {
   const { fetchProducts } = useFetchProducts();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const parentId = searchParams.get('parentId') || 'cat-스낵';
-  const categoryId = searchParams.get('categoryId') || 'sub-과자';
+  const parentId = searchParams.get('parentId');
+  const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -53,18 +53,24 @@ export default function ProductList() {
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
+    const newParams = new URLSearchParams(searchParams.toString());
     if (!sort) {
-      const newParams = new URLSearchParams(searchParams.toString());
       newParams.set('sort', 'createdAt:desc');
-      router.replace(`?${newParams.toString()}`);
     }
+    if (!parentId) {
+      newParams.set('parentId', 'cat-스낵');
+    }
+    if (!categoryId) {
+      newParams.set('categoryId', 'sub-과자');
+    }
+    router.replace(`?${newParams.toString()}`);
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchProducts(page, categoryId, sort);
+        const data = await fetchProducts(page, categoryId as string, sort);
         if (!data) notFound();
 
         const { items, hasNextPage, hasPrevPage } = data;

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import ProductMenu from '@/components/productList/ProductMenu';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { useEffect, useState } from 'react';
-import { IProducts } from '../page';
+import { IProducts } from '../../page';
 import EmptyImage from '@/components/productList/EmptyImage';
 
 export default function ProductDetail() {
@@ -66,7 +66,7 @@ export default function ProductDetail() {
         <div className='flex text-gray-400 items-center text-xl font-medium gap-2 mb-6'>
           <div>홈</div>
           <ChevronRight className='text-gray-300' />
-          <div>{mainCategory}</div>
+          <div>{mainCategory.slice(4)}</div>
           <ChevronRight className='text-gray-300' />
           <div className='text-black-400'>{categoryId.slice(4)}</div>
         </div>
