@@ -10,7 +10,8 @@ interface IProps {
 
 export default function CardList({ data }: IProps) {
   const searchParams = useSearchParams();
-  const parentId = searchParams.get('parentId') || 'cat-스낵';
+  const parentId = searchParams.get('parentId');
+  const categoryId = searchParams.get('categoryId');
   return (
     <>
       <div className='w-full grid tb:grid-cols-4 grid-cols-2 gap-6 px-[120px] max-lt:px-[24px]'>
@@ -21,11 +22,10 @@ export default function CardList({ data }: IProps) {
             whileTap={{ scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
-            <Link href={`/productList/${item.id}`}>
-              <ProductCard
-                data={item}
-                parentId={parentId}
-              />
+            <Link
+              href={`/productList/${item.id}/detail?parentId=${parentId}&categoryId=${categoryId}`}
+            >
+              <ProductCard data={item} />
             </Link>
           </motion.div>
         ))}
