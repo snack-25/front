@@ -45,7 +45,7 @@ export default function TabMenu({ setPage, setSubLoading }: ITabMenu) {
         //   router.replace(`?${newParams.toString()}`);
         // }
 
-        const parents: Category[] = await fetchApi('/api/categories/parents', {
+        const parents: Category[] = await fetchApi('/categories/parents', {
           method: 'GET',
         });
         if (process.env.NODE_ENV === 'development') {
@@ -67,7 +67,7 @@ export default function TabMenu({ setPage, setSubLoading }: ITabMenu) {
       //하위 카테고리 목록 패칭 함수
       try {
         const sub: Category[] = await fetchApi(
-          `/api/categories/parents/${parentId}`,
+          `/categories/parents/${parentId}`,
           { method: 'GET' },
         );
         if (process.env.NODE_ENV === 'development') {

@@ -17,12 +17,12 @@ import { HeaderMenu } from './HeaderMenu';
 
 슈퍼관리자 : superAdmin, supervisor */
 
-interface Imock {
+export interface Imock {
   isAuthenticated: boolean;
   userType?: 'basicUser' | 'admin' | 'superAdmin';
 }
 
-const mock: Imock[] = [
+export const mock: Imock[] = [
   { isAuthenticated: false },
   { isAuthenticated: true, userType: 'basicUser' },
   { isAuthenticated: true, userType: 'admin' },

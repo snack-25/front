@@ -16,8 +16,22 @@ import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { useEffect, useState } from 'react';
 import { IProducts } from '../../page';
 import EmptyImage from '@/components/productList/EmptyImage';
+import { mock } from '@/components/gnb/Header';
+import ProductEditModal from '@/components/ui/modal/ProductEditModal';
+
+interface IFormData {
+  id: string;
+  name: string;
+  category: string;
+  subCategory: string;
+  price: number;
+  imageUrl: string;
+  link: string;
+}
 
 export default function ProductDetail() {
+  const user = mock[3];
+
   const { id } = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,6 +39,17 @@ export default function ProductDetail() {
   const subCategory = searchParams.get('categoryId') as string;
   const { fetchProductDetail, isLoading, setIsLoading } = useFetchProducts();
   const [detail, setDetail] = useState<IProducts | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const handleEditOpen = () => {
+    setIsEditOpen((prev) => !prev);
+  };
+  const handleDeleteOpen = () => {
+    setIsDeleteOpen((prev) => !prev);
+  };
+  const handleUpdate = () => {};
+  const handleDelete = () => {};
+  const [formData, setformData] = useState<IFormData | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +69,16 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!detail) return;
     setIsLoading(false);
+
+    setformData({
+      id: detail.id,
+      name: detail.name,
+      category: mainCategory,
+      subCategory: subCategory,
+      price: detail.price,
+      imageUrl: detail.imageUrl,
+      link: 'https://www.codeit.kr/',
+    });
   }, [detail]);
 
   if (isLoading) {
@@ -99,7 +134,13 @@ export default function ProductDetail() {
                   {price}원
                 </p>
               </div>
-              <ProductMenu />
+              <ProductMenu onEditClick={handleEditOpen} onDeleteClick={handleDeleteOpen} />
+              <ProductEditModal
+                isOpen={isEditOpen}
+                onClose={handleEditOpen}
+                onUpdate={handleUpdate}
+                product={formData as IFormData}
+              />
             </div>
 
             <div className='flex flex-col w-full gap-2 lt:text-xl max-lt:text-md border-y-1 border-gray-200 py-8'>
