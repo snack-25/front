@@ -14,6 +14,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": ["node", "jsonwebtoken"],
     "plugins": [
       {
         "name": "next"
@@ -58,9 +59,15 @@
       "@pages": ["src/pages"],
       "@pages/*": ["src/pages/*"],
       "@public": ["./public"],
-      "@public/*": ["./public/*"],
+      "@public/*": ["./public/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "commitlint.config.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "commitlint.config.js"
+  ],
   "exclude": ["node_modules"]
 }
