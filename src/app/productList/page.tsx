@@ -1,19 +1,19 @@
 'use client';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import TabMenu, { Category } from '@/components/gnb/TabMenu';
+import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
 import FloatingButton from '@/components/productList/FloatingButton';
 import MoreButton from '@/components/productList/MoreButton';
 import { SortDropDown } from '@/components/productList/SortDropDown';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
-import { Loader2 } from 'lucide-react';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import CloseButton from '@/components/productList/CloseButton';
 import { notFound, useSearchParams } from 'next/navigation';
 import EmptyImage from '@/components/productList/EmptyImage';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import Loading from '@/components/productList/Loading';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -36,39 +36,43 @@ interface IFetchData {
   hasPrevPage: boolean;
 }
 
-const DEBOUNCE_DELAY = 300;
+export const DEFAULT_SORT = 'createdAt:desc';
+export const DEFAULT_PARENTID = 'cat-스낵';
+export const DEFAULT_CATEGORYID = 'sub-과자';
 
 export default function ProductList() {
-  const { fetchProducts } = useFetchProducts();
+  const isAuthenticated: boolean = true;
+
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { fetchProducts } = useFetchProducts();
+
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [subLoading, setSubLoading] = useState<boolean>(false);
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const isAuthenticated: boolean = true;
   const [page, setPage] = useState<number>(1);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
+    const newParams = new URLSearchParams(window.location.search);
     if (!sort) {
-      newParams.set('sort', 'createdAt:desc');
+      newParams.set('sort', DEFAULT_SORT);
     }
     if (!parentId) {
-      newParams.set('parentId', 'cat-스낵');
+      newParams.set('parentId', DEFAULT_PARENTID);
     }
     if (!categoryId) {
-      newParams.set('categoryId', 'sub-과자');
+      newParams.set('categoryId', DEFAULT_CATEGORYID);
     }
     router.replace(`?${newParams.toString()}`);
   }, []);
 
   useEffect(() => {
-    if(!categoryId || !sort) return;
+    if (!categoryId || !sort) return;
+
     const fetchData = async () => {
       setIsLoading(true);
       try {
@@ -115,23 +119,12 @@ export default function ProductList() {
 
   return (
     <>
-      {isLoading || subLoading ? (
-        <div className='absolute flex justify-center items-center h-full left-1/2 -translate-x-1/2'>
-          <Loader2 className='animate-spin text-gray-500 w-[120px] h-[120px]' />
-        </div>
+      {isLoading ? (
+        <Loading size='L' />
       ) : products?.items ? (
         <div className='relative'>
-          <Suspense fallback={<div>로딩중...</div>}>
-            <TabMenu
-              setPage={setPage}
-              setSubLoading={setSubLoading}
-            />
-          </Suspense>
-
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex items-center justify-end'>
-            <Suspense fallback={<div>로딩중...</div>}>
-              <SortDropDown />
-            </Suspense>
+            <SortDropDown />
           </div>
 
           <CardList data={products.items} />
@@ -139,15 +132,21 @@ export default function ProductList() {
           {products.items.length === 0 ? (
             <EmptyImage />
           ) : products.hasNextPage ? (
-            <MoreButton
+            <motion.div
+              initial={{ y: 300, opacity: 1 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
               className='w-full flex items-center justify-center my-16 fixed bottom-0'
-              onClick={handleMoreButton}
-            />
-          ) : (
+            >
+              <MoreButton onClick={handleMoreButton} />
+            </motion.div>
+          ) : products.hasPrevPage ? (
             <CloseButton
               className='w-full flex items-center justify-center my-16 fixed bottom-0'
               onClick={handleCloseButton}
             />
+          ) : (
+            ''
           )}
 
           {isAuthenticated && ( // 관리자 이상 권한일때만 표시
@@ -155,12 +154,13 @@ export default function ProductList() {
               initial={{ x: 300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
+              whileHover={{
+                x: [0, -5, 5, -5, 5, 0],
+                transition: { duration: 0.4, ease: 'easeInOut' },
+              }}
               className='fixed bottom-[10vh] right-[120px] max-lt:right-6'
             >
-              <FloatingButton
-                handleClick={handleOpen}
-                className=''
-              />
+              <FloatingButton handleClick={handleOpen} />
             </motion.div>
           )}
 

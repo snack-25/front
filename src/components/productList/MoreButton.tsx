@@ -5,7 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface IProps {
-  className: string;
+  className?: string;
   onClick: () => void;
 }
 

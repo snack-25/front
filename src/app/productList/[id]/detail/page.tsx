@@ -1,6 +1,4 @@
 'use client';
-import { mockData } from '@/app/playground/mock';
-import TabMenu from '@/components/gnb/TabMenu';
 import {
   notFound,
   useParams,
@@ -96,7 +94,6 @@ export default function ProductDetail() {
 
   return (
     <>
-      <TabMenu />
       <div className='relative flex flex-col my-12 w-full lt:px-[120px] max-lt:px-6'>
         <div className='flex text-gray-400 items-center text-xl font-medium gap-2 mb-6'>
           <div>홈</div>
@@ -134,7 +131,10 @@ export default function ProductDetail() {
                   {price}원
                 </p>
               </div>
-              <ProductMenu onEditClick={handleEditOpen} onDeleteClick={handleDeleteOpen} />
+              <ProductMenu
+                onEditClick={handleEditOpen}
+                onDeleteClick={handleDeleteOpen}
+              />
               <ProductEditModal
                 isOpen={isEditOpen}
                 onClose={handleEditOpen}
