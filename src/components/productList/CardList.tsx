@@ -20,6 +20,7 @@ export default function CardList({ data }: IProps) {
             key={item.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            style={{ pointerEvents: 'auto' }}
             transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           >
             <Link

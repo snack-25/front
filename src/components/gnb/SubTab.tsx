@@ -23,6 +23,7 @@ export default function SubTab({ sub, currentCategoryId, onClick }: Props) {
           <motion.button
             type='button'
             whileHover={{ scale: 1.15 }}
+            style={{ pointerEvents: 'auto' }}
             className={cn(
               'text-lg font-semibold',
               buttonStyle,
@@ -37,4 +38,3 @@ export default function SubTab({ sub, currentCategoryId, onClick }: Props) {
     </ul>
   );
 }
-

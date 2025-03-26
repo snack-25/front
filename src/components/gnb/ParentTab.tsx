@@ -22,6 +22,7 @@ export default function ParentTab({ parents, currentParentId, onClick }: Props) 
           <motion.button
             type='button'
             whileHover={{ scale: 1.15 }}
+            style={{ pointerEvents: 'auto' }}
             className={cn(
               buttonStyle,
               currentParentId === parent.id
