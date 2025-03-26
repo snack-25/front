@@ -14,6 +14,7 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/productList/Loading';
+import { usePage } from '@/components/productList/PageProvider';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -51,7 +52,7 @@ export default function ProductList() {
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
 
-  const [page, setPage] = useState<number>(1);
+  const { page, setPage } = usePage();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IFetchData | null>(null);

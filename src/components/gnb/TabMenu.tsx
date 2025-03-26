@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
+import { usePage } from '../productList/PageProvider';
 
 export interface Category {
   id: string;
@@ -26,6 +27,7 @@ export default function TabMenu() {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
+  const { setPage } = usePage();
 
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
@@ -95,6 +97,8 @@ export default function TabMenu() {
   ) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set(level, value);
+
+    setPage(1);
 
     if (pathName.includes('detail')) {
       if (level === 'parentId') {
