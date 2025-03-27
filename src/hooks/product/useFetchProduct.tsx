@@ -7,7 +7,7 @@ export const useFetchProducts = () => {
   const fetchProducts = useCallback(
     async (page: number, categoryId: string, sort: Tsort) => {
       try {
-        const url = `/api/products?page=${page}&limit=8&categoryId=${categoryId}&sort=${sort}`;
+        const url = `/products?page=${page}&limit=8&categoryId=${categoryId}&sort=${sort}`;
         const data = await fetchApi(url, { method: 'GET' });
 
         if (process.env.NODE_ENV === 'development') {
@@ -30,7 +30,7 @@ export const useFetchProducts = () => {
   const fetchProductDetail = async (id: string) => {
     setIsLoading(true);
     try {
-      const url = `/api/products/${id}`;
+      const url = `/products/${id}`;
       const data = await fetchApi(url, { method: 'GET' });
 
       if (process.env.NODE_ENV === 'development') {
