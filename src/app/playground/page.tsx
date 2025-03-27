@@ -1,19 +1,17 @@
 'use client';
-import { Loader2 } from 'lucide-react';
-
-import Header from '@/components/gnb/Header';
-import CloseButton from '@/components/productList/CloseButton';
+import { useCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function PlayGround() {
   return (
     <>
-      <Header />
-      <div className='text-white text-xl bg-black'>
-        <Loader2 />
-        <CloseButton
-          className=''
-          onClick={() => {}}
-        />
+      <div>
+        <button
+          onClick={() => {
+            useCustomToast({ label: '예산이 변경되었습니다.' });
+          }}
+        >
+          토스트 띄우기
+        </button>
       </div>
     </>
   );
