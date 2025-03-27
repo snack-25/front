@@ -125,7 +125,7 @@ export default function ProductList() {
       ) : products?.items ? (
         <div className='relative'>
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex items-center justify-end'>
-            <SortDropDown />
+            <SortDropDown setPage={setPage} />
           </div>
 
           <CardList data={products.items} />

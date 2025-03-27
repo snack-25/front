@@ -22,15 +22,18 @@ const sortOption: Record<Tsort, string> = {
   'price:desc': '높은 가격 순',
 };
 
-export function SortDropDown() {
+interface IProps {
+  setPage?: (value: number) => void;
+}
+
+export function SortDropDown({ setPage }: IProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setPage } = usePage();
   const currentSort: Tsort =
     (searchParams.get('sort') as Tsort) || 'createdAt:desc';
 
   const updateSort = (value: Tsort) => {
-    setPage(1);
+    setPage?.(1);
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('sort', value);
     router.push(`?${newParams.toString()}`);
