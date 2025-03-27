@@ -108,10 +108,10 @@ const OrderDetailPage = () => {
 
         {/* 하단 승인/반려 버튼 */}
         <div className="mt-6 flex justify-center gap-4">
-          <button className="bg-gray-300 text-gray-600 px-6 py-3 rounded-lg font-semibold">
+          <button className="bg-gray-300 text-gray-600 px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105 ">
             요청 반려
           </button>
-          <button className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold">
+          <button className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105">
             요청 승인
           </button>
         </div>
@@ -120,7 +120,7 @@ const OrderDetailPage = () => {
       {/* 오른쪽 요청 정보 + 예산 */}
       <div className="w-1/3 px-16 pt-10 pb-10">
         {/* 요청 정보 */}
-        <div className="bg-white shadow-md rounded-md p-6">
+        <div className="bg-#FBF8F4 rounded-md p-6">
           <h2 className="text-xl font-bold border-b-2 border-black-100">
             요청 정보
           </h2>
@@ -146,20 +146,20 @@ const OrderDetailPage = () => {
               value="코카콜라 제로 인기가 많아요."
               readOnly
               rows={2}
-              className="mt-1 w-full rounded-md border-2 text-lg resize-none pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
+              className="mt-1 w-full rounded-md border-2 text-21g resize-none pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
             />
           </div>
         </div>
 
         {/* 예산 정보 */}
-        <div className="bg-white shadow-md rounded-md p-6 mt-6">
+        <div className="bg-#FBF8F4 rounded-md p-6 mt-6">
           <h2 className="text-xl font-bold border-b-2 border-black-100">
             예산 정보
           </h2>
 
           <div className="mt-4 space-y-4">
             <div>
-              <label className="block font-semibold text-gray-700">
+              <label className="block font-semibold text-gray-700 text-xl">
                 이번 달 지원예산
               </label>
               <input

@@ -86,7 +86,7 @@ export default function Header() {
               </NavItem>
               {user.userType === 'basicUser' && (
                 <NavItem
-                  href='/tmp'
+                  href='/history'
                   currentPath={pathname}
                 >
                   구매 요청 내역
@@ -95,13 +95,13 @@ export default function Header() {
               {user.userType !== 'basicUser' && (
                 <div className='flex gap-12'>
                   <NavItem
-                    href='/tmp'
+                    href='/request'
                     currentPath={pathname}
                   >
                     구매 요청 관리
                   </NavItem>
                   <NavItem
-                    href='/tmp'
+                    href='/history'
                     currentPath={pathname}
                   >
                     구매 내역 확인

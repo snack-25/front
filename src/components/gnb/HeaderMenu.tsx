@@ -61,13 +61,13 @@ export function HeaderMenu() {
             <Link href='/'>상품 리스트</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/'>구매 요청 내역</Link>
+            <Link href='/request'>구매 요청 내역</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/'>구매 요청 관리</Link>
+            <Link href='/request'>구매 요청 관리</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/'>구매 내역 확인</Link>
+            <Link href='/history'>구매 내역 확인</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href='/'>상품 등록 내역</Link>
