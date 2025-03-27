@@ -23,6 +23,12 @@ interface IFormData {
   link: string;
 }
 
+const infoList = [
+  { label: '구매 혜택', value: '5포인트 적립 예정' },
+  { label: '배송방법', value: '택배' },
+  { label: '배송비', value: '3,000원(50,000원 이상 무료 배송)' },
+];
+
 export default function ProductDetail() {
   const user = mock[3];
 
@@ -105,10 +111,12 @@ export default function ProductDetail() {
                 {price}원
               </p>
             </div>
+
             <ProductMenu
               onEditClick={handleEditOpen}
               onDeleteClick={handleDeleteOpen}
             />
+            
             <ProductEditModal
               isOpen={isEditOpen}
               onClose={handleEditOpen}
@@ -118,22 +126,15 @@ export default function ProductDetail() {
           </div>
 
           <div className='flex flex-col w-full gap-2 lt:text-xl max-lt:text-md border-y-1 border-gray-200 py-8'>
-            <p className='flex gap-6'>
-              <span className='text-black-400 font-medium'>구매 혜택</span>
-              <span className='text-black-100 font-medium'>
-                5포인트 적립 예정
-              </span>
-            </p>
-            <p className='flex gap-6'>
-              <span className='text-black-400 font-medium'>배송방법</span>
-              <span className='text-black-100 font-medium'>택배</span>
-            </p>
-            <p className='flex gap-6'>
-              <span className='text-black-400 font-medium'>배송비</span>
-              <span className='text-black-100 font-medium'>
-                3,000원(50,000원 이상 무료 배송)
-              </span>
-            </p>
+            {infoList.map(({ label, value }) => (
+              <p
+                key={label}
+                className='flex gap-6'
+              >
+                <span className='text-black-400 font-medium'>{label}</span>
+                <span className='text-black-100 font-medium'>{value}</span>
+              </p>
+            ))}
           </div>
 
           <div className='flex w-full gap-6'>
