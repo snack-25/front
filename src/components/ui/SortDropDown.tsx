@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/Dropdown-Menu';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { usePage } from './PageProvider';
+import { usePage } from '../productList/PageProvider';
 
 const sortOption: Record<Tsort, string> = {
   'createdAt:desc': '최신 순',

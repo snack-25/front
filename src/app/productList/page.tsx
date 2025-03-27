@@ -5,7 +5,7 @@ import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
 import FloatingButton from '@/components/productList/FloatingButton';
 import MoreButton from '@/components/productList/MoreButton';
-import { SortDropDown } from '@/components/productList/SortDropDown';
+import { SortDropDown } from '@/components/ui/SortDropDown';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import CloseButton from '@/components/productList/CloseButton';
