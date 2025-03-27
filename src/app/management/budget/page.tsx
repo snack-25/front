@@ -10,6 +10,7 @@ export default function Budget() {
     thisMonth: '3,500,000',
     everyMonth: '3,000,000',
   });
+  const [modal, setModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 기존에 입력된 콤마 제거
@@ -24,13 +25,20 @@ export default function Budget() {
     setForm((prev) => ({ ...prev, [e.target.name]: formattedValue }));
   };
 
-  // const handleClick = () => {
-  //     if(input.vlaue == ''){
-  //         return input.placeholedr.value
-  //     }else(){
-  // return form.value
-  //     }
-  // }
+  const handleClick = () => {
+    const valueToSend = {
+      thisMonth:
+        form.thisMonth.trim() === ''
+          ? placeholderValue.thisMonth
+          : form.thisMonth,
+      everyMonth:
+        form.everyMonth.trim() === ''
+          ? placeholderValue.everyMonth
+          : form.everyMonth,
+    };
+    console.log('전송할 값:', valueToSend);
+    // 이후 valueToSend 객체를 서버로 전송하는 로직 추가
+  };
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -61,7 +69,7 @@ export default function Budget() {
         <Button
           className='mt-[16px] tb:mt-[40px]'
           filled='orange'
-          //   onClick={handleClick}
+          onClick={handleClick}
           //   disabled={!isFormValid}
         >
           수정하기

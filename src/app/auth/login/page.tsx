@@ -1,47 +1,32 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { loginApi, invitationCodeApi } from '@/app/api/auth/api';
+
+import React, { useState } from 'react';
+import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-interface InvitedUser {
-  email: string;
-  name: string;
+interface IError {
+  isError: boolean;
+  msg: string;
 }
+
+const initError = {
+  isError: false,
+  msg: '',
+};
+
+const initForm = { email: '', password: '' };
+const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Login() {
   const router = useRouter();
-  const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
-  // const searchParams = useSearchParams();
-  // const tokenFromUrl = searchParams.get('token');
-
-  // const [error, setError] = useState('');
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [nullError, setNullError] = useState<string>('');
+  const [form, setForm] = useState(initForm);
+  const [emailError, setEmailError] = useState<IError>(initError);
+  const [nullError, setNullError] = useState<IError>(initError);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
-
-  // const [invitedUser, setInvitedUser] = useState<InvitedUser>({
-  //   email: '',
-  //   name: '',
-  // });
-
-  // useEffect(() => {
-  //   if (!tokenFromUrl) return;
-  //   invitationCodeApi({ token: tokenFromUrl })
-  //     .then((data) => {
-  //       if (data) {
-  //         setInvitedUser({ email: data.email, name: data.name });
-  //         setForm((prev) => ({ ...prev, email: data.email }));
-  //       } else {
-  //         setError('유효하지 않은 초대 토큰입니다.');
-  //       }
-  //     })
-  //     .catch((err) => setError(err.msg));
-  // }, [tokenFromUrl]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -50,15 +35,17 @@ export default function Login() {
   const handleEmailBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailError(
-      emailRegex.test(e.target.value) ? null : '유효한 이메일을 입력하세요',
+      emailRegex.test(e.target.value)
+        ? initError
+        : { isError: true, msg: '유효한 이메일을 입력하세요' },
     );
   };
 
   const handleNullBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'password' && e.target.value === '') {
-      setNullError('비밀번호를 입력해주세요');
+      setNullError({ isError: true, msg: '비밀번호를 입력해주세요' });
     } else {
-      setNullError('');
+      setNullError(initError);
     }
   };
 
@@ -74,14 +61,12 @@ export default function Login() {
         router.replace('/');
       })
       .catch((err) => {
-        console.error('로그인 오류', err);
         alert(err);
+        setEmailError({ isError: true, msg: err.msg });
       });
   };
 
-  const isFormValid =
-    // ? invitedUser.email.length > 0 && form.password.length > 0 :
-    form.email.length > 0 && form.password.length > 0;
+  const isFormValid = form.email.length > 0 && form.password.length > 0;
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -101,7 +86,9 @@ export default function Login() {
             value={form.email}
             // disabled={!!tokenFromUrl} // 초대된 경우 입력 비활성화
           />
-          {emailError && <span className={errorFont}>{emailError}</span>}
+          {emailError.isError && (
+            <span className={errorFont}>{emailError.msg}</span>
+          )}
         </div>
         <div className='flex flex-col gap-[4px]'>
           <Input
@@ -125,7 +112,9 @@ export default function Login() {
               onClick={() => setPasswordVisibility((prev) => !prev)}
             />
           </Input>
-          {nullError && <span className={errorFont}>{nullError}</span>}
+          {nullError.isError && (
+            <span className={errorFont}>{nullError.msg}</span>
+          )}
         </div>
         <Button
           className='mt-[16px] tb:mt-[40px]'
