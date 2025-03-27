@@ -58,13 +58,18 @@ export default function ProductList() {
 
   useEffect(() => {
     const newParams = new URLSearchParams(window.location.search);
+    let isChanged: boolean = false;
     if (!sort) {
       newParams.set('sort', DEFAULT_SORT);
+      isChanged = true;
     }
     if (!page) {
       newParams.set('page', '1');
+      isChanged = true;
     }
-    router.replace(`?${newParams.toString()}`);
+    if (isChanged) {
+      router.replace(`?${newParams.toString()}`);
+    }
   }, []);
 
   useEffect(() => {
