@@ -25,24 +25,5 @@ export const useFetchProducts = () => {
     [],
   );
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const fetchProductDetail = async (id: string) => {
-    setIsLoading(true);
-    try {
-      const url = `/products/${id}`;
-      const data = await fetchApi(url, { method: 'GET' });
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('상품 상세 조회 성공:', data);
-      }
-      return data;
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('상품 상세 조회 실패:', err);
-      }
-    }
-  };
-
-  return { fetchProducts, fetchProductDetail, isLoading, setIsLoading };
+  return { fetchProducts };
 };

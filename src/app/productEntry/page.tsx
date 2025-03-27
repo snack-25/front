@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-import { SortDropDown } from '@/components/productList/SortDropDown';
+import { SortDropDown } from '@/components/ui/SortDropDown';
 
 import { entryMock } from '../playground/entryMock';
 import { Tsort } from '../productList/page';

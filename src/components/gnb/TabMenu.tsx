@@ -6,7 +6,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
-import { usePage } from '../productList/PageProvider';
 
 export interface Category {
   id: string;
@@ -27,7 +26,6 @@ export default function TabMenu() {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const { setPage } = usePage();
 
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
@@ -97,17 +95,17 @@ export default function TabMenu() {
   ) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set(level, value);
+    newParams.set('page', '1');
 
-    setPage(1);
-
+    if (level === 'parentId') {
+      const sub: Category[] = await fetchApi(`/categories/parents/${value}`, {
+        method: 'GET',
+      });
+      const initCategoryId = sub[0].id;
+      newParams.set('categoryId', initCategoryId);
+      newParams.set('sort', 'createdAt:desc');
+    }
     if (pathName.includes('detail')) {
-      if (level === 'parentId') {
-        const sub: Category[] = await fetchApi(`/categories/parents/${value}`, {
-          method: 'GET',
-        });
-        const initCategoryuId = sub[0].id;
-        newParams.set('categoryId', initCategoryuId);
-      }
       router.push(`/productList?${newParams.toString()}`);
     } else {
       router.replace(`?${newParams.toString()}`);

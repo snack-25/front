@@ -78,12 +78,24 @@ export default function Header() {
             </div>
 
             <div className='flex gap-8 max-tb:hidden'>
-              <NavItem
-                href='/productList'
-                currentPath={pathname}
+              <Link
+                prefetch={false}
+                href={{
+                  pathname: '/productList',
+                  query: {
+                    parentId: 'cat-스낵',
+                    categoryId: 'sub-과자',
+                    sort: 'createdAt:desc',
+                    page: '1',
+                  },
+                }}
+                className={cn(
+                  hoverStyle,
+                  pathname.includes('/productList') && 'text-primary-400',
+                )}
               >
                 상품 리스트
-              </NavItem>
+              </Link>
               {user.userType === 'basicUser' && (
                 <NavItem
                   href='/tmp'
