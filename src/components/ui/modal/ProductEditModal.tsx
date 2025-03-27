@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from '@/components/ui/Select';
 
-// 카테고리 데이터
 const mainCategories = [
   '스낵',
   '음료',
@@ -32,7 +31,6 @@ const subCategories: Record<string, string[]> = {
   비품: ['생활용품', '일회용품'],
 };
 
-// 상품 수정 모달 Props 타입 정의
 interface ProductEditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -42,7 +40,7 @@ interface ProductEditModalProps {
     category: string;
     subCategory: string;
     price: number;
-    image: File | null;
+    imageUrl: string;
     link: string;
   }) => void;
   product: {
@@ -66,40 +64,43 @@ export default function ProductEditModal({
     register,
     handleSubmit,
     setValue,
+    getValues,
     watch,
     control,
+    reset,
     formState: { isValid },
   } = useForm({
     defaultValues: {
       name: product.name,
       category: product.category,
       subCategory: product.subCategory,
-      price: product.price,
-      image: null as File | null,
+      price: product.price.toString(), // 🔄 문자열로 초기화
+      imageUrl: null as File | null,
       link: product.link,
     },
     mode: 'onChange',
   });
 
-  // 상품 등록 모달과 다른점
-  // 상품 수정 모달은 기존 데이터가 이미 채워져 있어야 함.
-  // 재사용 가능하도록 ProductFormModal을 확장할 필요가 있을까?
-
-  // 수정할 이미지를 미리 불러옴.
   const [previewImage, setPreviewImage] = useState<string>(product.imageUrl);
 
   useEffect(() => {
-    console.log('Product image updated:', product.imageUrl);
-    setPreviewImage(product.imageUrl); // 상품 데이터가 변경되면 미리보기 업데이트
-  }, [product.imageUrl]);
+    setPreviewImage(product.imageUrl);
+    reset({
+      name: product.name,
+      category: product.category,
+      subCategory: product.subCategory,
+      price: product.price.toString(),
+      imageUrl: null,
+      link: product.link,
+    });
+  }, [product, reset]);
 
-  // 파일 업로드 핸들러
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // 미리보기용 URL 생성
-      setPreviewImage(imageUrl); // UI 업데이트 (미리보기 이미지 변경)
-      setValue('image', file); // form 상태 업데이트 (이미지 파일 저장)
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewImage(imageUrl);
+      setValue('imageUrl', file);
     }
   };
 
@@ -108,7 +109,22 @@ export default function ProductEditModal({
       title='상품 수정'
       isOpen={isOpen}
       onClose={onClose}
-      onConfirm={handleSubmit((data) => onUpdate({ ...data, id: product.id }))}
+      onConfirm={handleSubmit(() => {
+        const values = getValues();
+        console.log('🧾 getValues()', values);
+
+        const imageUrlToSend = previewImage;
+
+        onUpdate({
+          id: product.id,
+          name: values.name,
+          category: values.category,
+          subCategory: values.subCategory,
+          price: Number(values.price), // ✅ 수동 변환
+          imageUrl: imageUrlToSend,
+          link: values.link,
+        });
+      })}
       confirmText='수정하기'
       cancelText='취소'
       confirmDisabled={!isValid}
@@ -118,7 +134,6 @@ export default function ProductEditModal({
       cancelButtonProps='w-[158px] h-[54px] md:w-[310px] md:h-[64px]'
     >
       <div className='flex flex-col gap-5 md:gap-16 w-[327px] md:w-[640px]'>
-        {/* 상품명 */}
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>상품명</label>
           <Input
@@ -127,7 +142,6 @@ export default function ProductEditModal({
           />
         </div>
 
-        {/* 카테고리 */}
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>카테고리</label>
           <div className='flex gap-2'>
@@ -138,7 +152,7 @@ export default function ProductEditModal({
                 <Select
                   onValueChange={(value) => {
                     setValue('category', value);
-                    setValue('subCategory', ''); // 대분류 변경 시 소분류 초기화
+                    setValue('subCategory', '');
                   }}
                 >
                   <SelectTrigger className='w-full h-[54px] md:h-[64px] border border-[#FCC49C] px-4 rounded-xl'>
@@ -183,17 +197,15 @@ export default function ProductEditModal({
           </div>
         </div>
 
-        {/* 가격 */}
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>가격</label>
           <Input
             type='number'
-            {...register('price', { required: true, valueAsNumber: true })}
+            {...register('price', { required: true })} // valueAsNumber 제거
             className='text-[16px] border border-[#FCC49C] px-4 rounded-xl h-[54px] md:h-[64px]'
           />
         </div>
 
-        {/* 이미지 업로드 */}
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>상품 이미지</label>
           <input
@@ -201,7 +213,7 @@ export default function ProductEditModal({
             accept='image/*'
             className='hidden'
             id='imageUpload'
-            onChange={handleImageUpload} // 업로드시 이벤트 핸들러 실행
+            onChange={handleImageUpload}
           />
           <label
             htmlFor='imageUpload'
@@ -216,7 +228,6 @@ export default function ProductEditModal({
           </label>
         </div>
 
-        {/* 제품 링크 */}
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>제품 링크</label>
           <Input

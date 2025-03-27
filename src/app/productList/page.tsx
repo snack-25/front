@@ -14,7 +14,6 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/productList/Loading';
-import { usePage } from '@/components/productList/PageProvider';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -51,8 +50,8 @@ export default function ProductList() {
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
+  const page = Number(searchParams.get('page'));
 
-  const { page, setPage } = usePage();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IFetchData | null>(null);
@@ -67,6 +66,9 @@ export default function ProductList() {
     }
     if (!categoryId) {
       newParams.set('categoryId', DEFAULT_CATEGORYID);
+    }
+    if (!page) {
+      newParams.set('page', '1');
     }
     router.replace(`?${newParams.toString()}`);
   }, []);
@@ -102,11 +104,16 @@ export default function ProductList() {
   }, [page, categoryId, sort, fetchProducts]);
 
   const handleMoreButton = () => {
-    setPage((prev) => prev + 1);
+    const newParams = new URLSearchParams(searchParams.toString());
+    const newPage = String(page + 1);
+    newParams.set('page', newPage);
+    router.replace(`?${newParams.toString()}`);
   };
 
   const handleCloseButton = () => {
-    setPage(1);
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set('page', '1');
+    router.replace(`?${newParams.toString()}`);
   };
 
   const handleOpen = () => {
@@ -125,7 +132,7 @@ export default function ProductList() {
       ) : products?.items ? (
         <div className='relative'>
           <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex items-center justify-end'>
-            <SortDropDown setPage={setPage} />
+            <SortDropDown />
           </div>
 
           <CardList data={products.items} />

@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/Dropdown-Menu';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { usePage } from '../productList/PageProvider';
 
 const sortOption: Record<Tsort, string> = {
   'createdAt:desc': '최신 순',
@@ -22,20 +21,16 @@ const sortOption: Record<Tsort, string> = {
   'price:desc': '높은 가격 순',
 };
 
-interface IProps {
-  setPage?: (value: number) => void;
-}
-
-export function SortDropDown({ setPage }: IProps) {
+export function SortDropDown() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentSort: Tsort =
     (searchParams.get('sort') as Tsort) || 'createdAt:desc';
 
   const updateSort = (value: Tsort) => {
-    setPage?.(1);
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('sort', value);
+    newParams.set('page', '1');
     router.push(`?${newParams.toString()}`);
   };
 
