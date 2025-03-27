@@ -82,6 +82,7 @@ export default function ProductDetail() {
             <Image
               src={imageUrl}
               fill
+              sizes='(max-width:745px):100vw, 50vw'
               className='object-contain'
               alt='product image'
             />
@@ -111,7 +112,7 @@ export default function ProductDetail() {
             <ProductEditModal
               isOpen={isEditOpen}
               onClose={handleEditOpen}
-              onUpdate={handleUpdate} 
+              onUpdate={handleUpdate}
               product={formData as IFormData}
             />
           </div>
