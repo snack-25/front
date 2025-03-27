@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -13,7 +12,7 @@ import {
 } from '@/components/ui/Table';
 
 interface Order {
-  id: number;
+  id: string;
   date: string;
   product: string;
   price: string;
@@ -22,32 +21,55 @@ interface Order {
   requestDate: string;
 }
 
-const mockOrders: Order[] = []; // ❌ 데이터가 없을 경우
+interface HistoryTableProps {
+  orders?: Order[]; // ✅ orders를 선택적으로 받을 수 있도록 수정
+}
 
-const HistoryTable = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+const mockOrders: Order[] = [
+  {
+    id: '1',
+    date: '2025-03-20',
+    product: '노트북',
+    price: '1,500,000',
+    requester: '홍길동',
+    handler: '김철수',
+    requestDate: '2025-03-18',
+  },
+  {
+    id: '2',
+    date: '2025-03-19',
+    product: '모니터',
+    price: '300,000',
+    requester: '이영희',
+    handler: '박영수',
+    requestDate: '2025-03-17',
+  },
+];
 
-  useEffect(() => {
-    setOrders(mockOrders); // 현재는 더미 데이터로 설정
-  }, []);
+const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => { // ✅ 기본값으로 mockOrders 사용
+  const router = useRouter();
 
   return (
     <div className='w-full'>
       {orders.length > 0 ? (
-        <Table className='w-full border-collapse'>
-          <TableHeader className='bg-red-300 rounded-full'>
+        <Table className='w-full border-sperate border-spacing-0 overflow-hidden'>
+          <TableHeader className='bg-gray-50  border border-gray-200'>
             <TableRow>
-              <TableHead className='rounded-l-full'>구매승인일</TableHead>
+              <TableHead className='rounded-tl-lg'>구매승인일</TableHead>
               <TableHead>상품정보</TableHead>
               <TableHead>주문 금액</TableHead>
               <TableHead>요청인</TableHead>
               <TableHead>담당자</TableHead>
-              <TableHead className='rounded-r-full'>구매요청일</TableHead>
+              <TableHead className='rounded-tr-lg'>구매요청일</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.map((order) => (
-              <TableRow key={order.id}>
+              <TableRow 
+                key={order.id} 
+                className="cursor-pointer hover:bg-gray-50" 
+                onClick={() => router.push(`/history/${order.id}`)}
+              >
                 <TableCell>{order.date}</TableCell>
                 <TableCell>{order.product}</TableCell>
                 <TableCell>{order.price}원</TableCell>
@@ -66,7 +88,6 @@ const HistoryTable = () => {
             width={300}
             height={200}
           />
-          <p className='text-gray-500 mt-4 text-lg'>구매 내역이 없습니다.</p>
         </div>
       )}
     </div>

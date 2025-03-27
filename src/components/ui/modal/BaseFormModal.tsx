@@ -50,6 +50,7 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
       <DialogContent
         showCloseButton={showCloseButton} // X 버튼 여부 전달
         className={`
+          z-[9999]
           flex flex-col p-6 md:p-[32px_24px_40px] gap-4 md:gap-8
           bg-[#FBF8F4] shadow-lg rounded-3xl
           ${smallSize} ${largeSize}
@@ -68,20 +69,20 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
         </DialogHeader>
 
         {/* 입력 필드 */}
-        <div className='flex flex-col gap-4 md:gap-8 w-[327px] md:w-[640px]'>
+        <div className='flex flex-col text-2lg gap-4 md:gap-8 w-[327px] md:w-[640px]'>
           {children}
         </div>
 
         {/* 버튼 컨테이너 */}
-        <div className='grid grid-cols-2 gap-4 w-full'>
+        <div className='grid grid-cols-2 gap-4 w-full text-2lg'>
           <Button
-            className={`bg-[#FDF0DF] text-[#F97B22] rounded-lg ${cancelButtonProps}`}
+            className={`bg-[#FDF0DF]  text-[#F97B22] rounded-lg ${cancelButtonProps} text-2lg`}
             onClick={onClose}
           >
             {cancelText}
           </Button>
           <Button
-            className={`bg-[#F97B22] text-white rounded-lg ${confirmButtonProps}`}
+            className={`bg-[#F97B22] text-white rounded-lg ${confirmButtonProps} text-2lg`}
             onClick={onConfirm}
             disabled={confirmDisabled}
           >
