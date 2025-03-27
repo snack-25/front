@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
 import Header from '@/components/gnb/Header';
-
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const pretendard = localFont({
@@ -27,6 +27,10 @@ export default function RootLayout({
       <body className={`${pretendard.variable} antialiased bg-background-400`}>
         <Header />
         {children}
+        <Toaster
+          position='top-center'
+          closeButton
+        />
       </body>
     </html>
   );

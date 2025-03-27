@@ -61,12 +61,6 @@ export default function ProductList() {
     if (!sort) {
       newParams.set('sort', DEFAULT_SORT);
     }
-    if (!parentId) {
-      newParams.set('parentId', DEFAULT_PARENTID);
-    }
-    if (!categoryId) {
-      newParams.set('categoryId', DEFAULT_CATEGORYID);
-    }
     if (!page) {
       newParams.set('page', '1');
     }
