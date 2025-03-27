@@ -20,7 +20,8 @@ export default function CardList({ data }: IProps) {
             key={item.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            style={{ pointerEvents: 'auto' }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           >
             <Link
               href={`/productList/${item.id}/detail?parentId=${parentId}&categoryId=${categoryId}`}

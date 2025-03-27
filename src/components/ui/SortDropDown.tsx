@@ -30,6 +30,7 @@ export function SortDropDown() {
   const updateSort = (value: Tsort) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('sort', value);
+    newParams.set('page', '1');
     router.push(`?${newParams.toString()}`);
   };
 

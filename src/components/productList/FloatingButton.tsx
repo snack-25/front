@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 
 interface IProps {
   handleClick: () => void;
-  className: string;
+  className?: string;
 }
 
 export default function FloatingButton({ handleClick, className }: IProps) {
