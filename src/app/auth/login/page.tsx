@@ -58,8 +58,13 @@ export default function Login() {
 
     loginApi(form)
       .then((res) => {
-        router.replace('/auth/login');
-        useCustomToast({ label: '로그인이 완료되었습니다.' });
+        // router.replace('/auth/login');
+        useCustomToast({
+          onClick: () => {
+            router.replace('/');
+          },
+          label: '로그인이 완료되었습니다.',
+        });
       })
       .catch((err) => {
         // setEmailError({ isError: true, msg: err.msg });
