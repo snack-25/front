@@ -12,6 +12,7 @@ import { mock } from '@/components/gnb/Header';
 import ProductEditModal from '@/components/ui/modal/ProductEditModal';
 import { useDetail } from '@/hooks/product/useDetail';
 import Loading from '@/components/productList/Loading';
+import ProductDeleteModal from '@/components/ui/modal/ProductDeleteModal';
 
 interface IFormData {
   id: string;
@@ -47,7 +48,6 @@ export default function ProductDetail() {
 
   const handleEditOpen = () => setIsEditOpen((prev) => !prev);
   const handleDeleteOpen = () => setIsDeleteOpen((prev) => !prev);
-  const handleDelete = () => {};
 
   useEffect(() => {
     if (data) setDetail(data);
@@ -116,12 +116,19 @@ export default function ProductDetail() {
               onEditClick={handleEditOpen}
               onDeleteClick={handleDeleteOpen}
             />
-            
+
             <ProductEditModal
               isOpen={isEditOpen}
               onClose={handleEditOpen}
               onUpdate={handleUpdate}
               product={formData as IFormData}
+            />
+
+            <ProductDeleteModal
+              id={detail.id}
+              name={detail.name}
+              isOpen={isDeleteOpen}
+              handleOpen={handleDeleteOpen}
             />
           </div>
 
