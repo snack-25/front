@@ -290,30 +290,30 @@ export function SuperAdmin() {
       </Button>
       <Modal
         open={isModalOpen}
-        onClose={() => {}} // 모달 닫기 동작 제거하거나 무시
-        onConfirm={() => router.replace('/auth/login')}
-        confirmText='확인'
+        onClose={() => setIsModalOpen(false)}
+        confirmText='로그인'
         hideCancel={true}
+        onConfirm={() => {
+          router.replace('/auth/login');
+        }}
       >
-        <div className='flex flex-col justify-center items-center gap-[36px]'>
-          <div className='flex flex-col items-center '>
-            <h2 className='mb-[10px] text-[40px] font-[600] text-[#F97B22]'>
-              회원가입 성공
-            </h2>
-            <span className='text-[20px]'>
-              {form.name}님, 회원가입을 진심으로 축하드립니다.
-            </span>
-          </div>
+        <div className='flex flex-col justify-center items-center gap-[24px]'>
           <Image
             src='/img/modal/approved-md.svg'
             alt='강아지 승인 사진'
             width={240}
             height={140}
           />
-          <div className='flex items-center gap-[15px] text-[18px]'>
-            <span>회사명: {form.company}</span>
-            <div>|</div>
-            <span>직급: {role}</span>
+          <h2 className='mt-[24px] text-[24px] font-[700]'>회원가입 성공</h2>
+          <div className='gap-[6px] flex flex-col items-center text-[20px] font-[500] text-[#ABABAB]'>
+            <span className=''>
+              {form.name}님, 회원가입을 진심으로 축하드립니다.
+            </span>
+            <div className='flex items-center gap-[15px]'>
+              <span className=''>회사명: {form.company}</span>
+              <div>|</div>
+              <span className=''>직급: {role}</span>
+            </div>
           </div>
         </div>
       </Modal>

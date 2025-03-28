@@ -22,9 +22,9 @@ export default function Signup() {
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
-      <div>
-        <button onClick={() => setIsModalOpen(true)}>모달 열기</button>
-        <Modal
+      {/* <div> */}
+      {/* <button onClick={() => setIsModalOpen(true)}>모달 열기</button> */}
+      {/* <Modal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           confirmText='확인'
@@ -51,12 +51,12 @@ export default function Signup() {
               <span className=''>직급: 최고관리자</span>
             </div>
           </div>
-        </Modal>
-        {/* <Modal
+        </Modal> */}
+      {/* <Modal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          confirmText='확인'
-          cancelText='닫기'
+          confirmText='로그인'
+          hideCancel={true}
         >
           <div className='flex flex-col justify-center items-center gap-[24px]'>
             <Image
@@ -78,7 +78,7 @@ export default function Signup() {
             </div>
           </div>
         </Modal> */}
-      </div>
+      {/* </div> */}
 
       {isTokenValid ? (
         <SuperAdmin></SuperAdmin>

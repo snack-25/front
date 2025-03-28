@@ -26,7 +26,7 @@ export default function Budget() {
     setForm((prev) => ({ ...prev, [e.target.name]: formattedValue }));
   };
 
-  const handleClick = () => {
+  const handleSubmit = () => {
     const valueToSend = {
       thisMonth:
         form.thisMonth.trim() === ''
@@ -73,7 +73,7 @@ export default function Budget() {
         <Button
           className='mt-[16px] tb:mt-[40px]'
           filled='orange'
-          onClick={handleClick}
+          onClick={handleSubmit}
           //   disabled={!isFormValid}
         >
           수정하기

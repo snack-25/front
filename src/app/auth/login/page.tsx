@@ -5,6 +5,7 @@ import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';
+import { useCustomToast } from '@/components/ui/Toast/Toast';
 import Image from 'next/image';
 
 interface IError {
@@ -49,7 +50,7 @@ export default function Login() {
     }
   };
 
-  const handleClick = () => {
+  const handleSubmit = () => {
     if (!form.email || !form.password) {
       alert('모든 항목을 입력해주세요!');
       return;
@@ -57,12 +58,12 @@ export default function Login() {
 
     loginApi(form)
       .then((res) => {
-        alert(res.msg);
-        router.replace('/');
+        router.replace('/auth/login');
+        useCustomToast({ label: '로그인이 완료되었습니다.' });
       })
       .catch((err) => {
-        alert(err);
-        setEmailError({ isError: true, msg: err.msg });
+        // setEmailError({ isError: true, msg: err.msg });
+        useCustomToast({ label: '로그인이 실패하였습니다.' });
       });
   };
 
@@ -119,7 +120,7 @@ export default function Login() {
         <Button
           className='mt-[16px] tb:mt-[40px]'
           filled='orange'
-          onClick={handleClick}
+          onClick={handleSubmit}
           disabled={!isFormValid}
         >
           시작하기

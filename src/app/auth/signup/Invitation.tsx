@@ -6,10 +6,13 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { invitationCodeApi, invitationSignupApi } from '@/app/api/auth/api';
 import Image from 'next/image';
+import Modal from '@/components/ui/modal/Modal';
 
 interface InvitedUser {
   email: string;
   name: string;
+  company: string;
+  role: string;
 }
 
 interface IError {
@@ -40,12 +43,16 @@ export function InvitationUser() {
   const [invitedUser, setInvitedUser] = useState<InvitedUser>({
     email: '',
     name: '',
+    company: '',
+    role: '',
   });
 
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     validatePassword: false,
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -88,17 +95,20 @@ export function InvitationUser() {
     })
       .then((res) => {
         if (res.msg === '회원가입 실패') {
-          throw new Error('회원가입 실패'); // 예외를 던져서 .catch()로 보냄
+          throw new Error('회원가입 실패');
         }
-
-        console.log(res);
-        alert('회원가입이 완료되었습니다!');
-        router.replace('/auth/login');
+        setInvitedUser((prev) => ({
+          ...prev,
+          role: res.data.role,
+          company: res.data.company, // 회사 이름도 함께 업데이트
+        }));
+        setIsModalOpen(true);
       })
       .catch((err) => {
         console.error(err);
-        alert('실패다'); // 실패한 경우, 여기에서만 실행됨
+        alert('실패다');
       });
+    console.log('invitedUser', invitedUser);
   };
 
   useEffect(() => {
@@ -106,10 +116,17 @@ export function InvitationUser() {
       return;
     }
 
+    // 초대 코드 API 응답 시
     invitationCodeApi({ token: tokenFromUrl })
       .then((data) => {
         if (data) {
-          setInvitedUser(data);
+          // API 응답에 role도 포함되어 있다면
+          setInvitedUser({
+            email: data.email,
+            name: data.name,
+            company: data.company, // 혹은 data.companyName
+            role: data.role,
+          });
           setForm((prev) => ({ ...prev, email: data.email || '' }));
         } else {
           console.log('유효하지 않은 초대 토큰입니다.');
@@ -186,6 +203,35 @@ export function InvitationUser() {
       >
         시작하기
       </Button>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        confirmText='로그인'
+        hideCancel={true}
+        onConfirm={() => {
+          router.replace('/auth/login');
+        }}
+      >
+        <div className='flex flex-col justify-center items-center gap-[24px]'>
+          <Image
+            src='/img/modal/approved-md.svg'
+            alt='강아지 승인 사진'
+            width={240}
+            height={140}
+          />
+          <h2 className='mt-[24px] text-[24px] font-[700]'>회원가입 성공</h2>
+          <div className='gap-[6px] flex flex-col items-center text-[20px] font-[500] text-[#ABABAB]'>
+            <span className=''>
+              {invitedUser.name}님, 회원가입을 진심으로 축하드립니다.
+            </span>
+            <div className='flex items-center gap-[15px]'>
+              <span className=''>회사명: {invitedUser.company}</span>
+              <div>|</div>
+              <span className=''>직급: {invitedUser.role}</span>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
