@@ -19,9 +19,10 @@ export default function ProductCard({ data }: cardProps) {
             <Image
               src={imageUrl}
               fill
+              sizes='(max-width: 745px) 45vw, (max-width: 1920px) 25vw'
               alt='product Image'
-              style={{ objectFit: 'contain' }}
               className='object-contain'
+              loading='lazy'
             />
           </div>
         </CardHeader>

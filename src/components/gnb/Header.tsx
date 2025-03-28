@@ -36,7 +36,7 @@ interface navItemProps {
 }
 
 const hoverStyle: string =
-  'transition-all ease-in-out duration-300 hover:text-primary-400';
+  'transition-colors ease-in-out duration-300 hover:text-primary-400';
 
 const NavItem = ({ href, currentPath, children }: navItemProps) => {
   const isActive = currentPath.includes(href);
