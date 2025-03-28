@@ -105,7 +105,7 @@ const OrderDetailPage = () => {
       <label className="block text-xl font-semibold text-black-400">요청인</label>
       <input
         type="text"
-        value={order?.requester}
+        value={order?.requester ?? ""}
         readOnly
         className="mt-1 w-full rounded-md border-2 text-2lg pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
       />
@@ -130,7 +130,7 @@ const OrderDetailPage = () => {
       <label className="block text-xl font-semibold text-black-400">담당자</label>
       <input
         type="text"
-        value={order?.handler}
+        value={order?.handler ?? ""}
         readOnly
         className="mt-1 w-full rounded-md border-2 text-21g pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
       />
