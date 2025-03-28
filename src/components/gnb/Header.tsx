@@ -36,7 +36,7 @@ interface navItemProps {
 }
 
 const hoverStyle: string =
-  'transition-all ease-in-out duration-300 hover:text-primary-400';
+  'transition-colors ease-in-out duration-300 hover:text-primary-400';
 
 const NavItem = ({ href, currentPath, children }: navItemProps) => {
   const isActive = currentPath.includes(href);
@@ -83,8 +83,8 @@ export default function Header() {
                 href={{
                   pathname: '/productList',
                   query: {
-                    parentId: 'cat-스낵',
-                    categoryId: 'sub-과자',
+                    parentId: 'cyxofxsgl8j37gs5ljr68xh1',
+                    categoryId: 'jvfkhtspnr4gvmtcue6xtjxf',
                     sort: 'createdAt:desc',
                     page: '1',
                   },
