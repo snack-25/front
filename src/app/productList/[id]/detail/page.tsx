@@ -13,6 +13,7 @@ import ProductEditModal from '@/components/ui/modal/ProductEditModal';
 import { useDetail } from '@/hooks/product/useDetail';
 import Loading from '@/components/productList/Loading';
 import ProductDeleteModal from '@/components/ui/modal/ProductDeleteModal';
+import { fetchApi } from '@/app/api/instance';
 
 interface IFormData {
   id: string;
@@ -40,6 +41,8 @@ export default function ProductDetail() {
   const { data, isLoading, setIsLoading, handleUpdate } = useDetail(
     id as string,
   );
+  const [mainName, setMainName] = useState<string>('');
+  const [subName, setSubName] = useState<string>('');
 
   const [detail, setDetail] = useState<IProducts | null>(null);
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
@@ -55,6 +58,15 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (!detail) return;
+    const fetchName = async () => {
+      const data: IProducts[] = await fetchApi('/categories/all');
+      const mainData = data.find((item) => item.id === mainCategory);
+      const subData = data.find((item) => item.id === subCategory);
+      setMainName(mainData?.name || '상위 카테고리');
+      setSubName(subData?.name || '하위 카테고리');
+    };
+    fetchName();
+
     setformData({
       id: detail.id,
       name: detail.name,
@@ -77,9 +89,9 @@ export default function ProductDetail() {
       <div className='flex text-gray-400 items-center text-xl font-medium gap-2 mb-6'>
         <div>홈</div>
         <ChevronRight className='text-gray-300' />
-        <div>{mainCategory.slice(4)}</div>
+        <div>{mainName}</div>
         <ChevronRight className='text-gray-300' />
-        <div className='text-black-400'>{categoryId.slice(4)}</div>
+        <div className='text-black-400'>{subName}</div>
       </div>
 
       <div className='relative w-full flex gap-20 max-tb:gap-6 max-tb:flex-col'>
@@ -99,7 +111,7 @@ export default function ProductDetail() {
           <div className='flex justify-between'>
             <div>
               <p className='lt:text-xl max-lt:text-xs font-medium text-gray-500 mb-2'>
-                {categoryId.slice(4)}
+                {subName}
               </p>
               <h1 className='lt:text-3xl max-lt:text-2xl font-semibold text-black-400 mb-6'>
                 {name}
