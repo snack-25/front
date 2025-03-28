@@ -50,7 +50,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
   return (
     <div className="w-full">
       {orders.length > 0 ? (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
           {/* 헤더 */}
           <div className="flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6">
             {headers.map((header) => (
@@ -74,7 +74,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
               </span>
               <span className="flex-1 text-center">{order.requester}</span>
               <div
-                className="flex-1 flex justify-center gap-2"
+                className="flex-1 flex justify-center gap-2 pb-0.5"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button

@@ -46,9 +46,9 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => {
   return (
     <div className="w-full">
       {orders.length > 0 ? (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
           {/* 헤더 */}
-          <div className="flex justify-around items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium">
+          <div className="min-h-[80px] flex justify-around items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium">
             {headers.map((header) => (
               <span key={header} className="flex-1 text-center">
                 {header}

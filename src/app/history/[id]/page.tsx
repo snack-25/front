@@ -97,7 +97,7 @@ const OrderDetailPage = () => {
 
       {/* 오른쪽 요청 정보 */}
 <div className="w-1/3 px-16 pt-10 pb-10">
-  <div className="bg-white shadow-md rounded-md p-6">
+  <div className=" rounded-md p-6">
     <h2 className="text-xl font-bold border-b-2 border-black-100">요청 정보</h2>
     <p className="text-xl text-gray-400 mt-2">2024. 07. 20.</p>
 
@@ -122,7 +122,7 @@ const OrderDetailPage = () => {
     </div>
   </div>
 
-  <div className="bg-white shadow-md rounded-md p-6 mt-6">
+  <div className=" rounded-md p-6 mt-6">
     <h2 className="text-xl font-bold border-b-2 border-black-100">승인 정보</h2>
     <p className="text-xl text-gray-400 mt-2">2024. 07. 24.</p>
 
