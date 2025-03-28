@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
+import { useCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function Budget() {
   const [form, setForm] = useState({ thisMonth: '', everyMonth: '' });
@@ -37,6 +38,9 @@ export default function Budget() {
           : form.everyMonth,
     };
     console.log('전송할 값:', valueToSend);
+
+    useCustomToast({ label: '예산이 변경되었습니다.' });
+
     // 이후 valueToSend 객체를 서버로 전송하는 로직 추가
   };
 

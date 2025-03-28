@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/Dialog';
 import { MOBILE_BREAKPOINT } from '@/lib/constants';
+import clsx from 'clsx';
 
 interface ModalProps {
   open: boolean;
@@ -22,6 +23,7 @@ interface ModalProps {
   confirmText?: string; // 확인 버튼의 텍스트 (기본값: "확인")
   cancelText?: string; // 취소 버튼의 텍스트 (기본값: "닫기")
   onConfirm?: () => void;
+  hideCancel?: boolean; // 닫기 모달 숨기기 ex) 회원가입 성공 모달은 닫기 버튼이 따로 필요가 없음
   imageSrc?: string;
 }
 
@@ -34,6 +36,7 @@ const Modal = ({
   children,
   confirmText = '확인',
   cancelText = '닫기',
+  hideCancel = false, // 기본값 false
   onConfirm,
   imageSrc,
 }: ModalProps) => {
@@ -149,14 +152,24 @@ const Modal = ({
 
           {/* 버튼 영역 */}
           <div className='flex flex-col w-full gap-4 md:flex-row md:justify-center md:w-full md:max-w-[640px]'>
+            {/* hideCancel이 false일 때 기존 cancel 버튼 렌더링 */}
+            {!hideCancel && (
+              <Button
+                className='md:text-[20px] text-[16px] w-full h-[54px] md:w-[310px] md:h-[64px] bg-[#FFF1E6] text-orange-500 py-3 rounded-lg font-semibold'
+                onClick={onClose}
+              >
+                {cancelText}
+              </Button>
+            )}
             <Button
-              className='w-full h-[54px] md:w-[310px] md:h-[64px] bg-[#FFF1E6] text-orange-500 py-3 rounded-lg font-semibold'
-              onClick={onClose}
-            >
-              {cancelText}
-            </Button>
-            <Button
-              className='w-full h-[54px] md:w-[310px] md:h-[64px] bg-orange-500 text-white py-3 rounded-lg font-semibold'
+              // 닫기 버튼이 있을 때는 확인 버튼이 전체 화면에 꽉 차게 / 아닐 때는 버튼 두개가 같은 넓이로 나오게
+              className={clsx(
+                'w-full h-[54px] md:text-[20px] text-[16px] bg-orange-500 text-white py-3 rounded-lg font-semibold',
+                {
+                  'w-full': hideCancel,
+                  'md:w-[310px] md:h-[64px]': !hideCancel,
+                },
+              )}
               onClick={onConfirm}
             >
               {confirmText}

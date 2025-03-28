@@ -41,7 +41,6 @@ export async function logoutApi() {
 export async function invitationCodeApi(params: {
   token: string;
 }): Promise<any> {
-  console.log('params', params);
   try {
     const res = await fetchApi('/auth/signup/invitationcode', {
       method: 'POST',
@@ -61,6 +60,8 @@ export async function invitationSignupApi(params: {
   password: string;
 }) {
   const { password, token } = params;
+  console.log('params', params);
+  console.log('token', token);
   try {
     const res = await fetchApi(`/auth/signup/invite/${token}`, {
       method: 'POST',

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input_auth';
 import { emailRegex } from '@/lib/constants';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Modal from '@/components/ui/modal/Modal';
 
 interface IError {
   isError: boolean;
@@ -42,14 +43,23 @@ const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export function SuperAdmin() {
   const router = useRouter();
+
   const [form, setForm] = useState(initForm);
+
   const [emailError, setEmailError] = useState<IError>(initError);
+
   const [passwords, setPasswords] = useState<IPasswords>(initForm);
+
   const [errors, setErrors] = useState<Record<string, IError>>(initErrors);
+
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     validatePassword: false,
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [role, setRole] = useState<string>('');
 
   // 사업자 번호 포맷팅 함수 (숫자만 남기고 000-00-00000 형식)
   const formatBizno = (value: string): string => {
@@ -140,10 +150,8 @@ export function SuperAdmin() {
         if (res.msg === '회원가입 실패') {
           throw new Error('회원가입 실패'); // 예외를 던져서 .catch()로 보냄
         }
-
-        console.log(res);
-        alert('회원가입이 완료되었습니다!');
-        router.replace('/auth/login');
+        setRole(res.data.role);
+        setIsModalOpen(true);
       })
       .catch((err) => {
         console.error(err);
@@ -280,6 +288,35 @@ export function SuperAdmin() {
       >
         시작하기
       </Button>
+      <Modal
+        open={isModalOpen}
+        onClose={() => {}} // 모달 닫기 동작 제거하거나 무시
+        onConfirm={() => router.replace('/auth/login')}
+        confirmText='확인'
+        hideCancel={true}
+      >
+        <div className='flex flex-col justify-center items-center gap-[36px]'>
+          <div className='flex flex-col items-center '>
+            <h2 className='mb-[10px] text-[40px] font-[600] text-[#F97B22]'>
+              회원가입 성공
+            </h2>
+            <span className='text-[20px]'>
+              {form.name}님, 회원가입을 진심으로 축하드립니다.
+            </span>
+          </div>
+          <Image
+            src='/img/modal/approved-md.svg'
+            alt='강아지 승인 사진'
+            width={240}
+            height={140}
+          />
+          <div className='flex items-center gap-[15px] text-[18px]'>
+            <span>회사명: {form.company}</span>
+            <div>|</div>
+            <span>직급: {role}</span>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
