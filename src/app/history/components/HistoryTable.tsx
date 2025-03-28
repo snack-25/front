@@ -2,14 +2,6 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/Table';
 
 interface Order {
   id: string;
@@ -22,7 +14,7 @@ interface Order {
 }
 
 interface HistoryTableProps {
-  orders?: Order[]; // ✅ orders를 선택적으로 받을 수 있도록 수정
+  orders?: Order[];
 }
 
 const mockOrders: Order[] = [
@@ -46,45 +38,45 @@ const mockOrders: Order[] = [
   },
 ];
 
-const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => { // ✅ 기본값으로 mockOrders 사용
+const headers = ['구매승인일', '상품정보', '주문 금액', '요청인', '담당자', '구매요청일'];
+
+const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => {
   const router = useRouter();
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {orders.length > 0 ? (
-        <Table className='w-full border-sperate border-spacing-0 overflow-hidden'>
-          <TableHeader className='bg-gray-50  border border-gray-200'>
-            <TableRow>
-              <TableHead className='rounded-tl-lg'>구매승인일</TableHead>
-              <TableHead>상품정보</TableHead>
-              <TableHead>주문 금액</TableHead>
-              <TableHead>요청인</TableHead>
-              <TableHead>담당자</TableHead>
-              <TableHead className='rounded-tr-lg'>구매요청일</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow 
-                key={order.id} 
-                className="cursor-pointer hover:bg-gray-50" 
-                onClick={() => router.push(`/history/${order.id}`)}
-              >
-                <TableCell>{order.date}</TableCell>
-                <TableCell>{order.product}</TableCell>
-                <TableCell>{order.price}원</TableCell>
-                <TableCell>{order.requester}</TableCell>
-                <TableCell>{order.handler}</TableCell>
-                <TableCell>{order.requestDate}</TableCell>
-              </TableRow>
+        <div className="flex flex-col gap-4">
+          {/* 헤더 */}
+          <div className="flex justify-around items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium">
+            {headers.map((header) => (
+              <span key={header} className="flex-1 text-center">
+                {header}
+              </span>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+
+          {/* 내용 */}
+          {orders.map((order) => (
+            <div
+              key={order.id}
+              className="flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50"
+              onClick={() => router.push(`/history/${order.id}`)}
+            >
+              <span className="flex-1 text-center">{order.date}</span>
+              <span className="flex-1 text-center">{order.product}</span>
+              <span className="flex-1 text-center">{order.price}원</span>
+              <span className="flex-1 text-center">{order.requester}</span>
+              <span className="flex-1 text-center">{order.handler}</span>
+              <span className="flex-1 text-center">{order.requestDate}</span>
+            </div>
+          ))}
+        </div>
       ) : (
-        <div className='flex flex-col items-center justify-center py-10'>
+        <div className="flex flex-col items-center justify-center py-10">
           <Image
-            src='/img/order/order-nothing-admin-md.svg'
-            alt='구매 내역 없음'
+            src="/img/order/order-nothing-admin-md.svg"
+            alt="구매 내역 없음"
             width={300}
             height={200}
           />
