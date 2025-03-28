@@ -10,6 +10,7 @@ export interface IProps {
   id: string | number;
   label: string;
   variant?: 'success' | 'error';
+  onClick?: () => void;
 }
 
 const shakeVariants = {
@@ -20,17 +21,22 @@ const shakeVariants = {
   },
 };
 
-export function useCustomToast({ label, variant }: Omit<IProps, 'id'>) {
+export function useCustomToast({
+  label,
+  variant,
+  onClick,
+}: Omit<IProps, 'id'>) {
   return sonnerToast.custom((id) => (
     <CustomToast
       id={id}
       label={label}
       variant={variant}
+      onClick={onClick}
     />
   ));
 }
 
-export function CustomToast({ id, label, variant }: IProps) {
+export function CustomToast({ id, label, variant, onClick }: IProps) {
   const textColor = variant === 'error' ? 'text-red-500' : 'text-primary-400';
   const iconSize = 'w-6 h-6';
 
@@ -46,12 +52,17 @@ export function CustomToast({ id, label, variant }: IProps) {
           {variant === 'error' ? (
             <CircleX className={cn(textColor, iconSize)} />
           ) : (
-            <CircleCheck className={cn(iconSize,'text-white fill-primary-400')} />
+            <CircleCheck
+              className={cn(iconSize, 'text-white fill-primary-400')}
+            />
           )}
           <p className={cn(textColor, 'text-lg font-medium')}>{label}</p>
         </div>
         <button onClick={() => sonnerToast.dismiss(id)}>
-          <X className={cn(textColor, iconSize)} />
+          <X
+            className={cn(textColor, iconSize)}
+            onClick={onClick}
+          />
         </button>
       </div>
     </motion.div>
