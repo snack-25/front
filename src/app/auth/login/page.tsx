@@ -58,11 +58,9 @@ export default function Login() {
 
     loginApi(form)
       .then((res) => {
-        // router.replace('/auth/login');
+        console.log('로그인 응답 데이터:', res); // 응답 데이터 확인
         useCustomToast({
-          onClick: () => {
-            router.replace('/');
-          },
+          onClick: () => router.replace('/auth/login'),
           label: '로그인이 완료되었습니다.',
         });
       })

@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useCustomToast } from '@/components/ui/Toast/Toast';
+import Cookies from 'js-cookie';
 
 export default function Budget() {
+  const token = Cookies.get('accessToken');
+  console.log('token', token);
+
   const [form, setForm] = useState({ thisMonth: '', everyMonth: '' });
   const [placeholderValue, setPlaceholderValue] = useState({
     thisMonth: '3,500,000',
