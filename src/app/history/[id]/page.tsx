@@ -97,7 +97,7 @@ const OrderDetailPage = () => {
 
       {/* 오른쪽 요청 정보 */}
 <div className="w-1/3 px-16 pt-10 pb-10">
-  <div className="bg-white shadow-md rounded-md p-6">
+  <div className=" rounded-md p-6">
     <h2 className="text-xl font-bold border-b-2 border-black-100">요청 정보</h2>
     <p className="text-xl text-gray-400 mt-2">2024. 07. 20.</p>
 
@@ -105,7 +105,7 @@ const OrderDetailPage = () => {
       <label className="block text-xl font-semibold text-black-400">요청인</label>
       <input
         type="text"
-        value={order?.requester}
+        value={order?.requester ?? ""}
         readOnly
         className="mt-1 w-full rounded-md border-2 text-2lg pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
       />
@@ -122,7 +122,7 @@ const OrderDetailPage = () => {
     </div>
   </div>
 
-  <div className="bg-white shadow-md rounded-md p-6 mt-6">
+  <div className=" rounded-md p-6 mt-6">
     <h2 className="text-xl font-bold border-b-2 border-black-100">승인 정보</h2>
     <p className="text-xl text-gray-400 mt-2">2024. 07. 24.</p>
 
@@ -130,7 +130,7 @@ const OrderDetailPage = () => {
       <label className="block text-xl font-semibold text-black-400">담당자</label>
       <input
         type="text"
-        value={order?.handler}
+        value={order?.handler ?? ""}
         readOnly
         className="mt-1 w-full rounded-md border-2 text-21g pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
       />

@@ -4,14 +4,6 @@ import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/Table';
 
 interface Order {
   id: string;
@@ -44,6 +36,8 @@ const mockOrders: Order[] = [
   },
 ];
 
+const headers = ['구매요청일', '상품정보', '주문 금액', '요청인', '비고'];
+
 const OrderTable: React.FC<OrderTableProps> = ({
   orders = mockOrders,
   onApprove,
@@ -54,64 +48,63 @@ const OrderTable: React.FC<OrderTableProps> = ({
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {orders.length > 0 ? (
-        <Table className='w-full border-collapse border border-gray-200 rounded-lg'>
-          <TableHeader className='bg-gray-50 text-2lg'>
-            <TableRow>
-              <TableHead className='rounded-tl-lg px-6 py-4'>구매요청일</TableHead>
-              <TableHead className='px-10 py-4'>상품정보</TableHead>
-              <TableHead className='px-6 py-4'>주문 금액</TableHead>
-              <TableHead className='px-6 py-4'>요청인</TableHead>
-              <TableHead className='rounded-tr-lg px-6 py-4'>비고</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className='text-2lg text-black-100'>
-            {orders.map((order) => (
-              <TableRow
-                key={order.id}
-                className='hover:bg-gray-50 cursor-pointer border-b border-gray-200'
-                onClick={() => router.push(`/request/${order.id}`)}
-              >
-                <TableCell className='px-6 py-4'>{order.date}</TableCell>
-                <TableCell className='px-10 py-4'>{order.product}</TableCell>
-                <TableCell className='px-6 py-4'>{parseInt(order.price).toLocaleString()}원</TableCell>
-                <TableCell className='px-6 py-4'>{order.requester}</TableCell>
-                <TableCell
-                  className='px-6 py-4'
-                  onClick={(e) => e.stopPropagation()} // 상세 이동 막기
-                >
-                  <div className='flex gap-2'>
-                    <button
-                      onClick={() => onReject?.(order.id)}
-                      className='bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
-                    >
-                      반려
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedOrder(order);
-                        setIsOpen(true);
-                      }}
-                      className='bg-orange-400 text-white px-3 py-1 rounded hover:bg-orange-600 w-[94px] h-[44px]'
-                    >
-                      승인
-                    </button>
-                  </div>
-                </TableCell>
-              </TableRow>
+        <div className="flex flex-col">
+          {/* 헤더 */}
+          <div className="flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6">
+            {headers.map((header) => (
+              <span key={header} className="flex-1 text-center">
+                {header}
+              </span>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+
+          {/* 바디 */}
+          {orders.map((order) => (
+            <div
+              key={order.id}
+              className="flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6"
+              onClick={() => router.push(`/request/${order.id}`)}
+            >
+              <span className="flex-1 text-center">{order.date}</span>
+              <span className="flex-1 text-center">{order.product}</span>
+              <span className="flex-1 text-center">
+                {parseInt(order.price).toLocaleString()}원
+              </span>
+              <span className="flex-1 text-center">{order.requester}</span>
+              <div
+                className="flex-1 flex justify-center gap-2 pb-0.5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => onReject?.(order.id)}
+                  className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]"
+                >
+                  반려
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setIsOpen(true);
+                  }}
+                  className="bg-orange-400 text-white px-3 py-1 rounded hover:bg-orange-600 w-[94px] h-[44px]"
+                >
+                  승인
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
-        <div className='flex flex-col items-center justify-center py-10'>
+        <div className="flex flex-col items-center justify-center py-10">
           <Image
-            src='/img/order/order-nothing-admin-md.svg'
-            alt='구매 요청 없음'
+            src="/img/order/order-nothing-admin-md.svg"
+            alt="구매 요청 없음"
             width={300}
             height={200}
           />
-          <p className='text-gray-500 mt-4'>신청된 요청이 없습니다</p>
+          <p className="text-gray-500 mt-4">신청된 요청이 없습니다</p>
         </div>
       )}
 

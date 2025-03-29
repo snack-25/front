@@ -37,7 +37,7 @@ const OrdersPage = () => {
   const [isError] = useState(false); // ✅ 에러 상태는 더 이상 필요하지 않음
 
   return (
-    <div className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4]'}>
+    <div className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen'}>
       <div className={'w-full h-[114px] flex justify-between items-center'}>
         <h1 className={'text-[42px] font-bold'}>구매 내역 확인</h1>
       </div>
