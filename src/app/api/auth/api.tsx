@@ -14,6 +14,12 @@ interface loginProps {
   password: string;
 }
 
+interface budgetProps {
+  companyId: string;
+  thisMonth: number;
+  everyMonth: number;
+}
+
 export async function signupApi(body: SignProps) {
   console.log('body');
   // 여기에서 body를 문자열로 변환 (JSON.stringify)해서 보내야 함
@@ -70,6 +76,18 @@ export async function invitationSignupApi(params: {
     return await res;
   } catch (error) {
     return { msg: '회원가입에 실패했습니다', error };
+  }
+}
+
+export async function budgetApi(body: { companyId: string }) {
+  try {
+    const res = await fetchApi('/budgets/inquiry', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    return res;
+  } catch (error) {
+    return { msg: '예산 변경이 실패하였습니다' };
   }
 }
 

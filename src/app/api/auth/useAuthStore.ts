@@ -1,6 +1,8 @@
 import { create } from 'zustand';
-import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { loginApi, logoutApi } from './api';
+import { initFormType } from '@/app/auth/login/page';
+import { persist } from 'zustand/middleware'; // 로컬스토리지 사용할 시
 
 // 백엔드에서 보내는거
 // user {
@@ -11,48 +13,60 @@ import { jwtDecode } from 'jwt-decode';
 // }
 
 // JWT 토큰 구조 정의 (백엔드에서 어떤 정보를 주는지에 따라 다름)
-interface DecodedToken {
+interface userInfo {
   id: number;
   email: string;
   name: string;
-  company: {
-    name: string;
-    id: string;
-  };
   companyId: string;
   role: 'SUPERADMIN' | 'ADMIN' | 'USER';
+}
+interface companyInfo {
+  name: string;
+  id: string;
 }
 
 // Zustand Store 타입 정의
 interface AuthState {
-  user: DecodedToken | null;
-  isAuthenticated: boolean;
-  login: () => void;
+  user: userInfo | null;
+  company: companyInfo | null;
+  isAuth: boolean;
+  login: (form: initFormType) => Promise<void>;
   logout: () => void;
 }
 
 // Zustand Store 생성
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      company: null,
+      isAuth: false,
 
-  // 로그인 시 실행 (토큰을 쿠키에서 읽고 상태 업데이트)
-  login: () => {
-    const token = Cookies.get('accessToken');
-    if (token) {
-      try {
-        const decoded = jwtDecode<DecodedToken>(token);
-        console.log('📌 디코딩된 토큰:', decoded); // 🔥 콘솔에서 자동 확인
-        set({ user: decoded, isAuthenticated: true });
-      } catch (error) {
-        console.error('토큰 디코딩 오류:', error);
-      }
-    }
-  },
+      // 로그인 (API 호출 후 상태 업데이트 + localStorage 저장)
+      login: async (form) => {
+        try {
+          const loginData = await loginApi(form);
+          const { company, companyId, ...rest } = loginData.data;
 
-  // 로그아웃 시 실행 (상태 초기화 및 쿠키 삭제)
-  logout: () => {
-    Cookies.remove('accessToken');
-    set({ user: null, isAuthenticated: false });
-  },
-}));
+          if (loginData) {
+            set({ user: rest, company, isAuth: true });
+          } else {
+            set({ user: null, company: null, isAuth: false });
+          }
+        } catch (error) {
+          console.error('로그인 실패:', error);
+        }
+      },
+
+      // 로그아웃 (상태 초기화 + localStorage 삭제)
+      logout: async () => {
+        await logoutApi();
+        set({ user: null, company: null, isAuth: false });
+      },
+    }),
+    {
+      name: 'auth-storage', // localStorage 키 이름
+      // getStorage: () => localStorage, // localStorage에 저장
+    },
+  ),
+);

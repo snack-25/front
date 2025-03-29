@@ -43,15 +43,10 @@ const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export function SuperAdmin() {
   const router = useRouter();
-
   const [form, setForm] = useState(initForm);
-
   const [emailError, setEmailError] = useState<IError>(initError);
-
   const [passwords, setPasswords] = useState<IPasswords>(initForm);
-
   const [errors, setErrors] = useState<Record<string, IError>>(initErrors);
-
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     validatePassword: false,
@@ -147,10 +142,10 @@ export function SuperAdmin() {
     const formData = { ...form, bizno: getCleanBizno(form.bizno) };
     signupApi(formData)
       .then((res) => {
-        if (res.msg === '회원가입 실패') {
+        if (!res.ok) {
           throw new Error('회원가입 실패'); // 예외를 던져서 .catch()로 보냄
         }
-        setRole(res.data.role);
+        // setRole(res.data.role);
         setIsModalOpen(true);
       })
       .catch((err) => {

@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';
 import { useCustomToast } from '@/components/ui/Toast/Toast';
 import Image from 'next/image';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 interface IError {
   isError: boolean;
@@ -18,13 +19,18 @@ const initError = {
   msg: '',
 };
 
+export type initFormType = {
+  email: string;
+  password: string;
+};
 const initForm = { email: '', password: '' };
 const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Login() {
   const router = useRouter();
+  const { isAuth, login } = useAuthStore();
 
-  const [form, setForm] = useState(initForm);
+  const [form, setForm] = useState<initFormType>(initForm);
   const [emailError, setEmailError] = useState<IError>(initError);
   const [nullError, setNullError] = useState<IError>(initError);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
@@ -50,27 +56,28 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.email || !form.password) {
       alert('모든 항목을 입력해주세요!');
       return;
     }
-
-    loginApi(form)
-      .then((res) => {
-        console.log('로그인 응답 데이터:', res); // 응답 데이터 확인
-        useCustomToast({
-          onClick: () => router.replace('/auth/login'),
-          label: '로그인이 완료되었습니다.',
-        });
-      })
-      .catch((err) => {
-        // setEmailError({ isError: true, msg: err.msg });
-        useCustomToast({ label: '로그인이 실패하였습니다.' });
-      });
+    useCustomToast({
+      label: '로그인 성공했습니다.',
+      variant: 'success',
+      onClick: () => {},
+    });
+    const test = await login(form);
   };
 
+  useEffect(() => {
+    if (isAuth) {
+      router.replace('/');
+    }
+  }, [isAuth]);
+
   const isFormValid = form.email.length > 0 && form.password.length > 0;
+
+  if (isAuth) return <>....</>;
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -103,6 +110,7 @@ export default function Login() {
             onChange={handleChange}
             onBlur={handleNullBlur}
             value={form.password}
+            autoComplete='current-password'
           >
             <Image
               src={

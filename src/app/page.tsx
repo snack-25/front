@@ -1,25 +1,19 @@
 'use client';
-import Cookies from 'js-cookie';
-
 import { Button } from '@/components/ui/Button';
 import { logoutApi } from './api/auth/api';
-
-declare module 'js-cookie' {
-  const Cookies: any;
-}
+import { useEffect } from 'react';
+import { useAuthStore } from './api/auth/useAuthStore';
 
 export default function Home() {
+  const { user, company, logout } = useAuthStore();
+
+  useEffect(() => {
+    console.log('landing user', user);
+    console.log('landing company', company);
+  }, [user]);
+
   const handleLogout = () => {
-    console.log('zmfflr');
-    logoutApi()
-      .then((res) => {
-        console.log('res', res);
-        console.log('안가지는거니?');
-      })
-      .catch((err) => {
-        console.error('로그아웃 오류', err);
-        alert(err);
-      });
+    logout();
   };
 
   return (
