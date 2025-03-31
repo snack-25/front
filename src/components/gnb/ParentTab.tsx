@@ -9,8 +9,14 @@ interface Props {
   onClick: (level: 'parentId', value: string) => void;
 }
 
-export default function ParentTab({ parents, currentParentId, onClick }: Props) {
-  if (!parents || parents.length === 0) return null;
+export default function ParentTab({
+  parents,
+  currentParentId,
+  onClick,
+}: Props) {
+  if (!parents || parents.length === 0) {
+    return null;
+  }
 
   return (
     <ul className={ulStyle}>
@@ -38,4 +44,3 @@ export default function ParentTab({ parents, currentParentId, onClick }: Props) 
     </ul>
   );
 }
-
