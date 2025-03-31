@@ -11,7 +11,9 @@ interface Props {
 }
 
 export default function SubTab({ sub, currentCategoryId, onClick }: Props) {
-  if (!sub) return <Loading size='S' />;
+  if (!sub) {
+    return <Loading size='S' />;
+  }
 
   return (
     <ul className={ulStyle}>
