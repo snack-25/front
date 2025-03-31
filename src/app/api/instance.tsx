@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACK_URL || 'http://localhost:4000';
+import { API_BASE_URL } from '@/lib/constants';
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {

@@ -1,15 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
+import { useCustomToast } from '@/components/ui/Toast/Toast';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { budgetApi } from '@/app/api/auth/api';
 
 export default function Budget() {
-  const [form, setForm] = useState({ thisMonth: '', everyMonth: '' });
-  const [placeholderValue, setPlaceholderValue] = useState({
-    thisMonth: '3,500,000',
-    everyMonth: '3,000,000',
-  });
+  const [form, setForm] = useState({ thisMonth: '0', everyMonth: '0' }); // 기본값 '0'으로 설정
+  const [load, setLoad] = useState(false);
+  const router = useRouter();
+  const { user, company, isAuth } = useAuthStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 기존에 입력된 콤마 제거
@@ -24,13 +27,61 @@ export default function Budget() {
     setForm((prev) => ({ ...prev, [e.target.name]: formattedValue }));
   };
 
-  // const handleClick = () => {
-  //     if(input.vlaue == ''){
-  //         return input.placeholedr.value
-  //     }else(){
-  // return form.value
-  //     }
-  // }
+  // 백엔드로 데이터 전송 (콤마 제거 후 숫자만 전송)
+  const handleSubmit = async () => {
+    useCustomToast({ label: '예산이 변경되었습니다.' });
+
+    const sendData = {
+      thisMonth: Number(form.thisMonth.replace(/,/g, '')),
+      everyMonth: Number(form.everyMonth.replace(/,/g, '')),
+    };
+
+    console.log('백엔드로 보낼 데이터:', sendData);
+  };
+
+  useEffect(() => {
+    setLoad(true);
+  }, []);
+
+  // 예산 정보를 백엔드에서 받아오는 로직
+  useEffect(() => {
+    if (!load) return;
+    console.log('company', company);
+
+    const fetchBudgetInfo = async () => {
+      // companyId가 undefined인 경우에는 fetch를 하지 않도록 처리
+      if (!company) throw new Error('회사 Id가 없습니다.');
+      if (!company.id) {
+        console.error('회사 ID가 없습니다');
+        return; // companyId가 없으면 API 호출을 하지 않음
+      }
+
+      try {
+        // companyId가 존재하는 경우에만 API 호출
+        const response = await budgetApi({ companyId: company.id });
+        if (response && response.ok) {
+          // 예산 정보가 있다면 form에 설정
+          const { year, month } = response.data;
+          setForm({
+            thisMonth: year ? year.toString() : '0',
+            everyMonth: month ? month.toString() : '0',
+          });
+        }
+      } catch (error) {
+        console.error('예산 정보 조회 실패', error);
+      }
+    };
+
+    fetchBudgetInfo();
+  }, [user]); // user?.companyId가 변경될 때마다 호출
+
+  useEffect(() => {
+    if (load) {
+      if (user?.role !== 'SUPERADMIN' || !isAuth) {
+        router.replace('/');
+      }
+    }
+  }, [load]);
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -44,7 +95,7 @@ export default function Budget() {
           <Input
             titleClassName='이번 달 예산'
             name='thisMonth'
-            placeholder={placeholderValue.thisMonth}
+            type='text' // 숫자 형식인데, 컴마가 있기 때문에 'text'로 설정
             onChange={handleChange}
             value={form.thisMonth}
           />
@@ -53,7 +104,7 @@ export default function Budget() {
           <Input
             titleClassName='매달 시작 예산'
             name='everyMonth'
-            placeholder={placeholderValue.everyMonth}
+            type='text' // 숫자 형식인데, 컴마가 있기 때문에 'text'로 설정
             onChange={handleChange}
             value={form.everyMonth}
           />
@@ -61,8 +112,7 @@ export default function Budget() {
         <Button
           className='mt-[16px] tb:mt-[40px]'
           filled='orange'
-          //   onClick={handleClick}
-          //   disabled={!isFormValid}
+          onClick={handleSubmit}
         >
           수정하기
         </Button>
