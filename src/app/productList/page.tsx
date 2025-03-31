@@ -14,6 +14,7 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/productList/Loading';
+import { useCustomToast } from '@/components/ui/Toast/Toast';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -120,8 +121,57 @@ export default function ProductList() {
   };
 
   // 등록 모달 제출 함수
-  const handleSubmit = () => {
-    /* 등록 api 연동 */
+  const handleSubmit = async (data: {
+    name: string;
+    category: string;
+    subCategory: string;
+    price: number;
+    image: File | null;
+    link: string;
+  }) => {
+    try {
+      const categoryId = `sub-${data.subCategory}`;
+
+      // imageUrl은 실제 업로드가 아니라면 링크 필드로 대체
+      const imageUrl = data.link;
+
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          price: data.price,
+          description: `${data.category} ${data.subCategory}`, // 예시로 구성
+          categoryId,
+          imageUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        useCustomToast({
+          label: '상품 등록에 실패하였습니다.',
+          variant: 'error',
+        });
+        throw new Error('상품 등록에 실패했습니다.');
+      }
+
+      useCustomToast({
+        label: '상품 등록에 성공하였습니다!',
+        variant: 'success',
+      });
+
+      // 등록 후 모달 닫기 or 리스트 갱신 등
+      setIsOpen(false);
+      router.refresh(); // 새로고침으로 상품 목록 갱신
+    } catch (error) {
+      console.error(error);
+      useCustomToast({
+        label: '상품 등록 중 오류가 발생하였습니다.',
+        variant: 'error',
+      });
+    }
   };
 
   return (
