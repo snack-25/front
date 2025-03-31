@@ -53,11 +53,15 @@ export default function ProductDetail() {
   const handleDeleteOpen = () => setIsDeleteOpen((prev) => !prev);
 
   useEffect(() => {
-    if (data) setDetail(data);
+    if (data) {
+      setDetail(data);
+    }
   }, [data]);
 
   useEffect(() => {
-    if (!detail) return;
+    if (!detail) {
+      return;
+    }
     const fetchName = async () => {
       const data: IProducts[] = await fetchApi('/categories/all');
       const mainData = data.find((item) => item.id === mainCategory);
@@ -79,8 +83,12 @@ export default function ProductDetail() {
     setIsLoading(false);
   }, [detail]);
 
-  if (isLoading || !formData?.id) return <Loading size='L' />;
-  if (!detail) return <EmptyImage />;
+  if (isLoading || !formData?.id) {
+    return <Loading size='L' />;
+  }
+  if (!detail) {
+    return <EmptyImage />;
+  }
 
   const { name, price, categoryId, imageUrl } = detail;
 

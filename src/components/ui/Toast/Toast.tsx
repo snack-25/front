@@ -21,7 +21,7 @@ const shakeVariants = {
   },
 };
 
-export function useCustomToast({
+export function showCustomToast({
   label,
   variant,
   onClick,

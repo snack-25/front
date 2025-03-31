@@ -75,7 +75,9 @@ export default function TabMenu() {
   }, [parentId]);
 
   useEffect(() => {
-    if (!sub || sub.length === 0) return;
+    if (!sub || sub.length === 0) {
+      return;
+    }
 
     const currentCategoryId = searchParams.get('categoryId');
     const isCurrentValid = sub.some((s) => s.id === currentCategoryId);
