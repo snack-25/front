@@ -5,9 +5,9 @@ import { loginApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';
-import { useCustomToast } from '@/components/ui/Toast/Toast';
 import Image from 'next/image';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface IError {
   isError: boolean;
@@ -61,7 +61,7 @@ export default function Login() {
       alert('모든 항목을 입력해주세요!');
       return;
     }
-    useCustomToast({
+    showCustomToast({
       label: '로그인 성공했습니다.',
       variant: 'success',
       onClick: () => {},
