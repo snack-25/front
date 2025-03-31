@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useCustomToast } from '@/components/ui/Toast/Toast';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { budgetApi } from '@/app/api/auth/api';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function Budget() {
   const [form, setForm] = useState({ thisMonth: '0', everyMonth: '0' }); // 기본값 '0'으로 설정
@@ -29,7 +29,7 @@ export default function Budget() {
 
   // 백엔드로 데이터 전송 (콤마 제거 후 숫자만 전송)
   const handleSubmit = async () => {
-    useCustomToast({ label: '예산이 변경되었습니다.' });
+    showCustomToast({ label: '예산이 변경되었습니다.' });
 
     const sendData = {
       thisMonth: Number(form.thisMonth.replace(/,/g, '')),
