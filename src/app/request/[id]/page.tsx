@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import StatusModal from '../components/StatusModal';
 import Image from 'next/image';
+import router from 'next/router';
+
 
 interface OrderItem {
   id: string;
@@ -28,6 +30,7 @@ interface BudgetInfo {
 }
 
 const OrderDetailPage = () => {
+  const Router = useRouter();
   const { id } = useParams();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [budget, setBudget] = useState<BudgetInfo>({
@@ -224,7 +227,7 @@ const OrderDetailPage = () => {
           buttonRight={modalType === 'approved' ? '구매 내역 보기' : '구매 요청 목록'}
           onClose={() => setModalType(null)}
           onNavigate={() => {
-            window.location.href = modalType === 'approved' ? '/history' : '/request';
+          router.push( modalType === 'approved' ? '/history' : '/request');
           }}
         />
       )}
