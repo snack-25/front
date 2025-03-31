@@ -37,7 +37,8 @@ export default function Budget() {
     };
 
     console.log('백엔드로 보낼 데이터:', sendData);
-    
+  };
+
   useEffect(() => {
     setLoad(true);
   }, []);
