@@ -14,7 +14,7 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/productList/Loading';
-import { useCustomToast } from '@/components/ui/Toast/Toast';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -74,13 +74,17 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
-    if (!categoryId || !sort) return;
+    if (!categoryId || !sort) {
+      return;
+    }
 
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const data = await fetchProducts(page, categoryId as string, sort);
-        if (!data) notFound();
+        if (!data) {
+          return <EmptyImage />;
+        }
 
         const { items, hasNextPage, hasPrevPage } = data;
 
@@ -150,14 +154,14 @@ export default function ProductList() {
       });
 
       if (!response.ok) {
-        useCustomToast({
+        showCustomToast({
           label: '상품 등록에 실패하였습니다.',
           variant: 'error',
         });
         throw new Error('상품 등록에 실패했습니다.');
       }
 
-      useCustomToast({
+      showCustomToast({
         label: '상품 등록에 성공하였습니다!',
         variant: 'success',
       });
@@ -167,7 +171,7 @@ export default function ProductList() {
       router.refresh(); // 새로고침으로 상품 목록 갱신
     } catch (error) {
       console.error(error);
-      useCustomToast({
+      showCustomToast({
         label: '상품 등록 중 오류가 발생하였습니다.',
         variant: 'error',
       });

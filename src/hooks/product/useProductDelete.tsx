@@ -1,4 +1,4 @@
-import { useCustomToast } from '@/components/ui/Toast/Toast';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 import { useRouter } from 'next/navigation';
 
 const API_BASE_URL =
@@ -17,10 +17,10 @@ export default function useProductDelete() {
         throw new Error();
       }
 
-      useCustomToast({ label: '상품이 삭제되었습니다.', variant: 'success' });
+      showCustomToast({ label: '상품이 삭제되었습니다.', variant: 'success' });
       router.replace(`/productList?parentId=cat-스낵&categoryId=sub-과자`);
     } catch (err) {
-      useCustomToast({
+      showCustomToast({
         label: '상품 삭제에 실패하였습니다.',
         variant: 'error',
       });

@@ -1,6 +1,6 @@
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/page';
-import { useCustomToast } from '@/components/ui/Toast/Toast';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 import { useEffect, useState } from 'react';
 
 interface IUpdatePayload {
@@ -70,12 +70,12 @@ export const useDetail = (id: string) => {
       if (!res || res.error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('❌ 수정 실패 응답:', res);
-        }        useCustomToast({ label: '상품 수정에 실패하였습니다.' });
+        }
+        showCustomToast({ label: '상품 수정에 실패하였습니다.' });
         throw new Error('수정 실패');
       }
 
-      useCustomToast({ label: '상품이 수정되었습니다.' });
-      
+      showCustomToast({ label: '상품이 수정되었습니다.' });
     } catch (err) {
       console.error('🔥 수정 중 에러 발생:', err);
     }
