@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function Budget() {
   const { user, company, isAuth } = useAuthStore();
@@ -30,7 +31,6 @@ export default function Budget() {
         return;
       }
       try {
-        console.log('company', company);
         const response = await getBudgetApi({ companyId: company.id });
         if (response && response.ok) {
           const { year, month } = response.data;
@@ -89,23 +89,25 @@ export default function Budget() {
     }));
   };
 
-  // onFocus: 값이 기본값과 동일하면 빈 문자열로 만들어 입력 필드를 비움 (placeholder 효과)
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: {
-        ...prev[name as keyof typeof prev],
-        value:
-          prev[name as keyof typeof prev].value ===
-          prev[name as keyof typeof prev].default
-            ? ''
-            : prev[name as keyof typeof prev].value,
-      },
-    }));
+
+    setForm((prev) => {
+      const currentValue = prev[name as keyof typeof prev].value;
+      const defaultValue = prev[name as keyof typeof prev].default;
+
+      // 기본값과 동일하면 빈 문자열로 설정, 아니면 기존 값을 유지
+      return {
+        ...prev,
+        [name]: {
+          ...prev[name as keyof typeof prev],
+          value: currentValue === defaultValue ? '' : currentValue,
+          modified: currentValue !== defaultValue, // 수정 여부 체크
+        },
+      };
+    });
   };
 
-  // onBlur: 입력 값이 비어 있으면 기본값으로 복원
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -115,7 +117,7 @@ export default function Budget() {
         ...prev[name as keyof typeof prev],
         value:
           value.trim() === '' ? prev[name as keyof typeof prev].default : value,
-        modified: value.trim() !== prev[name as keyof typeof prev].default,
+        modified: value.trim() !== prev[name as keyof typeof prev].default, // 수정 여부 체크
       },
     }));
   };
@@ -145,7 +147,7 @@ export default function Budget() {
         },
       }));
 
-      useCustomToast({ label: '예산이 변경되었습니다.' });
+      showCustomToast({ label: '예산이 변경되었습니다.' });
     } catch (error) {
       console.error('Submit failed:', error);
     }

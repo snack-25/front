@@ -42,6 +42,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       onFocus,
       onBlur,
       isModified,
+      value,
       ...props
     },
     ref,
@@ -49,14 +50,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [isFocused, setIsFocused] = useState(false);
 
     // 포커스 시 상태 업데이트
-    const handleFocus = () => {
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(true);
+      onFocus?.(e); // 기존 onFocus 콜백 호출
     };
 
     // 포커스 아웃 시 상태 업데이트
-    const handleBlur = () => {
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(false);
+      onBlur?.(e); // 기존 onBlur 콜백 호출
     };
+
     return (
       <div className='flex flex-col relative'>
         {titleClassName && (
@@ -74,20 +78,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         >
           <input
             type={type}
-            style={{
-              color: isModified ? 'var(--color-black-400)' : '#A0A0A0', // 수정되면 검정색, 아니면 회색
-            }}
             className={cn(
               'w-full focus:outline-none placeholder-[var(--color-gray-500)] bg-[transparent] text-[14px] tb:text-[18px] pr-10',
-              isFocused || props.value ? 'text-black' : 'text-gray-400',
+              // 포커스 상태일 때 텍스트 색상
+              isFocused || value ? 'text-black' : '', // 포커스가 있을 때 검정색
+              // 수정된 값이 있을 때 텍스트 색상
+              isModified ? 'text-black' : 'text-gray-400', // 수정된 값은 검정색, 기본값은 회색
               className,
               titleClassName,
             )}
             onChange={onChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            // onFocus={onFocus}
+            // onBlur={onBlur}
             ref={ref}
             disabled={disabled} // ✅ 기본 disabled 속성 그대로 사용
+            value={value}
             {...props}
           />
           {children}
