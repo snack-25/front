@@ -60,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
 
       // 로그아웃 (상태 초기화 + localStorage 삭제)
       logout: async () => {
+        console.log('버튼 누른거');
         await logoutApi();
         set({ user: null, company: null, isAuth: false });
       },

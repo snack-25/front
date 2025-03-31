@@ -27,10 +27,17 @@ export default function Budget() {
     setForm((prev) => ({ ...prev, [e.target.name]: formattedValue }));
   };
 
-  const handleSubmit = () => {
+  // 백엔드로 데이터 전송 (콤마 제거 후 숫자만 전송)
+  const handleSubmit = async () => {
     useCustomToast({ label: '예산이 변경되었습니다.' });
-    // 서버로 전송하는 로직 추가
-  };
+
+    const sendData = {
+      thisMonth: Number(form.thisMonth.replace(/,/g, '')),
+      everyMonth: Number(form.everyMonth.replace(/,/g, '')),
+    };
+
+    console.log('백엔드로 보낼 데이터:', sendData);
+    
   useEffect(() => {
     setLoad(true);
   }, []);

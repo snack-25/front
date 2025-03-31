@@ -37,6 +37,7 @@ export async function loginApi(body: loginProps) {
 }
 
 export async function logoutApi() {
+  console.log('12321');
   return await fetchApi('/auth/logout', {
     method: 'POST',
     credentials: 'include',
