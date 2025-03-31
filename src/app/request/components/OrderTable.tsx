@@ -46,6 +46,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [modalType, setModalType] = useState<'approved' | 'rejected' | null>(null);
 
   return (
     <div className="w-full">

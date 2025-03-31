@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import StatusModal from '../components/StatusModal';
+import Image from 'next/image';
 
 interface OrderItem {
   id: string;
@@ -32,6 +34,7 @@ const OrderDetailPage = () => {
     monthlyLimit: 1500000,
     remaining: 200000,
   });
+  const [modalType, setModalType] = useState<'approved' | 'rejected' | null>(null);
 
   const totalCost = order
     ? order.items.reduce((acc, item) => acc + item.price * item.quantity, 0)
@@ -108,10 +111,16 @@ const OrderDetailPage = () => {
 
         {/* 하단 승인/반려 버튼 */}
         <div className="mt-6 flex justify-center gap-4">
-          <button className="bg-gray-300 text-gray-600 px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105 ">
+          <button
+            className="bg-gray-300 text-gray-600 px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105"
+            onClick={() => setModalType('rejected')}
+          >
             요청 반려
           </button>
-          <button className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105">
+          <button
+            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105"
+            onClick={() => setModalType('approved')}
+          >
             요청 승인
           </button>
         </div>
@@ -132,7 +141,7 @@ const OrderDetailPage = () => {
             </label>
             <input
               type="text"
-              value={order?.requester}
+              value={order?.requester ?? ''}
               readOnly
               className="mt-1 w-full rounded-md border-2 text-lg pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500"
             />
@@ -200,6 +209,25 @@ const OrderDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* 승인/반려 모달 */}
+      {modalType && (
+        <StatusModal
+          status={modalType}
+          title={modalType === 'approved' ? '승인 완료' : '요청 반려'}
+          message={
+            modalType === 'approved'
+              ? '승인이 완료되었어요!\n구매 내역을 통해 배송현황을 확인해보세요'
+              : '요청이 반려되었어요\n목록에서 다른 요청을 확인해보세요'
+          }
+          buttonLeft="홈으로"
+          buttonRight={modalType === 'approved' ? '구매 내역 보기' : '구매 요청 목록'}
+          onClose={() => setModalType(null)}
+          onNavigate={() => {
+            window.location.href = modalType === 'approved' ? '/history' : '/request';
+          }}
+        />
+      )}
     </div>
   );
 };
