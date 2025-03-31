@@ -80,7 +80,7 @@ export async function invitationSignupApi(params: {
   }
 }
 
-export async function budgetApi(body: { companyId: string }) {
+export async function getBudgetApi(body: { companyId: string }) {
   try {
     const res = await fetchApi('/budgets/inquiry', {
       method: 'POST',
@@ -88,6 +88,18 @@ export async function budgetApi(body: { companyId: string }) {
     });
     return res;
   } catch (error) {
+    return { msg: '예산 조회에 실패하였습니다' };
+  }
+}
+
+export async function updateBudgetApi(body: {}) {
+  try {
+    const res = await fetchApi('/budgets/update', {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    return res;
+  } catch (err) {
     return { msg: '예산 변경이 실패하였습니다' };
   }
 }
