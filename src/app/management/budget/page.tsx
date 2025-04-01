@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { fetchApi } from '@/app/api/instance';
 
 export default function Budget() {
   const { user, company, isAuth } = useAuthStore();
