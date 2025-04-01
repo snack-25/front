@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import StatusModal from '../components/StatusModal';
 import Image from 'next/image';
-import router from 'next/router';
-
 
 interface OrderItem {
   id: string;
@@ -30,7 +28,7 @@ interface BudgetInfo {
 }
 
 const OrderDetailPage = () => {
-  const Router = useRouter();
+  const router = useRouter();
   const { id } = useParams();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [budget, setBudget] = useState<BudgetInfo>({
@@ -47,24 +45,67 @@ const OrderDetailPage = () => {
   const isOverBudget = remainingAfterPurchase < 0;
 
   useEffect(() => {
-    // Mock 데이터 설정
-    const mockOrder: OrderDetail = {
-      id: id as string,
-      date: '2024.07.24',
-      items: Array(6).fill({
-        id: '1',
-        category: '청량.음료',
-        name: '코카콜라 제로',
-        quantity: 4,
-        price: 2000,
-      }),
-      requester: '김스낵',
-      handler: '김코드',
-      requestDate: '2024.07.20',
+    if (!id) return;
+
+    const fetchOrderDetail = async () => {
+      try {
+        const res = await fetch(`/order-requests/${id}`);
+        if (!res.ok) throw new Error('데이터 불러오기 실패');
+        const data = await res.json();
+
+        const transformed: OrderDetail = {
+          id: data.id,
+          date: data.createdAt.slice(0, 10),
+          requester: data.requester.name,
+          handler: data.resolver?.name || '-',
+          requestDate: data.createdAt.slice(0, 10),
+          items: data.orderItems.map((item: any) => ({
+            id: item.id,
+            category: item.categoryName,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        };
+
+        setOrder(transformed);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-    setOrder(mockOrder);
+    fetchOrderDetail();
   }, [id]);
+
+  const handleApprove = async () => {
+    try {
+      await fetch(`/order-requests/${id}/accept`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ adminNotes: '승인합니다.' }),
+      });
+      setModalType('approved');
+    } catch (error) {
+      console.error('승인 실패:', error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await fetch(`/order-requests/${id}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ adminNotes: '사유 부족으로 반려합니다.' }),
+      });
+      setModalType('rejected');
+    } catch (error) {
+      console.error('반려 실패:', error);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10">
@@ -90,9 +131,7 @@ const OrderDetailPage = () => {
                   <div>
                     <p className="text-sm text-gray-500">{item.category}</p>
                     <p className="text-lg font-semibold">{item.name}</p>
-                    <p className="text-sm font-semibold">
-                      수량: {item.quantity}개
-                    </p>
+                    <p className="text-sm font-semibold">수량: {item.quantity}개</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
@@ -116,13 +155,13 @@ const OrderDetailPage = () => {
         <div className="mt-6 flex justify-center gap-4">
           <button
             className="bg-gray-300 text-gray-600 px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105"
-            onClick={() => setModalType('rejected')}
+            onClick={handleReject}
           >
             요청 반려
           </button>
           <button
             className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105"
-            onClick={() => setModalType('approved')}
+            onClick={handleApprove}
           >
             요청 승인
           </button>
@@ -133,15 +172,11 @@ const OrderDetailPage = () => {
       <div className="w-1/3 px-16 pt-10 pb-10">
         {/* 요청 정보 */}
         <div className="bg-#FBF8F4 rounded-md p-6">
-          <h2 className="text-xl font-bold border-b-2 border-black-100">
-            요청 정보
-          </h2>
+          <h2 className="text-xl font-bold border-b-2 border-black-100">요청 정보</h2>
           <p className="text-xl text-gray-400 mt-2">{order?.requestDate}</p>
 
           <div className="mt-2">
-            <label className="block text-xl font-semibold text-black-400">
-              요청인
-            </label>
+            <label className="block text-xl font-semibold text-black-400">요청인</label>
             <input
               type="text"
               value={order?.requester ?? ''}
@@ -151,9 +186,7 @@ const OrderDetailPage = () => {
           </div>
 
           <div className="mt-4">
-            <label className="block text-xl font-semibold text-black-400">
-              요청 메시지
-            </label>
+            <label className="block text-xl font-semibold text-black-400">요청 메시지</label>
             <textarea
               value="코카콜라 제로 인기가 많아요."
               readOnly
@@ -165,15 +198,11 @@ const OrderDetailPage = () => {
 
         {/* 예산 정보 */}
         <div className="bg-#FBF8F4 rounded-md p-6 mt-6">
-          <h2 className="text-xl font-bold border-b-2 border-black-100">
-            예산 정보
-          </h2>
+          <h2 className="text-xl font-bold border-b-2 border-black-100">예산 정보</h2>
 
           <div className="mt-4 space-y-4">
             <div>
-              <label className="block font-semibold text-gray-700 text-xl">
-                이번 달 지원예산
-              </label>
+              <label className="block font-semibold text-gray-700 text-xl">이번 달 지원예산</label>
               <input
                 value={budget.monthlyLimit.toLocaleString() + '원'}
                 readOnly
@@ -182,9 +211,7 @@ const OrderDetailPage = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-gray-700">
-                이번 달 남은 예산
-              </label>
+              <label className="block font-semibold text-gray-700">이번 달 남은 예산</label>
               <input
                 value={budget.remaining.toLocaleString() + '원'}
                 readOnly
@@ -200,9 +227,7 @@ const OrderDetailPage = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-gray-700">
-                구매 후 예산
-              </label>
+              <label className="block font-semibold text-gray-700">구매 후 예산</label>
               <input
                 value={remainingAfterPurchase.toLocaleString() + '원'}
                 readOnly
@@ -227,7 +252,7 @@ const OrderDetailPage = () => {
           buttonRight={modalType === 'approved' ? '구매 내역 보기' : '구매 요청 목록'}
           onClose={() => setModalType(null)}
           onNavigate={() => {
-          Router.push( modalType === 'approved' ? '/history' : '/request');
+            router.push(modalType === 'approved' ? '/history' : '/request');
           }}
         />
       )}

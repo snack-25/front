@@ -9,7 +9,7 @@ interface Order {
   id: string;
   date: string;
   product: string;
-  price: string;
+  price: number;
   requester: string;
 }
 
@@ -19,27 +19,10 @@ interface OrderTableProps {
   onReject?: (id: string) => void;
 }
 
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    date: '2025-03-20',
-    product: '코카콜라 제로 외 1건',
-    price: '21000',
-    requester: '김스낵',
-  },
-  {
-    id: '2',
-    date: '2025-03-19',
-    product: '코카콜라 제로 외 1건',
-    price: '63000',
-    requester: '김스낵',
-  },
-];
-
 const headers = ['구매요청일', '상품정보', '주문 금액', '요청인', '비고'];
 
 const OrderTable: React.FC<OrderTableProps> = ({
-  orders = mockOrders,
+  orders = [],
   onApprove,
   onReject,
 }) => {
@@ -71,7 +54,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
               <span className="flex-1 text-center">{order.date}</span>
               <span className="flex-1 text-center">{order.product}</span>
               <span className="flex-1 text-center">
-                {parseInt(order.price).toLocaleString()}원
+                {order.price.toLocaleString()}원
               </span>
               <span className="flex-1 text-center">{order.requester}</span>
               <div
@@ -125,11 +108,11 @@ const OrderTable: React.FC<OrderTableProps> = ({
               name: '코카콜라 제로',
               imageUrl: '/images/coke-zero.png',
               category: '청량음료',
-              price: parseInt(selectedOrder.price),
+              price: selectedOrder.price,
               quantity: 1,
             },
           ]}
-          totalAmount={parseInt(selectedOrder.price)}
+          totalAmount={selectedOrder.price}
         />
       )}
     </div>
