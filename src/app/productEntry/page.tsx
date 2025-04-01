@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation';
 export default function ProductEntry() {
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
-  const sort = Number(searchParams.get('sort')) || 'createdAt:desc';
+  const sort = searchParams.get('sort') || 'createdAt:desc';
   const [dataList, setDataList] = useState(getMockProductPage(currentPage));
 
   useEffect(() => {

@@ -61,6 +61,9 @@ export default function ProductList() {
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
+    if(!isAuth) {
+      return ;
+    }
     const newParams = new URLSearchParams(window.location.search);
     let isChanged: boolean = false;
     if (!sort) {
@@ -77,7 +80,7 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
-    if (!categoryId || !sort) {
+    if (!categoryId || !sort || !isAuth) {
       return;
     }
 
