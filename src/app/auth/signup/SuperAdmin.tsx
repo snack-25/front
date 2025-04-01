@@ -88,19 +88,12 @@ export function SuperAdmin() {
       ) {
         newError = { isError: true, msg: '비밀번호를 다시 한 번 확인해주세요' };
       }
-    } else {
-      // 비밀번호 외 필드는 passwords 업데이트 (필요 시)
-      setPasswords((prev) => ({ ...prev, [name]: value }));
     }
 
-    setErrors((prev) => {
-      if (!newError.isError) {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      }
-      return { ...prev, [name]: newError };
-    });
+    setErrors((prev) => ({
+      ...prev,
+      [name]: newError.isError ? newError : initError,
+    }));
 
     if (name === 'email') {
       setEmailError(
@@ -145,16 +138,14 @@ export function SuperAdmin() {
         if (!res.ok) {
           throw new Error('회원가입 실패'); // 예외를 던져서 .catch()로 보냄
         }
-        // setRole(res.data.role);
         setIsModalOpen(true);
       })
       .catch((err) => {
         console.error(err);
-        alert('실패다'); // 실패한 경우, 여기에서만 실행됨
+        alert('실패다');
       });
   };
 
-  // 에러 메시지 렌더링 헬퍼 함수 (email은 별도 상태 사용)
   const renderError = (field: string) => {
     if (field === 'email') {
       return (
@@ -170,7 +161,6 @@ export function SuperAdmin() {
     );
   };
 
-  // 일반 입력 필드 렌더링 헬퍼 (비밀번호 계열 제외)
   const renderInputField = (
     title: string,
     name: string,
@@ -192,7 +182,6 @@ export function SuperAdmin() {
     </div>
   );
 
-  // 비밀번호 입력 필드 렌더링 헬퍼
   const renderPasswordField = (
     title: string,
     name: 'password' | 'validatePassword',
@@ -288,9 +277,7 @@ export function SuperAdmin() {
         onClose={() => setIsModalOpen(false)}
         confirmText='로그인'
         hideCancel={true}
-        onConfirm={() => {
-          router.replace('/auth/login');
-        }}
+        onConfirm={() => router.replace('/auth/login')}
       >
         <div className='flex flex-col justify-center items-center gap-[24px]'>
           <Image
