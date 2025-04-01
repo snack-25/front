@@ -30,7 +30,7 @@ interface AuthState {
   user: userInfo | null;
   company: companyInfo | null;
   isAuth: boolean;
-  login: (form: initFormType) => Promise<void>;
+  login: (form: initFormType) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -50,11 +50,14 @@ export const useAuthStore = create<AuthState>()(
 
           if (loginData) {
             set({ user: rest, company, isAuth: true });
+            return true;
           } else {
             set({ user: null, company: null, isAuth: false });
+            return false;
           }
         } catch (error) {
           console.error('로그인 실패:', error);
+          return false;
         }
       },
 

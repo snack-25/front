@@ -60,12 +60,22 @@ export default function Login() {
       alert('모든 항목을 입력해주세요!');
       return;
     }
-    showCustomToast({
-      label: '로그인 성공했습니다.',
-      variant: 'success',
-      onClick: () => {},
-    });
-    const test = await login(form);
+
+    const result = await login(form);
+    if (result) {
+      showCustomToast({
+        label: '로그인 성공했습니다.',
+        variant: 'success',
+        onClick: () => {},
+      });
+    } else {
+      showCustomToast({
+        label: '로그인 실패했습니다.',
+        variant: 'error',
+        onClick: () => {},
+      });
+    }
+    // console.log('result', result);
   };
 
   useEffect(() => {
@@ -94,6 +104,7 @@ export default function Login() {
             onChange={handleChange}
             onBlur={handleEmailBlur}
             value={form.email}
+            isModified={true}
             // disabled={!!tokenFromUrl} // 초대된 경우 입력 비활성화
           />
           {emailError.isError && (
@@ -109,9 +120,12 @@ export default function Login() {
             onChange={handleChange}
             onBlur={handleNullBlur}
             value={form.password}
+            isModified={true}
             autoComplete='current-password'
           >
             <Image
+              unoptimized
+              // style={{width:'auto',height:'auto'}}
               src={
                 passwordVisibility
                   ? '/icon/lined/visibility-on.svg'
