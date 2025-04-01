@@ -227,7 +227,7 @@ const OrderDetailPage = () => {
           buttonRight={modalType === 'approved' ? '구매 내역 보기' : '구매 요청 목록'}
           onClose={() => setModalType(null)}
           onNavigate={() => {
-          router.push( modalType === 'approved' ? '/history' : '/request');
+          Router.push( modalType === 'approved' ? '/history' : '/request');
           }}
         />
       )}
