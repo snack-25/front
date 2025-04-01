@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '@/lib/constants';
+import { useAuthStore } from './auth/useAuthStore';
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
@@ -23,7 +24,8 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   if (!response.ok) {
     console.log(data);
     if (response.status === 401) {
-      window.location.href = '/notAuth'; 
+      useAuthStore.getState().logout();
+      window.location.href = '/notAuth';
     }
     throw new Error(data.message || 'API 요청 실패');
   }
