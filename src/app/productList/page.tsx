@@ -40,9 +40,7 @@ interface IFetchData {
   hasPrevPage: boolean;
 }
 
-export const DEFAULT_SORT = 'createdAt:desc';
-export const DEFAULT_PARENTID = 'cat-스낵';
-export const DEFAULT_CATEGORYID = 'sub-과자';
+const DEFAULT_SORT = 'createdAt:desc';
 
 export default function ProductList() {
   const { user, isAuth } = useAuthStore();
@@ -61,8 +59,8 @@ export default function ProductList() {
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
-    if(!isAuth) {
-      return ;
+    if (!isAuth) {
+      return;
     }
     const newParams = new URLSearchParams(window.location.search);
     let isChanged: boolean = false;
