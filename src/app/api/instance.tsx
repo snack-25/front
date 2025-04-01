@@ -22,6 +22,9 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     console.log(data);
+    if (response.status === 401) {
+      window.location.href = '/notAuth'; 
+    }
     throw new Error(data.message || 'API 요청 실패');
   }
 
