@@ -1,9 +1,10 @@
 'use client';
 
-import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
-import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 
 interface Order {
   id: string;

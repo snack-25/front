@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import { InvitationUser } from './Invitation';
 import { SuperAdmin } from './SuperAdmin';
-import Modal from '@/components/ui/modal/Modal';
-import Image from 'next/image';
 
 export default function Signup() {
   const searchParams = useSearchParams();

@@ -1,8 +1,7 @@
-import { PaginatedProductList } from '@/app/playground/entryMock';
-import { IProducts } from '@/app/productList/page';
-import { cn } from '@/lib/utils';
-import { Link2 } from 'lucide-react';
 import Image from 'next/image';
+import { Link2 } from 'lucide-react';
+
+import { IProducts } from '@/app/productList/page';
 
 interface IProps {
   items: IProducts[];

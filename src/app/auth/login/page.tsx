@@ -1,12 +1,12 @@
 'use client';
 
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { loginApi } from '@/app/api/auth/api';
+
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface IError {
@@ -77,7 +77,7 @@ export default function Login() {
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;
 
-  if (isAuth) return <>....</>;
+  if (isAuth) {return <>....</>;}
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>

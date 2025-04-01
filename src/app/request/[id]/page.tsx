@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import StatusModal from '../components/StatusModal';
-import Image from 'next/image';
 import router from 'next/router';
+
+import StatusModal from '../components/StatusModal';
 
 
 interface OrderItem {

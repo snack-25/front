@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
+import { cn } from '@/lib/utils';
 
 function getPaginationRange(
   current: number,

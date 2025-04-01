@@ -1,13 +1,14 @@
 'use client';
 
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
 import { signupApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { emailRegex } from '@/lib/constants';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Modal from '@/components/ui/modal/Modal';
+import { emailRegex } from '@/lib/constants';
 
 interface IError {
   isError: boolean;
@@ -59,8 +60,8 @@ export function SuperAdmin() {
   // 사업자 번호 포맷팅 함수 (숫자만 남기고 000-00-00000 형식)
   const formatBizno = (value: string): string => {
     const digits = value.replace(/\D/g, '');
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 5) return digits.slice(0, 3) + '-' + digits.slice(3);
+    if (digits.length <= 3) {return digits;}
+    if (digits.length <= 5) {return digits.slice(0, 3) + '-' + digits.slice(3);}
     return (
       digits.slice(0, 3) + '-' + digits.slice(3, 5) + '-' + digits.slice(5, 10)
     );

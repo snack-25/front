@@ -1,8 +1,14 @@
 import { motion } from 'framer-motion';
-import { buttonStyle, Category, ulStyle } from './TabMenu';
+
 import { cn } from '@/lib/utils';
+
+import { buttonStyle, Category, ulStyle } from './TabMenu';
 import Loading from '../productList/Loading';
-import { memo } from 'react';
+
+
+
+
+
 
 interface Props {
   sub: Category[] | null;

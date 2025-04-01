@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
+
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/page';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { useEffect, useState } from 'react';
 
 interface IUpdatePayload {
   id: string;

@@ -1,20 +1,21 @@
 'use client';
-import { notFound, useParams, useSearchParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import NumberInput from '@/components/ui/NumberInput';
-import { Button } from '@/components/ui/Button';
-import ProductMenu from '@/components/productList/ProductMenu';
 import { useEffect, useState } from 'react';
-import { IProducts } from '../../page';
-import EmptyImage from '@/components/productList/EmptyImage';
-import ProductEditModal from '@/components/ui/modal/ProductEditModal';
-import { useDetail } from '@/hooks/product/useDetail';
-import Loading from '@/components/productList/Loading';
-import ProductDeleteModal from '@/components/ui/modal/ProductDeleteModal';
-import { fetchApi } from '@/app/api/instance';
+import { useParams, useSearchParams } from 'next/navigation';
+
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import EmptyImage from '@/components/productList/EmptyImage';
+import Loading from '@/components/productList/Loading';
+import ProductMenu from '@/components/productList/ProductMenu';
+import { Button } from '@/components/ui/Button';
+import ProductDeleteModal from '@/components/ui/modal/ProductDeleteModal';
+import ProductEditModal from '@/components/ui/modal/ProductEditModal';
+import NumberInput from '@/components/ui/NumberInput';
 import useCategory from '@/hooks/product/useCategory';
+import { useDetail } from '@/hooks/product/useDetail';
+
+import { IProducts } from '../../page';
 
 interface IFormData {
   id: string;

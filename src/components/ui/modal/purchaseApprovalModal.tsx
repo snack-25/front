@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import PurchaseItem from '@/components/ui/modal/PurchaseItem';
-import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/TextArea';
 
 interface PurchaseApprovalModalProps {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/page';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 export default function useCategory() {
   const searchParams = useSearchParams();
@@ -25,7 +26,7 @@ export default function useCategory() {
     const fetchName = async () => {
       try {
         const data: IProducts[] = await fetchApi('/categories/all');
-        if (!isMounted) return;
+        if (!isMounted) {return;}
 
         const mainData = data.find((item) => item.id === mainCategory);
         const subData = data.find((item) => item.id === subCategory);

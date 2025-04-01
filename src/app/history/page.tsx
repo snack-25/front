@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Order } from "@/lib/api/orders"; // ✅ Order 타입만 import
+
 import DropdownMenu, {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
+import { Order } from "@/lib/api/orders"; // ✅ Order 타입만 import
 
 import HistoryTable from './components/HistoryTable';
 import SummaryCards from './components/SummaryCards';
