@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 export interface Category {
   id: string;
@@ -26,6 +27,7 @@ export default function TabMenu() {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
+  const { isAuth } = useAuthStore();
 
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
@@ -113,6 +115,10 @@ export default function TabMenu() {
       router.replace(`?${newParams.toString()}`);
     }
   };
+
+  if (!isAuth) {
+    return;
+  }
 
   return (
     <motion.div
