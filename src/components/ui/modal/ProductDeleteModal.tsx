@@ -3,7 +3,6 @@ import Image from 'next/image';
 import useProductDelete from '@/hooks/product/useProductDelete';
 import { cn } from '@/lib/utils';
 
-
 interface IProps {
   id: string;
   name: string;

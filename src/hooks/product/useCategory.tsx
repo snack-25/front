@@ -26,7 +26,9 @@ export default function useCategory() {
     const fetchName = async () => {
       try {
         const data: IProducts[] = await fetchApi('/categories/all');
-        if (!isMounted) {return;}
+        if (!isMounted) {
+          return;
+        }
 
         const mainData = data.find((item) => item.id === mainCategory);
         const subData = data.find((item) => item.id === subCategory);

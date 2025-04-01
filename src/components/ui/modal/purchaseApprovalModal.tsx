@@ -63,17 +63,17 @@ export default function PurchaseApprovalModal({
 
   return (
     <BaseFormModal
-      title="구매 요청 승인"
+      title='구매 요청 승인'
       isOpen={isOpen}
       onClose={onCloseAction}
       onConfirm={() => onConfirmAction(approvalMessage)}
-      confirmText="승인하기"
-      cancelText="취소"
-      confirmButtonProps="w-[158px] h-[54px] md:w-[310px] md:h-[64px]"
-      cancelButtonProps="w-[158px] h-[54px] md:w-[310px] md:h-[64px]"
+      confirmText='승인하기'
+      cancelText='취소'
+      confirmButtonProps='w-[158px] h-[54px] md:w-[310px] md:h-[64px]'
+      cancelButtonProps='w-[158px] h-[54px] md:w-[310px] md:h-[64px]'
       confirmDisabled={!isValid || isOverBudget || !!amountError}
-      smallSize="w-[375px] h-auto"
-      largeSize="md:w-[688px] h-auto"
+      smallSize='w-[375px] h-auto'
+      largeSize='md:w-[688px] h-auto'
     >
       <div className='flex flex-col gap-5'>
         <div className='flex flex-col gap-2'>
@@ -89,14 +89,19 @@ export default function PurchaseApprovalModal({
           <label className='text-[20px] font-semibold'>요청 품목</label>
           <div className='flex flex-col gap-3 border border-[#FCC49C] rounded-xl p-3 bg-white max-h-[250px] overflow-y-auto'>
             {items.map((item) => (
-              <PurchaseItem key={item.id} item={item} />
+              <PurchaseItem
+                key={item.id}
+                item={item}
+              />
             ))}
           </div>
         </div>
 
         <div className='flex justify-between items-center text-[20px] font-semibold border-t border-[#FCC49C] pt-3'>
           <span>총 {items.length}건</span>
-          <span className='text-[#F97B22]'>{totalAmount.toLocaleString()}원</span>
+          <span className='text-[#F97B22]'>
+            {totalAmount.toLocaleString()}원
+          </span>
         </div>
 
         <div className='flex justify-between items-center text-[20px] font-semibold'>
@@ -107,11 +112,15 @@ export default function PurchaseApprovalModal({
         </div>
 
         {isOverBudget && (
-          <p className='text-red-500 text-sm font-semibold'>구매 금액이 남은 예산을 초과합니다.</p>
+          <p className='text-red-500 text-sm font-semibold'>
+            구매 금액이 남은 예산을 초과합니다.
+          </p>
         )}
 
         {amountError && (
-          <div className='text-red-500 text-sm font-semibold'>{amountError}</div>
+          <div className='text-red-500 text-sm font-semibold'>
+            {amountError}
+          </div>
         )}
 
         <div className='flex flex-col gap-2'>

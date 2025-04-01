@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { budgetApi } from '@/app/api/auth/api';
@@ -19,7 +19,9 @@ export default function Budget() {
     // 기존에 입력된 콤마 제거
     const rawValue = e.target.value.replace(/,/g, '');
     // 숫자만 입력되도록 검사 (빈 문자열도 허용)
-    if (!/^\d*$/.test(rawValue)) {return;}
+    if (!/^\d*$/.test(rawValue)) {
+      return;
+    }
 
     // 숫자가 있으면 포맷 적용, 없으면 빈 문자열 처리
     const formattedValue = rawValue
@@ -46,12 +48,16 @@ export default function Budget() {
 
   // 예산 정보를 백엔드에서 받아오는 로직
   useEffect(() => {
-    if (!load) {return;}
+    if (!load) {
+      return;
+    }
     console.log('company', company);
 
     const fetchBudgetInfo = async () => {
       // companyId가 undefined인 경우에는 fetch를 하지 않도록 처리
-      if (!company) {throw new Error('회사 Id가 없습니다.');}
+      if (!company) {
+        throw new Error('회사 Id가 없습니다.');
+      }
       if (!company.id) {
         console.error('회사 ID가 없습니다');
         return; // companyId가 없으면 API 호출을 하지 않음

@@ -77,7 +77,9 @@ export default function Login() {
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;
 
-  if (isAuth) {return <>....</>;}
+  if (isAuth) {
+    return <>....</>;
+  }
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
