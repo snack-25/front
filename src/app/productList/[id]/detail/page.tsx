@@ -8,12 +8,13 @@ import ProductMenu from '@/components/productList/ProductMenu';
 import { useEffect, useState } from 'react';
 import { IProducts } from '../../page';
 import EmptyImage from '@/components/productList/EmptyImage';
-import { mock } from '@/components/gnb/Header';
 import ProductEditModal from '@/components/ui/modal/ProductEditModal';
 import { useDetail } from '@/hooks/product/useDetail';
 import Loading from '@/components/productList/Loading';
 import ProductDeleteModal from '@/components/ui/modal/ProductDeleteModal';
 import { fetchApi } from '@/app/api/instance';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import useCategory from '@/hooks/product/useCategory';
 
 interface IFormData {
   id: string;
@@ -32,7 +33,7 @@ const infoList = [
 ];
 
 export default function ProductDetail() {
-  const user = mock[3];
+  const { user } = useAuthStore();
 
   const { id } = useParams();
   const searchParams = useSearchParams();
@@ -41,9 +42,8 @@ export default function ProductDetail() {
   const { data, isLoading, setIsLoading, handleUpdate } = useDetail(
     id as string,
   );
-  const [mainName, setMainName] = useState<string>('');
-  const [subName, setSubName] = useState<string>('');
 
+  const { mainName, subName } = useCategory();
   const [detail, setDetail] = useState<IProducts | null>(null);
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
@@ -62,14 +62,6 @@ export default function ProductDetail() {
     if (!detail) {
       return;
     }
-    const fetchName = async () => {
-      const data: IProducts[] = await fetchApi('/categories/all');
-      const mainData = data.find((item) => item.id === mainCategory);
-      const subData = data.find((item) => item.id === subCategory);
-      setMainName(mainData?.name || '상위 카테고리');
-      setSubName(subData?.name || '하위 카테고리');
-    };
-    fetchName();
 
     setformData({
       id: detail.id,
@@ -132,24 +124,28 @@ export default function ProductDetail() {
               </p>
             </div>
 
-            <ProductMenu
-              onEditClick={handleEditOpen}
-              onDeleteClick={handleDeleteOpen}
-            />
+            {user?.role !== 'USER' && (
+              <div>
+                <ProductMenu
+                  onEditClick={handleEditOpen}
+                  onDeleteClick={handleDeleteOpen}
+                />
 
-            <ProductEditModal
-              isOpen={isEditOpen}
-              onClose={handleEditOpen}
-              onUpdate={handleUpdate}
-              product={formData as IFormData}
-            />
+                <ProductEditModal
+                  isOpen={isEditOpen}
+                  onClose={handleEditOpen}
+                  onUpdate={handleUpdate}
+                  product={formData as IFormData}
+                />
 
-            <ProductDeleteModal
-              id={detail.id}
-              name={detail.name}
-              isOpen={isDeleteOpen}
-              handleOpen={handleDeleteOpen}
-            />
+                <ProductDeleteModal
+                  id={detail.id}
+                  name={detail.name}
+                  isOpen={isDeleteOpen}
+                  handleOpen={handleDeleteOpen}
+                />
+              </div>
+            )}
           </div>
 
           <div className='flex flex-col w-full gap-2 lt:text-xl max-lt:text-md border-y-1 border-gray-200 py-8'>

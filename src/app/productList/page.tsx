@@ -15,6 +15,9 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/productList/Loading';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import useCategory from '@/hooks/product/useCategory';
+import { useAuthStore } from '../api/auth/useAuthStore';
+import ProductnotAuth from '@/components/productList/ProductNotAuth';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -37,18 +40,16 @@ interface IFetchData {
   hasPrevPage: boolean;
 }
 
-export const DEFAULT_SORT = 'createdAt:desc';
-export const DEFAULT_PARENTID = 'cat-스낵';
-export const DEFAULT_CATEGORYID = 'sub-과자';
+const DEFAULT_SORT = 'createdAt:desc';
 
 export default function ProductList() {
-  const isAuthenticated: boolean = true;
+  const { user, isAuth } = useAuthStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const { fetchProducts } = useFetchProducts();
+  const { subName } = useCategory(); // 카테고리 한글값 가져오기
 
-  const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
   const page = Number(searchParams.get('page'));
@@ -58,6 +59,9 @@ export default function ProductList() {
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
+    if (!isAuth) {
+      return;
+    }
     const newParams = new URLSearchParams(window.location.search);
     let isChanged: boolean = false;
     if (!sort) {
@@ -74,7 +78,7 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
-    if (!categoryId || !sort) {
+    if (!categoryId || !sort || !isAuth) {
       return;
     }
 
@@ -166,9 +170,8 @@ export default function ProductList() {
         variant: 'success',
       });
 
-      // 등록 후 모달 닫기 or 리스트 갱신 등
       setIsOpen(false);
-      router.refresh(); // 새로고침으로 상품 목록 갱신
+      router.refresh();
     } catch (error) {
       console.error(error);
       showCustomToast({
@@ -177,6 +180,14 @@ export default function ProductList() {
       });
     }
   };
+
+  if (!isAuth) {
+    return (
+      <>
+        <ProductnotAuth />
+      </>
+    );
+  }
 
   return (
     <>
@@ -188,7 +199,12 @@ export default function ProductList() {
             <SortDropDown />
           </div>
 
-          <CardList data={products.items} />
+          <CardList
+            data={products.items.map((item) => ({
+              ...item,
+              categoryId: subName,
+            }))}
+          />
 
           {products.items.length === 0 ? (
             <EmptyImage />
@@ -210,7 +226,7 @@ export default function ProductList() {
             ''
           )}
 
-          {isAuthenticated && ( // 관리자 이상 권한일때만 표시
+          {user?.role !== 'USER' && ( // 관리자 이상 권한일때만 표시
             <motion.div
               initial={{ x: 300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}

@@ -8,26 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 import { HeaderMenu } from './HeaderMenu';
-
-/* ### 사용자 타입(UserTypes)
-
-일반유저 : basicUser
-
-관리자 : admin
-
-슈퍼관리자 : superAdmin, supervisor */
-
-export interface Imock {
-  isAuthenticated: boolean;
-  userType?: 'basicUser' | 'admin' | 'superAdmin';
-}
-
-export const mock: Imock[] = [
-  { isAuthenticated: false },
-  { isAuthenticated: true, userType: 'basicUser' },
-  { isAuthenticated: true, userType: 'admin' },
-  { isAuthenticated: true, userType: 'superAdmin' },
-];
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 interface navItemProps {
   href: string;
@@ -51,13 +32,14 @@ const NavItem = ({ href, currentPath, children }: navItemProps) => {
 };
 
 export default function Header() {
-  const user: Imock = mock[3];
+  const { user, isAuth, logout } = useAuthStore();
   const pathname: string = usePathname();
-  const isAuthPage: boolean = pathname === '/login' || pathname === '/signUp';
+  const isAuthPage: boolean =
+    pathname === '/auth/login' || pathname === '/auth/signUp';
 
   return (
     <>
-      {user.isAuthenticated ? (
+      {user && isAuth ? (
         <header className='sticky z-1000 top-0 lt:h-[88px] tb:h-16 mb:h-[54px] flex border-b-1 border-b-line-200 items-center lt:px-[120px] max-lt:px-6 bg-background-400 whitespace-nowrap'>
           <div className='flex items-center justify-between text-gray-400 font-bold text-[1.4vw] w-full mx-auto'>
             <div className='flex items-center gap-6'>
@@ -96,7 +78,7 @@ export default function Header() {
               >
                 상품 리스트
               </Link>
-              {user.userType === 'basicUser' && (
+              {user.role === 'USER' && (
                 <NavItem
                   href='/history'
                   currentPath={pathname}
@@ -104,7 +86,7 @@ export default function Header() {
                   구매 요청 내역
                 </NavItem>
               )}
-              {user.userType !== 'basicUser' && (
+              {user.role !== 'USER' && (
                 <div className='flex gap-12'>
                   <NavItem
                     href='/request'
@@ -126,7 +108,7 @@ export default function Header() {
               >
                 상품 등록 내역
               </NavItem>
-              {user.userType === 'superAdmin' && (
+              {user.role === 'SUPERADMIN' && (
                 <NavItem
                   href='/tmp'
                   currentPath={pathname}
@@ -152,6 +134,7 @@ export default function Header() {
               <Button
                 className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
                 font='tb:text-[1.4vw]'
+                onClick={logout}
               >
                 Logout
               </Button>
@@ -193,8 +176,8 @@ export default function Header() {
 
           {!isAuthPage && (
             <div className='text-white font-bold flex lt:w-[290px] tb:w-[205px] justify-around max-tb:hidden'>
-              <Link href='/login'>로그인</Link>
-              <Link href='/signUp'>관리자 회원가입</Link>
+              <Link href='/auth/login'>로그인</Link>
+              <Link href='/auth/signup'>관리자 회원가입</Link>
             </div>
           )}
         </header>
