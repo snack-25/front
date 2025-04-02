@@ -1,9 +1,10 @@
+'use client'
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
-import { IProducts } from '@/app/productList/page';
+import { IProducts } from '@/app/productList/ProductList';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function useCategory() {

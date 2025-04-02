@@ -61,7 +61,6 @@ export default function Header() {
 
             <div className='flex gap-8 max-tb:hidden'>
               <Link
-                prefetch={false}
                 href={{
                   pathname: '/productList',
                   query: {

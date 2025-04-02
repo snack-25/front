@@ -1,8 +1,9 @@
+'use client'
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
-import { IProducts } from '@/app/productList/page';
+import { IProducts } from '@/app/productList/ProductList';
 
 import ProductCard from './ProductCard';
 

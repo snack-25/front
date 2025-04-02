@@ -15,7 +15,7 @@ import NumberInput from '@/components/ui/NumberInput';
 import useCategory from '@/hooks/product/useCategory';
 import { useDetail } from '@/hooks/product/useDetail';
 
-import { IProducts } from '../../page';
+import { IProducts } from '../../ProductList';
 
 interface IFormData {
   id: string;

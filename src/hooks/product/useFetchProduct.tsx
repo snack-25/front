@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { fetchApi } from '@/app/api/instance';
-import { Tsort } from '@/app/productList/page';
+import { Tsort } from '@/app/productList/ProductList';
 import EmptyImage from '@/components/productList/EmptyImage';
 
 export const useFetchProducts = () => {

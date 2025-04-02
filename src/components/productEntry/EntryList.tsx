@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Link2 } from 'lucide-react';
 
-import { IProducts } from '@/app/productList/page';
+import { IProducts } from '@/app/productList/ProductList';
 
 interface IProps {
   items: IProducts[];

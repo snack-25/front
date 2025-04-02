@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 
-import { Tsort } from '@/app/productList/page';
+import { Tsort } from '@/app/productList/ProductList';
 import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
