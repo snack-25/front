@@ -3,50 +3,36 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { budgetApi } from '@/app/api/auth/api';
+import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
+interface AmountField {
+  value: string;
+  default: string;
+  modified: boolean;
+}
+
 export default function Budget() {
-  const [form, setForm] = useState({ thisMonth: '0', everyMonth: '0' }); // 기본값 '0'으로 설정
+  const { user, company, isAuth } = useAuthStore();
+  const [form, setForm] = useState({
+    currentAmount: { value: '0', default: '0', modified: false },
+    initialAmount: { value: '0', default: '0', modified: false },
+    year: new Date().getFullYear(), // 현재 연도로 기본값 설정
+    month: new Date().getMonth() + 1, // 현재 월로 기본값 설정
+  });
+
   const [load, setLoad] = useState(false);
   const router = useRouter();
-  const { user, company, isAuth } = useAuthStore();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 기존에 입력된 콤마 제거
-    const rawValue = e.target.value.replace(/,/g, '');
-    // 숫자만 입력되도록 검사 (빈 문자열도 허용)
-    if (!/^\d*$/.test(rawValue)) {
-      return;
-    }
-
-    // 숫자가 있으면 포맷 적용, 없으면 빈 문자열 처리
-    const formattedValue = rawValue
-      ? Number(rawValue).toLocaleString('en-US')
-      : '';
-    setForm((prev) => ({ ...prev, [e.target.name]: formattedValue }));
-  };
-
-  // 백엔드로 데이터 전송 (콤마 제거 후 숫자만 전송)
-  const handleSubmit = async () => {
-    showCustomToast({ label: '예산이 변경되었습니다.' });
-
-    const sendData = {
-      thisMonth: Number(form.thisMonth.replace(/,/g, '')),
-      everyMonth: Number(form.everyMonth.replace(/,/g, '')),
-    };
-
-    console.log('백엔드로 보낼 데이터:', sendData);
-  };
-
+  // 로딩 상태 설정
   useEffect(() => {
     setLoad(true);
   }, []);
 
-  // 예산 정보를 백엔드에서 받아오는 로직
+  // 서버에서 예산 정보를 받아와 form 상태 업데이트 (초기 로딩)
   useEffect(() => {
     if (!load) {
       return;
@@ -54,42 +40,133 @@ export default function Budget() {
     console.log('company', company);
 
     const fetchBudgetInfo = async () => {
-      // companyId가 undefined인 경우에는 fetch를 하지 않도록 처리
-      if (!company) {
-        throw new Error('회사 Id가 없습니다.');
+      if (!company || !company.id) {
+        console.error('회사 ID가 없습니다.');
+        return;
       }
-      if (!company.id) {
-        console.error('회사 ID가 없습니다');
-        return; // companyId가 없으면 API 호출을 하지 않음
-      }
-
       try {
-        // companyId가 존재하는 경우에만 API 호출
-        const response = await budgetApi({ companyId: company.id });
+        const response = await getBudgetApi({ companyId: company.id });
         if (response && response.ok) {
-          // 예산 정보가 있다면 form에 설정
-          const { year, month } = response.data;
+          const { currentAmount, initialAmount, year, month } = response.data;
+
+          if (!year || !month) {
+            console.error('올바른 연도와 월이 없습니다.', response.data);
+            return;
+          }
+
           setForm({
-            thisMonth: year ? year.toString() : '0',
-            everyMonth: month ? month.toString() : '0',
+            currentAmount: {
+              value: Number(currentAmount).toLocaleString('en-US'),
+              default: Number(currentAmount).toLocaleString('en-US'),
+              modified: false,
+            },
+            initialAmount: {
+              value: Number(initialAmount).toLocaleString('en-US'),
+              default: Number(initialAmount).toLocaleString('en-US'),
+              modified: false,
+            },
+            year,
+            month,
           });
         }
+        console.log('form', form);
       } catch (error) {
         console.error('예산 정보 조회 실패', error);
       }
     };
 
     fetchBudgetInfo();
-  }, [user]); // user?.companyId가 변경될 때마다 호출
+  }, [company, load]);
 
+  // 로그인/권한 체크
   useEffect(() => {
     if (load) {
       if (user?.role !== 'SUPERADMIN' || !isAuth) {
         router.replace('/');
       }
     }
-  }, [load]);
+  }, [load, user, isAuth, router]);
 
+  // onChange: 입력된 값 업데이트, 천단위 포맷 적용, 수정 여부 계산
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const rawValue = value.replace(/,/g, '');
+    if (!/^\d*$/.test(rawValue)) {
+      return;
+    }
+    const formattedValue = rawValue
+      ? Number(rawValue).toLocaleString('en-US')
+      : '';
+    setForm((prev) => ({
+      ...prev,
+      [name]: {
+        ...(prev[name as 'currentAmount' | 'initialAmount'] as AmountField),
+        value: formattedValue,
+        modified:
+          formattedValue !==
+          (prev[name as 'currentAmount' | 'initialAmount'] as AmountField)
+            .default,
+      },
+    }));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => {
+      const field = prev[
+        name as 'currentAmount' | 'initialAmount'
+      ] as AmountField;
+      return {
+        ...prev,
+        [name]: {
+          ...field,
+          value: value.trim() === '' ? field.default : value,
+          modified: value.trim() !== field.default,
+        },
+      };
+    });
+  };
+
+  // Submit: 콤마 제거 후 숫자 데이터 전송, 성공 시 서버 최신 데이터로 업데이트 (수정 상태 false)
+  const handleSubmit = async () => {
+    if (!form.year || !form.month) {
+      console.error('year 또는 month가 올바르게 설정되지 않음', form);
+      return;
+    }
+
+    try {
+      const sendData = {
+        companyId: company?.id || '',
+        currentAmount: Number(form.currentAmount.value.replace(/,/g, '')),
+        initialAmount: Number(form.initialAmount.value.replace(/,/g, '')),
+        year: form.year,
+        month: form.month,
+      };
+
+      console.log('전송할 데이터:', sendData);
+
+      await updateBudgetApi(sendData);
+
+      setForm((prev) => ({
+        ...prev,
+        currentAmount: {
+          value: sendData.currentAmount.toLocaleString('en-US'),
+          default: sendData.currentAmount.toLocaleString('en-US'),
+          modified: false,
+        },
+        initialAmount: {
+          value: sendData.initialAmount.toLocaleString('en-US'),
+          default: sendData.initialAmount.toLocaleString('en-US'),
+          modified: false,
+        },
+      }));
+
+      showCustomToast({ label: '예산이 변경되었습니다.' });
+    } catch (error) {
+      console.error('Submit failed:', error);
+    }
+  };
+  //리턴
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
       <div className='pr-[10px]'>
@@ -101,19 +178,25 @@ export default function Budget() {
         <div className='flex flex-col gap-[4px]'>
           <Input
             titleClassName='이번 달 예산'
-            name='thisMonth'
-            type='text' // 숫자 형식인데, 컴마가 있기 때문에 'text'로 설정
+            name='currentAmount'
+            type='text'
             onChange={handleChange}
-            value={form.thisMonth}
+            // onFocus={handleFocus}
+            onBlur={handleBlur}
+            value={form.currentAmount.value}
+            isModified={form.currentAmount.modified}
           />
         </div>
         <div className='flex flex-col gap-[4px]'>
           <Input
             titleClassName='매달 시작 예산'
-            name='everyMonth'
-            type='text' // 숫자 형식인데, 컴마가 있기 때문에 'text'로 설정
+            name='initialAmount'
+            type='text'
             onChange={handleChange}
-            value={form.everyMonth}
+            // onFocus={handleFocus}
+            onBlur={handleBlur}
+            value={form.initialAmount.value}
+            isModified={form.initialAmount.modified}
           />
         </div>
         <Button
@@ -121,7 +204,9 @@ export default function Budget() {
           filled='orange'
           onClick={handleSubmit}
         >
-          수정하기
+          {form.currentAmount.value === '0' && form.initialAmount.value === '0'
+            ? '추가하기'
+            : '수정하기'}
         </Button>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import CategorySelect from '@/components/ui/CategorySelect';
 import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
-import CategorySelect from '@/components/ui/CategorySelect';
 
 // 상품 등록 모달 Props 타입 정의
 interface ProductFormModalProps {

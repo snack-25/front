@@ -1,8 +1,9 @@
 'use client';
 
-import { Listbox } from '@headlessui/react';
-import { ChevronDownIcon, CheckIcon } from 'lucide-react';
+import { CheckIcon,ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
+
+import { Listbox } from '@headlessui/react';
 
 const mainCategories = [
   '스낵',

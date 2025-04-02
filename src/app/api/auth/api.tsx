@@ -16,8 +16,10 @@ interface loginProps {
 
 interface budgetProps {
   companyId: string;
-  thisMonth: number;
-  everyMonth: number;
+  currentAmount: number;
+  initialAmount: number;
+  year: number;
+  month: number;
 }
 
 export async function signupApi(body: SignProps) {
@@ -80,7 +82,7 @@ export async function invitationSignupApi(params: {
   }
 }
 
-export async function budgetApi(body: { companyId: string }) {
+export async function getBudgetApi(body: { companyId: string }) {
   try {
     const res = await fetchApi('/budgets/inquiry', {
       method: 'POST',
@@ -88,41 +90,18 @@ export async function budgetApi(body: { companyId: string }) {
     });
     return res;
   } catch (error) {
-    return { msg: '예산 변경이 실패하였습니다' };
+    return { msg: '예산 조회에 실패하였습니다' };
   }
 }
 
-// type ExtendedRequestInit = Omit<RequestInit, 'body'> & {
-//   body?: any; // 객체 형태로 body를 받을 수 있도록 허용합니다.
-// };
-
-// async function authApi(
-//   endpoint: string,
-//   options: ExtendedRequestInit = {},
-// ): Promise<any> {
-//   const response = await fetch(`${API_BASE_URL}/api/auth${endpoint}`, {
-//     ...options,
-//     headers: {
-//       'Content-Type': 'application/json',
-//       ...options.headers,
-//     },
-//     credentials: 'include',
-//     body:
-//       options.method === 'GET' ? undefined : JSON.stringify(options.body ?? {}),
-//   });
-
-//   // 응답 본문이 없을 경우를 처리
-//   const text = await response.text();
-//   let data;
-//   try {
-//     data = text ? JSON.parse(text) : {};
-//   } catch (error) {
-//     console.error('JSON 파싱 오류:', error);
-//     throw new Error('응답을 JSON으로 파싱하는데 실패했습니다.');
-//   }
-//   if (!response.ok) {
-//     console.log(data);
-//     throw new Error(data.message || 'API 요청 실패');
-//   }
-//   return data;
-// }
+export async function updateBudgetApi(body: budgetProps) {
+  try {
+    const res = await fetchApi('/budgets/update', {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    return res;
+  } catch (err) {
+    return { msg: '예산 변경이 실패하였습니다' };
+  }
+}
