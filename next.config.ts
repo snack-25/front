@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'snack25-bucket.s3.ap-northeast-2.amazonaws.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'placehold.co',
       },
     ],
