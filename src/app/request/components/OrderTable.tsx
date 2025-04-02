@@ -1,9 +1,10 @@
 'use client';
 
-import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
-import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 
 interface Order {
   id: string;
@@ -46,16 +47,21 @@ const OrderTable: React.FC<OrderTableProps> = ({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [modalType, setModalType] = useState<'approved' | 'rejected' | null>(null);
+  const [modalType, setModalType] = useState<'approved' | 'rejected' | null>(
+    null,
+  );
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       {orders.length > 0 ? (
-        <div className="flex flex-col">
+        <div className='flex flex-col'>
           {/* 헤더 */}
-          <div className="flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6">
+          <div className='flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6'>
             {headers.map((header) => (
-              <span key={header} className="flex-1 text-center">
+              <span
+                key={header}
+                className='flex-1 text-center'
+              >
                 {header}
               </span>
             ))}
@@ -65,22 +71,22 @@ const OrderTable: React.FC<OrderTableProps> = ({
           {orders.map((order) => (
             <div
               key={order.id}
-              className="flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6"
+              className='flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6'
               onClick={() => router.push(`/request/${order.id}`)}
             >
-              <span className="flex-1 text-center">{order.date}</span>
-              <span className="flex-1 text-center">{order.product}</span>
-              <span className="flex-1 text-center">
+              <span className='flex-1 text-center'>{order.date}</span>
+              <span className='flex-1 text-center'>{order.product}</span>
+              <span className='flex-1 text-center'>
                 {parseInt(order.price).toLocaleString()}원
               </span>
-              <span className="flex-1 text-center">{order.requester}</span>
+              <span className='flex-1 text-center'>{order.requester}</span>
               <div
-                className="flex-1 flex justify-center gap-2 pb-0.5"
+                className='flex-1 flex justify-center gap-2 pb-0.5'
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   onClick={() => onReject?.(order.id)}
-                  className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]"
+                  className='bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
                 >
                   반려
                 </button>
@@ -89,7 +95,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
                     setSelectedOrder(order);
                     setIsOpen(true);
                   }}
-                  className="bg-orange-400 text-white px-3 py-1 rounded hover:bg-orange-600 w-[94px] h-[44px]"
+                  className='bg-orange-400 text-white px-3 py-1 rounded hover:bg-orange-600 w-[94px] h-[44px]'
                 >
                   승인
                 </button>
@@ -98,14 +104,14 @@ const OrderTable: React.FC<OrderTableProps> = ({
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-10">
+        <div className='flex flex-col items-center justify-center py-10'>
           <Image
-            src="/img/order/order-nothing-admin-md.svg"
-            alt="구매 요청 없음"
+            src='/img/order/order-nothing-admin-md.svg'
+            alt='구매 요청 없음'
             width={300}
             height={200}
           />
-          <p className="text-gray-500 mt-4">신청된 요청이 없습니다</p>
+          <p className='text-gray-500 mt-4'>신청된 요청이 없습니다</p>
         </div>
       )}
 

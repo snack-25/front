@@ -1,36 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select';
-
-// 카테고리 데이터
-const mainCategories = [
-  '스낵',
-  '음료',
-  '생수',
-  '간편식',
-  '신선식품',
-  '원두커피',
-  '비품',
-];
-const subCategories: Record<string, string[]> = {
-  스낵: ['과자', '쿠키', '초콜릿류', '젤리류'],
-  음료: ['탄산음료', '과즙음료', '커피'],
-  생수: ['생수', '스파클링'],
-  간편식: ['컵라면', '핫도그', '계란'],
-  신선식품: ['샐러드', '도시락'],
-  원두커피: ['드립커피', '원두'],
-  비품: ['생활용품', '일회용품'],
-};
+import CategorySelect from '@/components/ui/CategorySelect';
 
 // 상품 등록 모달 Props 타입 정의
 interface ProductFormModalProps {
@@ -128,67 +102,9 @@ export default function ProductFormModal({
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>카테고리</label>
           <div className='flex gap-2'>
-            {/* 대분류 선택 */}
-            <Controller
-              control={control} // React Hook Form 컨트롤러 사용
-              name='category'
-              render={({ field }) => (
-                <Select
-                  onValueChange={(value) => {
-                    setSelectedCategory(value || '대분류'); // 대분류 선택 시 상태 업데이트
-                    setValue('category', value || '대분류'); // React Hook Form 값 설정
-                  }}
-                >
-                  <SelectTrigger className='w-full h-[54px] md:h-[64px] border border-[#FCC49C] px-4 rounded-xl'>
-                    <SelectValue placeholder='대분류' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mainCategories.map((cat) => (
-                      <SelectItem
-                        key={cat}
-                        value={cat}
-                      >
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {/* 소분류 선택 */}
-            <Controller
-              control={control}
-              name='subCategory'
-              render={({ field }) => (
-                <Select
-                  onValueChange={(value) =>
-                    setValue('subCategory', value || '소분류')
-                  }
-                >
-                  <SelectTrigger className='w-full h-[54px] md:h-[64px] border border-[#FCC49C] px-4 rounded-xl'>
-                    <SelectValue placeholder='소분류' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {selectedCategory && subCategories[selectedCategory] ? (
-                      subCategories[selectedCategory].map((sub) => (
-                        <SelectItem
-                          key={sub}
-                          value={sub}
-                        >
-                          {sub}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem
-                        value='소분류'
-                        disabled
-                      >
-                        대분류를 먼저 선택해주세요
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              )}
+            <CategorySelect
+              onCategoryChange={(cat) => setValue('category', cat)} // RHF 상태 업데이트
+              onSubCategoryChange={(sub) => setValue('subCategory', sub)} // RHF 상태 업데이트
             />
           </div>
         </div>

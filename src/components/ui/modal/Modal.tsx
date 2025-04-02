@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
@@ -11,7 +12,6 @@ import {
   DialogTitle,
 } from '@/components/ui/Dialog';
 import { MOBILE_BREAKPOINT } from '@/lib/constants';
-import clsx from 'clsx';
 
 interface ModalProps {
   open: boolean;
@@ -67,15 +67,6 @@ const Modal = ({
 
     return () => window.removeEventListener('resize', handleResize);
   }, [imageSrc]);
-
-  // TODO: 위의 화면 크기에 따라 이미지 변경하는 로직을 이미지 컴포넌트로 대체.
-  // 예시:
-  //   <ResponsiveImage
-  //   imageSrc='/img/icons/warning-md.svg'
-  //   smallSize='w-[180px] h-[160px]'
-  //   largeSize='md:w-[230px] md:h-[200px]'
-  //   altText='경고 아이콘'
-  // />
 
   // TODO: 위의 화면 크기에 따라 이미지 변경하는 로직을 이미지 컴포넌트로 대체.
   // 예시:

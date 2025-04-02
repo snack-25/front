@@ -1,11 +1,10 @@
 'use client';
 
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface IError {

@@ -1,6 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { budgetApi } from '@/app/api/auth/api';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';
@@ -40,7 +44,10 @@ export default function Budget() {
 
   // 서버에서 예산 정보를 받아와 form 상태 업데이트 (초기 로딩)
   useEffect(() => {
-    if (!load) return;
+    if (!load) {
+      return;
+    }
+    console.log('company', company);
 
     const fetchBudgetInfo = async () => {
       if (!company || !company.id) {

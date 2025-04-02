@@ -1,8 +1,11 @@
+'use client'
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { IProducts } from '@/app/productList/page';
-import ProductCard from './ProductCard';
 import { useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
+
+import { IProducts } from '@/app/productList/ProductList';
+
+import ProductCard from './ProductCard';
 
 interface IProps {
   data: IProducts[];

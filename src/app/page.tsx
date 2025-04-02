@@ -1,7 +1,8 @@
 'use client';
-import { Button } from '@/components/ui/Button';
-import { logoutApi } from './api/auth/api';
 import { useEffect } from 'react';
+
+import { Button } from '@/components/ui/Button';
+
 import { useAuthStore } from './api/auth/useAuthStore';
 
 export default function Home() {

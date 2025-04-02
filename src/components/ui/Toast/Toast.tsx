@@ -1,10 +1,11 @@
 // components/ui/SimpleToast.tsx
 'use client';
 
-import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { CircleCheck, CircleX, icons, X } from 'lucide-react';
+import { CircleCheck, CircleX, X } from 'lucide-react';
 import { toast as sonnerToast } from 'sonner';
+
+import { cn } from '@/lib/utils';
 
 export interface IProps {
   id: string | number;
