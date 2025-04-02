@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
@@ -6,6 +6,7 @@ import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/ProductList';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { Category } from '@/components/gnb/TabMenu';
 
 export default function useCategory() {
   const searchParams = useSearchParams();
@@ -15,6 +16,43 @@ export default function useCategory() {
   const [mainName, setMainName] = useState<string>('');
   const [subName, setSubName] = useState<string>('');
   const { isAuth } = useAuthStore();
+
+  const getParents = async (): Promise<Category[]> => {
+    try {
+      const parents: Category[] = await fetchApi('/categories/parents', {
+        method: 'GET',
+      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('상위 카테고리 패칭 완료:', parents);
+      }
+      return parents;
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('상위 카테고리 패칭 실패:', err);
+      }
+      showCustomToast({ label: '상위 패칭 실패', variant: 'error' });
+      return [];
+    }
+  };
+
+  const getSub = async (parentId: string): Promise<Category[]> => {
+    //하위 카테고리 목록 패칭 함수
+    try {
+      const sub: Category[] = await fetchApi(
+        `/categories/parents/${parentId}`,
+        { method: 'GET' },
+      );
+      if (process.env.NODE_ENV === 'development') {
+        console.log('초기 하위 카테고리 패칭 완료:', sub);
+      }
+      return sub;
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('초기 하위 카테고리 패칭 실패:', err);
+      }
+      return [];
+    }
+  };
 
   useEffect(() => {
     if (!isAuth) {
@@ -48,5 +86,5 @@ export default function useCategory() {
     };
   }, [mainCategory, subCategory, isAuth]);
 
-  return { mainName, subName };
+  return { getParents, getSub, mainName, subName };
 }

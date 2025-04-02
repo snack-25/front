@@ -42,18 +42,6 @@ interface IFetchData {
   hasPrevPage: boolean;
 }
 
-/**
- * src/app/productList/page.tsx
- * Type error: Page "src/app/productList/page.tsx" does not match the required types of a Next.js Page.
- * "DEFAULT_SORT" is not a valid Page export field.
- * Next.js에서 page컴포넌트에서 export할 수 있도록 허용된 필드는 'default'와 'generateStaticParams'뿐입니다.
- * 별도의 파일로 분리하거나 컴포넌트 내부에서 선언해야 한다고 합니다.
- * lib/constants.ts로 이동했습니다!
- * export const DEFAULT_SORT = 'createdAt:desc';
- * export const DEFAULT_PARENTID = 'cat-스낵';
- * export const DEFAULT_CATEGORYID = 'sub-과자';
- */
-
 export default function ProductList() {
   const { user, isAuth } = useAuthStore();
 
