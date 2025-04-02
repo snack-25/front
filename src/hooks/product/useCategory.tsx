@@ -30,6 +30,9 @@ export default function useCategory() {
       if (process.env.NODE_ENV === 'development') {
         console.log('상위 카테고리 패칭 실패:', err);
       }
+      if (!isAuth) {
+        return [];
+      }
       showCustomToast({ label: '상위 패칭 실패', variant: 'error' });
       return [];
     }

@@ -44,6 +44,9 @@ export default function TabMenu() {
       const parents = await getParents();
       setParents(parents);
     };
+    if(!isAuth) {
+      router.replace('/notAuth');
+    }
     fetchParents();
   }, []);
 
@@ -96,10 +99,6 @@ export default function TabMenu() {
       router.replace(`?${newParams.toString()}`);
     }
   };
-
-  if (!isAuth) {
-    return;
-  }
 
   return (
     <motion.div
