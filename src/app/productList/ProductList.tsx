@@ -128,67 +128,6 @@ export default function ProductList() {
     setIsOpen((prev) => !prev);
   };
 
-  // 등록 모달 제출 함수
-  const handleSubmit = async (data: {
-    name: string;
-    category: string;
-    subCategory: string;
-    price: number;
-    image: File | null;
-    link: string;
-  }) => {
-    try {
-      const categoryId = `sub-${data.subCategory}`;
-
-      // imageUrl은 실제 업로드가 아니라면 링크 필드로 대체
-      const imageUrl = data.link;
-
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: data.name,
-          price: data.price,
-          description: `${data.category} ${data.subCategory}`, // 예시로 구성
-          categoryId,
-          imageUrl,
-        }),
-      });
-
-      if (!response.ok) {
-        showCustomToast({
-          label: '상품 등록에 실패하였습니다.',
-          variant: 'error',
-        });
-        throw new Error('상품 등록에 실패했습니다.');
-      }
-
-      showCustomToast({
-        label: '상품 등록에 성공하였습니다!',
-        variant: 'success',
-      });
-
-      setIsOpen(false);
-      router.refresh();
-    } catch (error) {
-      console.error(error);
-      showCustomToast({
-        label: '상품 등록 중 오류가 발생하였습니다.',
-        variant: 'error',
-      });
-    }
-  };
-
-  if (!isAuth) {
-    return (
-      <>
-        <ProductnotAuth />
-      </>
-    );
-  }
-
   return (
     <>
       {isLoading ? (
@@ -244,7 +183,6 @@ export default function ProductList() {
           <ProductFormModal
             isOpen={isOpen}
             onClose={handleOpen}
-            onConfirm={handleSubmit}
           />
         </div>
       ) : null}
