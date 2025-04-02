@@ -75,7 +75,7 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage', // localStorage 키 이름
       // getStorage: () => localStorage, // localStorage에 저장
       onRehydrateStorage: () => (state: any) => {
-        state?.setState?.({ isHydrated: true });
+        state?.set?.({ isHydrated: true });
       },
     },
   ),
