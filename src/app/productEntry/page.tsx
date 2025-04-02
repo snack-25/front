@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+
 import ProductEntry from './ProductEntry';
 
 export default function ProductEntryPage() {

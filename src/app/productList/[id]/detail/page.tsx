@@ -1,8 +1,8 @@
 'use client';
-import { ChevronRight } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useParams, useSearchParams } from 'next/navigation';
+import { ChevronRight } from 'lucide-react';
 
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import EmptyImage from '@/components/productList/EmptyImage';
