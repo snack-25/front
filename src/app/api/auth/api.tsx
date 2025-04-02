@@ -16,8 +16,10 @@ interface loginProps {
 
 interface budgetProps {
   companyId: string;
-  thisMonth: number;
-  everyMonth: number;
+  currentAmount: number;
+  initialAmount: number;
+  year: number;
+  month: number;
 }
 
 export async function signupApi(body: SignProps) {
@@ -92,7 +94,7 @@ export async function getBudgetApi(body: { companyId: string }) {
   }
 }
 
-export async function updateBudgetApi(body: {}) {
+export async function updateBudgetApi(body: budgetProps) {
   try {
     const res = await fetchApi('/budgets/update', {
       method: 'PUT',

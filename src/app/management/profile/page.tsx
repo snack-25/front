@@ -1,9 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
+
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Image from 'next/image';
 
 interface IError {
   isError: boolean;

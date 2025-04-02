@@ -1,24 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
-import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface AmountField {
   value: string;
   default: string;
   modified: boolean;
-}
-
-interface FormState {
-  currentAmount: AmountField;
-  initialAmount: AmountField;
-  year: number;
-  month: number;
 }
 
 export default function Budget() {
@@ -97,7 +91,9 @@ export default function Budget() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const rawValue = value.replace(/,/g, '');
-    if (!/^\d*$/.test(rawValue)) return;
+    if (!/^\d*$/.test(rawValue)) {
+      return;
+    }
     const formattedValue = rawValue
       ? Number(rawValue).toLocaleString('en-US')
       : '';
@@ -113,23 +109,6 @@ export default function Budget() {
       },
     }));
   };
-
-  // const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-  //   const { name } = e.target;
-  //   setForm((prev) => {
-  //     const field = prev[
-  //       name as 'currentAmount' | 'initialAmount'
-  //     ] as AmountField;
-  //     return {
-  //       ...prev,
-  //       [name]: {
-  //         ...field,
-  //         value: field.value === field.default ? '' : field.value,
-  //         modified: field.value !== field.default,
-  //       },
-  //     };
-  //   });
-  // };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
