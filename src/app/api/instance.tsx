@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '@/lib/constants';
+
 import { useAuthStore } from './auth/useAuthStore';
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {

@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select';
+import CategorySelect from '@/components/ui/CategorySelect';
 
 const mainCategories = [
   '스낵',
@@ -145,54 +139,12 @@ export default function ProductEditModal({
         <div className='flex flex-col gap-2'>
           <label className='text-[20px] font-semibold'>카테고리</label>
           <div className='flex gap-2'>
-            <Controller
-              control={control}
-              name='category'
-              render={({ field }) => (
-                <Select
-                  onValueChange={(value) => {
-                    setValue('category', value);
-                    setValue('subCategory', '');
-                  }}
-                >
-                  <SelectTrigger className='w-full h-[54px] md:h-[64px] border border-[#FCC49C] px-4 rounded-xl'>
-                    <SelectValue placeholder='대분류' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mainCategories.map((cat) => (
-                      <SelectItem
-                        key={cat}
-                        value={cat}
-                      >
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            <Controller
-              control={control}
-              name='subCategory'
-              render={({ field }) => (
-                <Select
-                  onValueChange={(value) => setValue('subCategory', value)}
-                >
-                  <SelectTrigger className='w-full h-[54px] md:h-[64px] border border-[#FCC49C] px-4 rounded-xl'>
-                    <SelectValue placeholder='소분류' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subCategories[watch('category')]?.map((sub) => (
-                      <SelectItem
-                        key={sub}
-                        value={sub}
-                      >
-                        {sub}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+            <CategorySelect
+              onCategoryChange={(cat) => {
+                setValue('category', cat);
+                setValue('subCategory', '');
+              }}
+              onSubCategoryChange={(sub) => setValue('subCategory', sub)}
             />
           </div>
         </div>

@@ -38,19 +38,29 @@ const mockOrders: Order[] = [
   },
 ];
 
-const headers = ['구매승인일', '상품정보', '주문 금액', '요청인', '담당자', '구매요청일'];
+const headers = [
+  '구매승인일',
+  '상품정보',
+  '주문 금액',
+  '요청인',
+  '담당자',
+  '구매요청일',
+];
 
 const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => {
   const router = useRouter();
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       {orders.length > 0 ? (
-        <div className="flex flex-col">
+        <div className='flex flex-col'>
           {/* 헤더 */}
-          <div className="min-h-[80px] flex justify-around items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium">
+          <div className='min-h-[80px] flex justify-around items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium'>
             {headers.map((header) => (
-              <span key={header} className="flex-1 text-center">
+              <span
+                key={header}
+                className='flex-1 text-center'
+              >
                 {header}
               </span>
             ))}
@@ -60,23 +70,23 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => {
           {orders.map((order) => (
             <div
               key={order.id}
-              className="flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50"
+              className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
               onClick={() => router.push(`/history/${order.id}`)}
             >
-              <span className="flex-1 text-center">{order.date}</span>
-              <span className="flex-1 text-center">{order.product}</span>
-              <span className="flex-1 text-center">{order.price}원</span>
-              <span className="flex-1 text-center">{order.requester}</span>
-              <span className="flex-1 text-center">{order.handler}</span>
-              <span className="flex-1 text-center">{order.requestDate}</span>
+              <span className='flex-1 text-center'>{order.date}</span>
+              <span className='flex-1 text-center'>{order.product}</span>
+              <span className='flex-1 text-center'>{order.price}원</span>
+              <span className='flex-1 text-center'>{order.requester}</span>
+              <span className='flex-1 text-center'>{order.handler}</span>
+              <span className='flex-1 text-center'>{order.requestDate}</span>
             </div>
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-10">
+        <div className='flex flex-col items-center justify-center py-10'>
           <Image
-            src="/img/order/order-nothing-admin-md.svg"
-            alt="구매 내역 없음"
+            src='/img/order/order-nothing-admin-md.svg'
+            alt='구매 내역 없음'
             width={300}
             height={200}
           />

@@ -1,0 +1,265 @@
+'use client';
+import { notFound, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+
+import { Category } from '@/components/gnb/TabMenu';
+import CardList from '@/components/productList/CardList';
+import CloseButton from '@/components/productList/CloseButton';
+import EmptyImage from '@/components/productList/EmptyImage';
+import FloatingButton from '@/components/productList/FloatingButton';
+import Loading from '@/components/productList/Loading';
+import MoreButton from '@/components/productList/MoreButton';
+import ProductnotAuth from '@/components/productList/ProductNotAuth';
+import ProductFormModal from '@/components/ui/modal/ProductFormModal';
+import { SortDropDown } from '@/components/ui/SortDropDown';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import useCategory from '@/hooks/product/useCategory';
+import { useFetchProducts } from '@/hooks/product/useFetchProduct';
+import { DEFAULT_SORT } from '@/lib/constants';
+
+import { useAuthStore } from '../api/auth/useAuthStore';
+
+export type Tsort =
+  | 'createdAt:asc'
+  | 'createdAt:desc'
+  | 'price:asc'
+  | 'price:desc';
+
+export interface IProducts {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  categoryId: Category['id'];
+  imageUrl: string;
+}
+
+interface IFetchData {
+  items: IProducts[];
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+/**
+ * src/app/productList/page.tsx
+ * Type error: Page "src/app/productList/page.tsx" does not match the required types of a Next.js Page.
+ * "DEFAULT_SORT" is not a valid Page export field.
+ * Next.js에서 page컴포넌트에서 export할 수 있도록 허용된 필드는 'default'와 'generateStaticParams'뿐입니다.
+ * 별도의 파일로 분리하거나 컴포넌트 내부에서 선언해야 한다고 합니다.
+ * lib/constants.ts로 이동했습니다!
+ * export const DEFAULT_SORT = 'createdAt:desc';
+ * export const DEFAULT_PARENTID = 'cat-스낵';
+ * export const DEFAULT_CATEGORYID = 'sub-과자';
+ */
+
+export default function ProductList() {
+  const { user, isAuth } = useAuthStore();
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { fetchProducts } = useFetchProducts();
+  const { subName } = useCategory(); // 카테고리 한글값 가져오기
+
+  const categoryId = searchParams.get('categoryId');
+  const sort: Tsort = searchParams.get('sort') as Tsort;
+  const page = Number(searchParams.get('page'));
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [products, setProducts] = useState<IFetchData | null>(null);
+
+  useEffect(() => {
+    if (!isAuth) {
+      return;
+    }
+    const newParams = new URLSearchParams(searchParams.toString());
+    let isChanged: boolean = false;
+    if (!sort) {
+      newParams.set('sort', DEFAULT_SORT);
+      isChanged = true;
+    }
+    if (!page) {
+      newParams.set('page', '1');
+      isChanged = true;
+    }
+    if (isChanged) {
+      router.replace(`?${newParams.toString()}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!categoryId || !sort || !isAuth) {
+      return;
+    }
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchProducts(page, categoryId as string, sort);
+        if (!data) {
+          return <EmptyImage />;
+        }
+
+        const { items, hasNextPage, hasPrevPage } = data;
+
+        setProducts((prev) => {
+          if (page === 1) {
+            return { items, hasNextPage, hasPrevPage };
+          }
+          return {
+            items: prev ? [...prev.items, ...data.items] : items,
+            hasNextPage,
+            hasPrevPage,
+          };
+        });
+      } catch (err) {
+        notFound();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [page, categoryId, sort, fetchProducts]);
+
+  const handleMoreButton = () => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    const newPage = String(page + 1);
+    newParams.set('page', newPage);
+    router.replace(`?${newParams.toString()}`);
+  };
+
+  const handleCloseButton = () => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set('page', '1');
+    router.replace(`?${newParams.toString()}`);
+  };
+
+  const handleOpen = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  // 등록 모달 제출 함수
+  const handleSubmit = async (data: {
+    name: string;
+    category: string;
+    subCategory: string;
+    price: number;
+    image: File | null;
+    link: string;
+  }) => {
+    try {
+      const categoryId = `sub-${data.subCategory}`;
+
+      // imageUrl은 실제 업로드가 아니라면 링크 필드로 대체
+      const imageUrl = data.link;
+
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          price: data.price,
+          description: `${data.category} ${data.subCategory}`, // 예시로 구성
+          categoryId,
+          imageUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        showCustomToast({
+          label: '상품 등록에 실패하였습니다.',
+          variant: 'error',
+        });
+        throw new Error('상품 등록에 실패했습니다.');
+      }
+
+      showCustomToast({
+        label: '상품 등록에 성공하였습니다!',
+        variant: 'success',
+      });
+
+      setIsOpen(false);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      showCustomToast({
+        label: '상품 등록 중 오류가 발생하였습니다.',
+        variant: 'error',
+      });
+    }
+  };
+
+  if (!isAuth) {
+    return (
+      <>
+        <ProductnotAuth />
+      </>
+    );
+  }
+
+  return (
+    <>
+      {isLoading ? (
+        <Loading size='L' />
+      ) : products?.items ? (
+        <div className='relative'>
+          <div className='w-full h-[98px] max-lt:h-[68px] px-[120px] max-lt:px-6 flex items-center justify-end'>
+            <SortDropDown />
+          </div>
+
+          <CardList
+            data={products.items.map((item) => ({
+              ...item,
+              categoryId: subName,
+            }))}
+          />
+
+          {products.items.length === 0 ? (
+            <EmptyImage />
+          ) : products.hasNextPage ? (
+            <motion.div
+              initial={{ y: 300, opacity: 1 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className='w-full flex items-center justify-center my-16 fixed bottom-0'
+            >
+              <MoreButton onClick={handleMoreButton} />
+            </motion.div>
+          ) : products.hasPrevPage ? (
+            <CloseButton
+              className='w-full flex items-center justify-center my-16 fixed bottom-0'
+              onClick={handleCloseButton}
+            />
+          ) : (
+            ''
+          )}
+
+          {user?.role !== 'USER' && ( // 관리자 이상 권한일때만 표시
+            <motion.div
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              whileHover={{
+                x: [0, -5, 5, -5, 5, 0],
+                transition: { duration: 0.4, ease: 'easeInOut' },
+              }}
+              className='fixed bottom-[10vh] right-[120px] max-lt:right-6'
+            >
+              <FloatingButton handleClick={handleOpen} />
+            </motion.div>
+          )}
+
+          <ProductFormModal
+            isOpen={isOpen}
+            onClose={handleOpen}
+            onConfirm={handleSubmit}
+          />
+        </div>
+      ) : null}
+    </>
+  );
+}
