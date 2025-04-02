@@ -322,12 +322,6 @@ export default function ModalTestPage() {
         >
           상품 등록 열기
         </Button>
-        {/* 상품 등록 모달 추가 */}
-        <ProductFormModal
-          isOpen={isProductModalOpen}
-          onClose={() => setIsProductModalOpen(false)}
-          onConfirm={handleProductConfirm}
-        />
 
         {/* 상품 수정 모달 열기 버튼 */}
         <Button
