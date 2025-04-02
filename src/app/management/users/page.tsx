@@ -6,6 +6,7 @@ import ManagementTabMenu from '@/components/gnb/ManagementTabMenu';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
+import { inviteUserApi } from '@/app/api/users/api';
 
 const mockUsers = [
   { id: 1, name: '김스낵', email: 'snack1@codeit.com', role: 'admin' },
@@ -174,8 +175,17 @@ export default function UserManagementPage() {
       <InviteMemberModal
         isOpen={isInviteModalOpen}
         onClose={() => setInviteModalOpen(false)}
-        onConfirm={(data) => {
-          console.log('User invited:', data);
+        onConfirm={async (data) => {
+          try {
+            const response = await inviteUserApi(data);
+            console.log('✅ 초대 완료:', response);
+            alert('회원 초대가 완료되었습니다!');
+          } catch (error) {
+            console.error('❌ 초대 실패:', error);
+            alert('회원 초대에 실패했습니다.');
+          } finally {
+            setInviteModalOpen(false);
+          }
         }}
       />
     </div>
