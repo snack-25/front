@@ -110,7 +110,7 @@ export default function Header() {
               </NavItem>
               {user.role === 'SUPERADMIN' && (
                 <NavItem
-                  href='/tmp'
+                  href='/management/users'
                   currentPath={pathname}
                 >
                   관리
@@ -126,7 +126,7 @@ export default function Header() {
                 Cart
               </NavItem>
               <NavItem
-                href='/tmp'
+                href='/management/profile'
                 currentPath={pathname}
               >
                 Profile

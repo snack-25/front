@@ -77,15 +77,6 @@ const Modal = ({
   //   altText='경고 아이콘'
   // />
 
-  // TODO: 위의 화면 크기에 따라 이미지 변경하는 로직을 이미지 컴포넌트로 대체.
-  // 예시:
-  //   <ResponsiveImage
-  //   imageSrc='/img/icons/warning-md.svg'
-  //   smallSize='w-[180px] h-[160px]'
-  //   largeSize='md:w-[230px] md:h-[200px]'
-  //   altText='경고 아이콘'
-  // />
-
   const finalDescription =
     userEmail && typeof description === 'string'
       ? description.replace('{userEmail}', userEmail) // e.g. '김스낵(sn@codeit.com)' ->'김스낵(sn@codeit.com)님의 계정을 탈퇴시킬까요?',
