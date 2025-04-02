@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware'; // 로컬스토리지 사용할 시
 
 import { initFormType } from '@/app/auth/login/page';
-
 import { loginApi, logoutApi } from './api';
 
 // 백엔드에서 보내는거
@@ -66,7 +65,9 @@ export const useAuthStore = create<AuthState>()(
 
       // 로그아웃 (상태 초기화 + localStorage 삭제)
       logout: async () => {
-        console.log('버튼 누른거');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('버튼 누른거');
+        }
         await logoutApi();
         set({ user: null, company: null, isAuth: false });
       },
@@ -74,8 +75,13 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage', // localStorage 키 이름
       // getStorage: () => localStorage, // localStorage에 저장
-      onRehydrateStorage: () => (state: any) => {
-        state?.set?.({ isHydrated: true });
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('hydrate error:', error);
+        }
+        if (state) {
+          state.isHydrated = true;
+        }
       },
     },
   ),

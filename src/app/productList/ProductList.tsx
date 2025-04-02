@@ -11,7 +11,6 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import FloatingButton from '@/components/productList/FloatingButton';
 import Loading from '@/components/productList/Loading';
 import MoreButton from '@/components/productList/MoreButton';
-import ProductnotAuth from '@/components/productList/ProductNotAuth';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import { SortDropDown } from '@/components/ui/SortDropDown';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
@@ -59,9 +58,6 @@ export default function ProductList() {
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
-    if (!isAuth) {
-      return;
-    }
     const newParams = new URLSearchParams(searchParams.toString());
     let isChanged: boolean = false;
     if (!sort) {
@@ -78,7 +74,7 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
-    if (!categoryId || !sort || !isAuth) {
+    if (!categoryId || !sort) {
       return;
     }
 
