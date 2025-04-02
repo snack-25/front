@@ -45,12 +45,14 @@ const OrderDetailPage = () => {
   const isOverBudget = remainingAfterPurchase < 0;
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      return;
+    }
 
     const fetchOrderDetail = async () => {
       try {
         const res = await fetch(`/order-requests/${id}`);
-        if (!res.ok) throw new Error('데이터 불러오기 실패');
+        if (!res.ok) { throw new Error('데이터 불러오기 실패'); }
         const data = await res.json();
 
         const transformed: OrderDetail = {
