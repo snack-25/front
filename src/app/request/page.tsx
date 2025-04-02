@@ -11,12 +11,22 @@ import DropdownMenu, {
 
 import OrderTable from './components/OrderTable'; // ✅ 테이블 컴포넌트
 
+interface OrderItem {
+  id: string;
+  name: string;
+  imageUrl: string;
+  category: string;
+  price: number;
+  quantity: number;
+}
+
 interface Order {
   id: string;
   date: string;
-  product: string;
-  price: number;
   requester: string;
+  price: number;
+  items: OrderItem[];
+  budgetLeft: number;
 }
 
 const PurchaseRequestPage = () => {
@@ -35,9 +45,9 @@ const PurchaseRequestPage = () => {
 
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=1&pageSize=10&sort=${sortQuery}`, {
-            credentials: 'include',
-        });
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=1&pageSize=10&sort=${sortQuery}`,
+          { credentials: 'include' }
+        );
 
         if (!res.ok) {
           const text = await res.text();
@@ -45,14 +55,30 @@ const PurchaseRequestPage = () => {
           return;
         }
 
-        const data = await res.json();
+        const fetchedData = await res.json();
 
-        const transformed: Order[] = data.data.map((item: any) => ({
+        if (!Array.isArray(fetchedData)) {
+          console.error('응답이 배열이 아님:', fetchedData);
+          return;
+        }
+
+        const transformed: Order[] = fetchedData.map((item: any) => ({
           id: item.id,
           date: item.createdAt.slice(0, 10),
-          product: item.summary || '코카콜라 제로 외 1건',
-          price: item.totalAmount,
           requester: item.requester?.name || '-',
+          price: item.totalAmount,
+          budgetLeft: item.budgetLeft ?? 0,
+          items: (item.orderRequestItems || []).map((i: any) => {
+            console.log('✅ 주문 아이템 확인:', JSON.stringify(i, null, 2));
+            return {
+              id: i.product?.id ?? '',
+              name: i.product?.name || '상품 없음',
+              imageUrl: i.product?.imageUrl || '/images/default.png',
+              category: i.product?.categoryName || '기타',
+              price: i.price ?? 0,
+              quantity: i.quantity ?? 0,
+            };
+          }),
         }));
 
         setOrders(transformed);
@@ -64,12 +90,12 @@ const PurchaseRequestPage = () => {
     fetchOrders();
   }, [sortOption]);
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (id: string, message: string) => {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminNotes: '승인합니다.' }),
+        body: JSON.stringify({ adminNotes: message }),
       });
       setOrders((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
@@ -129,4 +155,3 @@ const PurchaseRequestPage = () => {
 };
 
 export default PurchaseRequestPage;
-

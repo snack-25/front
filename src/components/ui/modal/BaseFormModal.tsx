@@ -39,7 +39,7 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
   showCloseButton = false,
   smallSize = 'w-[375px] h-[456px]',
   largeSize = 'md:w-[688px] md:h-[528px]',
-  confirmButtonProps = 'w-[158px] h-[54px] md:w-[310px] md:h-[64px]',
+  confirmButtonProps = 'w-[158px] h-[54px] md:w-[310px] md:h-[64px]', 
   cancelButtonProps = 'w-[158px] h-[54px] md:w-[310px] md:h-[64px]',
 }) => {
   return (
@@ -82,12 +82,16 @@ const BaseFormModal: React.FC<BaseFormModalProps> = ({
             {cancelText}
           </Button>
           <Button
-            className={`bg-[#F97B22] text-white rounded-lg ${confirmButtonProps} text-2lg`}
-            onClick={onConfirm}
-            disabled={confirmDisabled}
-          >
-            {confirmText}
-          </Button>
+  className={`rounded-lg ${confirmButtonProps} text-2lg ${
+    confirmDisabled
+      ? 'bg-gray-300 text-white cursor-not-allowed'
+      : 'bg-[#F97B22] text-white hover:bg-orange-600 cursor-pointer'
+  }`}
+  onClick={onConfirm}
+  disabled={confirmDisabled}
+>
+  {confirmText}
+</Button>
         </div>
       </DialogContent>
     </Dialog>
