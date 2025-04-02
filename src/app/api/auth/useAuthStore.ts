@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import { jwtDecode } from 'jwt-decode';
-import { loginApi, logoutApi } from './api';
-import { initFormType } from '@/app/auth/login/page';
 import { persist } from 'zustand/middleware'; // 로컬스토리지 사용할 시
+
+import { initFormType } from '@/app/auth/login/page';
+
+import { loginApi, logoutApi } from './api';
 
 // 백엔드에서 보내는거
 // user {

@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
@@ -11,7 +12,6 @@ import {
   DialogTitle,
 } from '@/components/ui/Dialog';
 import { MOBILE_BREAKPOINT } from '@/lib/constants';
-import clsx from 'clsx';
 
 interface ModalProps {
   open: boolean;

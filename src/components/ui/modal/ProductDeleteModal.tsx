@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import { Button } from '../Button';
-import { cn } from '@/lib/utils';
+
 import useProductDelete from '@/hooks/product/useProductDelete';
+import { cn } from '@/lib/utils';
 
 interface IProps {
   id: string;

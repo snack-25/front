@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 import { HeaderMenu } from './HeaderMenu';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 interface navItemProps {
   href: string;
@@ -61,7 +61,6 @@ export default function Header() {
 
             <div className='flex gap-8 max-tb:hidden'>
               <Link
-                prefetch={false}
                 href={{
                   pathname: '/productList',
                   query: {

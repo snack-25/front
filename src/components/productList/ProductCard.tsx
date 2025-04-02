@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 
-import { IProducts } from '@/app/productList/page';
+import { IProducts } from '@/app/productList/ProductList';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 
 type cardProps = {

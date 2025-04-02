@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import { invitationCodeApi, invitationSignupApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { invitationCodeApi, invitationSignupApi } from '@/app/api/auth/api';
-import Image from 'next/image';
 import Modal from '@/components/ui/modal/Modal';
 
 interface InvitedUser {

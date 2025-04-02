@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { budgetApi } from '@/app/api/auth/api';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
-import { budgetApi } from '@/app/api/auth/api';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function Budget() {
@@ -16,9 +17,11 @@ export default function Budget() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 기존에 입력된 콤마 제거
-    let rawValue = e.target.value.replace(/,/g, '');
+    const rawValue = e.target.value.replace(/,/g, '');
     // 숫자만 입력되도록 검사 (빈 문자열도 허용)
-    if (!/^\d*$/.test(rawValue)) return;
+    if (!/^\d*$/.test(rawValue)) {
+      return;
+    }
 
     // 숫자가 있으면 포맷 적용, 없으면 빈 문자열 처리
     const formattedValue = rawValue
@@ -45,12 +48,16 @@ export default function Budget() {
 
   // 예산 정보를 백엔드에서 받아오는 로직
   useEffect(() => {
-    if (!load) return;
+    if (!load) {
+      return;
+    }
     console.log('company', company);
 
     const fetchBudgetInfo = async () => {
       // companyId가 undefined인 경우에는 fetch를 하지 않도록 처리
-      if (!company) throw new Error('회사 Id가 없습니다.');
+      if (!company) {
+        throw new Error('회사 Id가 없습니다.');
+      }
       if (!company.id) {
         console.error('회사 ID가 없습니다');
         return; // companyId가 없으면 API 호출을 하지 않음
