@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 interface IError {
   isError: boolean;

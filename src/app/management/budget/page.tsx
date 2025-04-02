@@ -1,10 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-import { budgetApi } from '@/app/api/auth/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { useRouter } from 'next/navigation';

@@ -1,14 +1,13 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
 import { signupApi } from '@/app/api/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Modal from '@/components/ui/modal/Modal';
 import { emailRegex } from '@/lib/constants';
+import Modal from '@/components/ui/modal/Modal';
+import Image from 'next/image';
 
 interface IError {
   isError: boolean;
