@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import EmptyImage from '@/components/productList/EmptyImage';
 import Loading from '@/components/productList/Loading';
 import ProductMenu from '@/components/productList/ProductMenu';

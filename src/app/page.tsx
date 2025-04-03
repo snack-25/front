@@ -5,7 +5,7 @@ import Image from 'next/image';
 import HeroImg from '@public/img/landing/landing-hero-md.svg';
 import LogoImg from '@public/img/landing/landing-title-md.svg';
 
-import { useAuthStore } from './api/auth/useAuthStore';
+import { useAuthStore } from './auth/useAuthStore';
 
 export default function Home() {
   const { user, company, logout } = useAuthStore();

@@ -2,7 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/ProductList';
 import { Category } from '@/components/gnb/TabMenu';

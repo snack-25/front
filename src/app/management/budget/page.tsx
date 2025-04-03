@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { getBudgetApi, updateBudgetApi } from '@/app/auth/api';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
@@ -49,7 +49,7 @@ export default function Budget() {
         const response = await getBudgetApi({ companyId: company.companyId });
 
         if (response) {
-          const { currentAmount, initialAmount, year, month } = response;
+          const { currentAmount, initialAmount, year, month } = response.data;
 
           if (!year || !month) {
             console.error('올바른 연도와 월이 없습니다.', response);
@@ -81,13 +81,13 @@ export default function Budget() {
   }, [company, load]);
 
   // 로그인/권한 체크
-  // useEffect(() => {
-  //   if (load) {
-  //     if (user?.role !== 'SUPERADMIN' || !isAuth) {
-  //       router.replace('/');
-  //     }
-  //   }
-  // }, [load, user, isAuth, router]);
+  useEffect(() => {
+    if (load) {
+      if (user?.role !== 'SUPERADMIN' || !isAuth) {
+        router.replace('/');
+      }
+    }
+  }, [load, user, isAuth, router]);
 
   // onChange: 입력된 값 업데이트, 천단위 포맷 적용, 수정 여부 계산
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
