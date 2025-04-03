@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { updatePasswordApi } from '@/app/api/auth/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { updatePasswordApi } from '@/app/auth/api';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';

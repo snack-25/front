@@ -5,11 +5,11 @@ import Form from 'next/form';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { loginApi } from '@/app/api/auth/api';
+import { loginApi } from '@/app/auth/api';
 import { fetchApi } from '@/app/api/instance';
 
 interface IError {

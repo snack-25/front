@@ -17,7 +17,7 @@ import useCategory from '@/hooks/product/useCategory';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { DEFAULT_SORT } from '@/lib/constants';
 
-import { useAuthStore } from '../api/auth/useAuthStore';
+import { useAuthStore } from '../auth/useAuthStore';
 
 export type Tsort =
   | 'createdAt:asc'

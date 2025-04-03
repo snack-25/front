@@ -1,4 +1,4 @@
-import { fetchApi } from '../instance';
+import { fetchApi } from '../api/instance';
 
 interface SignProps {
   name: string;

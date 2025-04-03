@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { inviteUserApi } from '@/app/api/users/api';
 import ManagementTabMenu from '@/components/gnb/ManagementTabMenu';
 import { Button } from '@/components/ui/Button';

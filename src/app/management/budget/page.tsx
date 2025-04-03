@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { getBudgetApi, updateBudgetApi } from '@/app/auth/api';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
