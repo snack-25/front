@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import { inviteUserApi } from '@/app/api/users/api';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 const mockUsers = [
   { id: 1, name: '김스낵', email: 'snack1@codeit.com', role: 'admin' },
@@ -38,6 +39,7 @@ const RoleChip = ({ role }: { role: 'admin' | 'basicUser' }) => {
 
 export default function UserManagementPage() {
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+  const { user, company } = useAuthStore();
 
   return (
     <div className='bg-[#FFFBF6] min-h-screen'>
@@ -178,7 +180,39 @@ export default function UserManagementPage() {
         onClose={() => setInviteModalOpen(false)}
         onConfirm={async (data) => {
           try {
-            const response = await inviteUserApi(data);
+            if (!user) {
+              console.error('❌ user가 존재하지 않습니다.');
+              alert('로그인이 필요합니다.');
+              return;
+            }
+
+            if (!user.id) {
+              console.error('❌ user.id가 존재하지 않습니다.', user);
+              alert('유효하지 않은 사용자입니다.');
+              return;
+            }
+
+            if (!user.companyId) {
+              console.error('❌ user.companyId가 존재하지 않습니다.', user);
+              alert('소속된 회사 정보가 없습니다.');
+              return;
+            }
+
+            console.log('✅ 초대 요청 데이터:', {
+              name: data.name,
+              email: data.email,
+              role: data.role,
+              companyId: user.companyId,
+              inviterId: String(user.id),
+            });
+
+            const response = await inviteUserApi({
+              name: data.name,
+              email: data.email,
+              role: data.role,
+              companyId: user.companyId,
+              inviterId: String(user.id),
+            });
             console.log('✅ 초대 완료:', response);
             alert('회원 초대가 완료되었습니다!');
           } catch (error) {
