@@ -1,20 +1,23 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Listbox } from '@headlessui/react';
+import { ChevronDownIcon, CheckIcon } from 'lucide-react';
 
 import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select';
 
 interface InviteMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (data: { name: string; email: string; role: string }) => void;
 }
+
+// 권한 목록 (value는 서버에 보낼 값, label은 사용자에게 보여지는 이름)
+const roleOptions = [
+  { value: 'SUPERADMIN', label: '최종 관리자' },
+  { value: 'ADMIN', label: '관리자' },
+  { value: 'USER', label: '일반 유저' },
+];
 
 export default function InviteMemberModal({
   isOpen,
@@ -30,10 +33,12 @@ export default function InviteMemberModal({
     defaultValues: {
       name: '',
       email: '',
-      role: '관리자', // 기본값 설정
     },
     mode: 'onChange',
   });
+
+  // 선택된 권한 상태 관리
+  const [selectedRole, setSelectedRole] = useState(roleOptions[1]); // 기본값: 관리자
 
   const isConfirmDisabled =
     watch('name').length < 3 ||
@@ -46,7 +51,12 @@ export default function InviteMemberModal({
       title='회원 초대'
       isOpen={isOpen}
       onClose={onClose}
-      onConfirm={handleSubmit(onConfirm)}
+      onConfirm={handleSubmit((data) =>
+        onConfirm({
+          ...data,
+          role: selectedRole.value, // 실제 서버에 보낼 enum 값
+        }),
+      )}
       confirmText='등록하기'
       cancelText='취소'
       confirmDisabled={isConfirmDisabled}
@@ -105,16 +115,37 @@ export default function InviteMemberModal({
           <label className='text-[20px] font-semibold text-[#1F1F1F]'>
             권한
           </label>
-          <Select {...register('role')}>
-            <SelectTrigger className='text-[16px] w-full h-[54px] md:h-[64px] border border-[#FCC49C] rounded-xl px-4'>
-              <SelectValue placeholder='관리자' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='최종 관리자'>최종 관리자</SelectItem>
-              <SelectItem value='관리자'>관리자</SelectItem>
-              <SelectItem value='일반 유저'>일반 유저</SelectItem>
-            </SelectContent>
-          </Select>
+          <Listbox
+            value={selectedRole}
+            onChange={setSelectedRole}
+          >
+            <div className='relative'>
+              <Listbox.Button className='flex items-center justify-between w-full h-[54px] md:h-[64px] px-4 border border-[#FCC49C] rounded-xl bg-white text-left'>
+                <span className='text-[16px]'>{selectedRole.label}</span>
+                <ChevronDownIcon className='w-4 h-4 text-orange-500' />
+              </Listbox.Button>
+              <Listbox.Options className='absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded-xl border bg-white shadow-md'>
+                {roleOptions.map((role) => (
+                  <Listbox.Option
+                    key={role.value}
+                    value={role}
+                    className={({ active }) =>
+                      `px-4 py-2 cursor-pointer ${active ? 'bg-orange-100' : ''}`
+                    }
+                  >
+                    {({ selected }) => (
+                      <span className='flex justify-between items-center text-sm'>
+                        {role.label}
+                        {selected && (
+                          <CheckIcon className='w-4 h-4 text-orange-500' />
+                        )}
+                      </span>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </div>
+          </Listbox>
         </div>
       </div>
     </BaseFormModal>

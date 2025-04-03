@@ -157,6 +157,7 @@ export default function Login() {
         <Button
           className='mt-[16px] tb:mt-[40px] cursor-pointer w-full'
           filled='orange'
+          type='button'
           onClick={handleSubmit}
           disabled={!isFormValid}
         >
