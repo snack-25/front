@@ -32,10 +32,12 @@ export async function signupApi(body: SignProps) {
 }
 
 export async function loginApi(body: loginProps) {
-  return await fetchApi('/auth/login', {
+  const data = await fetchApi('/auth/login', {
     method: 'POST',
     body: JSON.stringify(body),
   });
+  console.log('d?', data);
+  return data;
 }
 
 export async function logoutApi() {
@@ -83,6 +85,7 @@ export async function invitationSignupApi(params: {
 }
 
 export async function getBudgetApi(body: { companyId: string }) {
+  console.log('body', body);
   try {
     const res = await fetchApi('/budgets/inquiry', {
       method: 'POST',

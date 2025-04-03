@@ -18,11 +18,7 @@ export async function fetchApi(
     });
 
     const data = await res.json();
-
-    if (!res.ok) {
-      console.error('❌ [API 응답 에러]', fullUrl, data);
-      throw new Error(data.message || 'API 요청 실패');
-    }
+    console.log('data', data);
 
     return data;
   } catch (err) {

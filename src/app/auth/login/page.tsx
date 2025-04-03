@@ -65,6 +65,7 @@ export default function Login() {
     }
 
     const result = await login(form);
+    console.log('result', result);
     if (result) {
       showCustomToast({
         label: '로그인 성공했습니다.',
@@ -79,7 +80,6 @@ export default function Login() {
         onClick: () => {},
       });
     }
-    // console.log('result', result);
   };
 
   useEffect(() => {
