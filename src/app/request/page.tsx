@@ -65,7 +65,7 @@ const PurchaseRequestPage = () => {
 
         const transformed: Order[] = fetchedData.map((item: any) => ({
           id: item.id,
-          date: item.createdAt.slice(0, 10),
+          date: item.createdAt ? item.createdAt.slice(0, 10) : '-', // 오류나서 임시로 처리
           requester: item.requester?.name || '-',
           price: item.totalAmount,
           budgetLeft: item.budgetLeft ?? 0,

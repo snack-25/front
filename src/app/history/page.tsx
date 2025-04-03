@@ -38,16 +38,20 @@ const OrdersPage = () => {
 
         const data = await res.json();
         console.log('✅ 서버 응답 확인', data);
-
         const transformed: Order[] = data.map((item: any) => ({
           id: item.id,
           date: item.createdAt?.slice(0, 10) ?? '-',
-          product: item.orderRequestItems?.[0]?.product?.name || '상품 없음',
+          items: item.orderRequestItems?.map((it: any) => ({
+            name: it.product?.name || '상품 없음',
+            quantity: it.quantity || 0,
+          })) || [],
           price: item.totalAmount?.toLocaleString() || '0',
           requester: item.requester?.name || '-',
           handler: item.resolver?.name || '-',
-          requestDate: item.createdAt?.slice(0, 10) ?? '-',
+          requestDate: item.CreatedAt?.slice(0, 10) ?? '-',
         }));
+        
+        
 
         setOrders(transformed);
       } catch (err) {

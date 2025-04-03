@@ -1,12 +1,16 @@
 export interface Order {
   id: string;
   date: string;
-  product: string;
+  items: {
+    name: string;
+    quantity: number;
+  }[];
   price: string;
   requester: string;
   handler: string;
   requestDate: string;
 }
+
 
 // ✅ 1. 주문 목록 조회 API (엔드포인트 수정)
 export const getOrders = async (
