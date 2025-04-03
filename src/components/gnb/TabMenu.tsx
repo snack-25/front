@@ -1,15 +1,15 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
+import useCategory from '@/hooks/product/useCategory';
 
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
-import useCategory from '@/hooks/product/useCategory';
 
 export interface Category {
   id: string;
@@ -30,7 +30,7 @@ export default function TabMenu() {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const { isAuth } = useAuthStore();
+  const { isAuth, isHydrated } = useAuthStore();
   const { getParents, getSub } = useCategory();
 
   const parentId = searchParams.get('parentId');
@@ -44,9 +44,6 @@ export default function TabMenu() {
       const parents = await getParents();
       setParents(parents);
     };
-    if(!isAuth) {
-      router.replace('/notAuth');
-    }
     fetchParents();
   }, []);
 

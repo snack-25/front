@@ -105,3 +105,20 @@ export async function updateBudgetApi(body: budgetProps) {
     return { msg: '예산 변경이 실패하였습니다' };
   }
 }
+
+export async function updatePasswordApi(body: {
+  company?: string;
+  password: string;
+}) {
+  try {
+    console.log('body', body);
+    const res = await fetchApi('/auth/update/info', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
+    console.log('res', res);
+    return res;
+  } catch (err) {
+    return { msg: '비밀번호 변경이 실패하였습니다' };
+  }
+}

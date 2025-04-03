@@ -31,6 +31,7 @@ interface AuthState {
   user: userInfo | null;
   company: companyInfo | null;
   isAuth: boolean;
+  isHydrated: boolean;
   login: (form: initFormType) => Promise<boolean>;
   logout: () => void;
 }
@@ -42,9 +43,10 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       company: null,
       isAuth: false,
+      isHydrated: false,
 
       // 로그인 (API 호출 후 상태 업데이트 + localStorage 저장)
-      login: async (form) => {
+      login: async (form: initFormType) => {
         try {
           const loginData = await loginApi(form);
           const { company, companyId, id, ...rest } = loginData.data;
@@ -76,7 +78,9 @@ export const useAuthStore = create<AuthState>()(
 
       // 로그아웃 (상태 초기화 + localStorage 삭제)
       logout: async () => {
-        console.log('버튼 누른거');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('버튼 누른거');
+        }
         await logoutApi();
         set({ user: null, company: null, isAuth: false });
       },
@@ -84,6 +88,14 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage', // localStorage 키 이름
       // getStorage: () => localStorage, // localStorage에 저장
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('hydrate error:', error);
+        }
+        if (state) {
+          state.isHydrated = true;
+        }
+      },
     },
   ),
 );

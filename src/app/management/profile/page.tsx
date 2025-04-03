@@ -1,8 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
-import { useState } from 'react';
 
+import { updatePasswordApi } from '@/app/api/auth/api';
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 
@@ -14,12 +17,9 @@ interface IError {
 const initError: IError = { isError: false, msg: '' };
 
 const initErrors: Record<string, IError> = {
-  name: initError,
-  email: initError,
   password: initError,
   validatePassword: initError,
   company: initError,
-  bizno: initError,
 };
 
 interface IPasswords {
@@ -28,29 +28,20 @@ interface IPasswords {
 }
 
 const initForm = {
-  name: '',
-  email: '',
+  company: '',
   password: '',
   validatePassword: '',
-  company: '',
-  bizno: '',
-};
-
-const initDisabled = {
-  name: '',
-  email: '',
-  company: '',
-  role: '',
 };
 
 const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Profile() {
+  const { isAuth, user, company } = useAuthStore();
+
   const [form, setForm] = useState(initForm);
-  const [disabled, setDisabled] = useState(initDisabled);
-  const [emailError, setEmailError] = useState<IError>(initError);
-  const [passwords, setPasswords] = useState<IPasswords>(initForm);
   const [errors, setErrors] = useState<Record<string, IError>>(initErrors);
+
+  const [passwords, setPasswords] = useState<IPasswords>(initForm);
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     validatePassword: false,
@@ -78,6 +69,11 @@ export default function Profile() {
         newError = { isError: true, msg: '비밀번호를 다시 한 번 확인해주세요' };
       }
     }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: newError,
+    }));
   };
 
   // 공통 onChange 핸들러 (사업자 번호는 별도 처리)
@@ -94,13 +90,6 @@ export default function Profile() {
   };
 
   const renderError = (field: string) => {
-    if (field === 'email') {
-      return (
-        emailError.isError && (
-          <span className={errorFont}>{emailError.msg}</span>
-        )
-      );
-    }
     return (
       errors[field]?.isError && (
         <span className={errorFont}>{errors[field].msg}</span>
@@ -109,29 +98,59 @@ export default function Profile() {
   };
 
   const handleSubmit = () => {
-    // form 객체 내 하나라도 비어있는 값이 있으면 알림 표시 후 중단
-    if (Object.values(form).some((value) => !value.trim())) {
-      alert('모든 항목을 입력해주세요!');
+    // 필수 값 검증 (비밀번호가 비어있으면 중단)
+    if (!form.password.trim()) {
+      alert('비밀번호를 입력해주세요!');
       return;
     }
+
+    // 보낼 데이터 결정 (기업명 변경 여부 확인)
+    const requestBody: { password: string; company?: string } = {
+      password: form.password, // 비밀번호는 항상 포함
+    };
+
+    if (form.company !== safeCompany.name) {
+      requestBody.company = form.company; // 기업명이 변경된 경우에만 포함
+    }
+
+    // 변경할 내용이 없으면 API 요청하지 않음
+    if (!requestBody.company && !requestBody.password) {
+      alert('변경된 사항이 없습니다.');
+      return;
+    }
+
+    updatePasswordApi(requestBody)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('비밀번호 변경 실패');
+        }
+        console.log('성공res', res);
+        alert('비밀번호 변경 성공!');
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('비밀번호 변경 실패!');
+      });
+
+    console.log('보낸 데이터:', requestBody);
   };
 
   const renderInputField = (
     title: string,
     name: string,
-    placeholder: string,
     value: string,
-    type: string = 'text',
+    disabled: boolean = false,
+    placeholder?: string, // 선택적 속성으로 변경
   ) => (
     <div className='flex flex-col gap-[4px]'>
       <Input
         titleClassName={title}
         name={name}
-        placeholder={placeholder}
-        type={type}
+        value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        value={value}
+        disabled={disabled}
+        {...(placeholder ? { placeholder } : {})} // placeholder가 있을 때만 추가
       />
       {renderError(name)}
     </div>
@@ -172,6 +191,19 @@ export default function Profile() {
     </div>
   );
 
+  // company가 변경될 때만 safeCompany를 다시 계산
+  const safeCompany = useMemo(() => company ?? { name: '' }, [company]);
+  // user가 변경될 때만 safeUser를 다시 계산
+  const safeUser = useMemo(
+    () => user ?? { role: '', name: '', email: '' },
+    [user],
+  );
+
+  // company 값이 바뀌면 form.company도 업데이트하도록 설정
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, company: safeCompany.name }));
+  }, [safeCompany.name]);
+
   const isFormValid = Object.values(form).every(
     (value) => (value ?? '').length > 0,
   );
@@ -181,15 +213,19 @@ export default function Profile() {
       <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
         <div className='pr-[10px]'>
           <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
-            기업 담당자 회원가입
+            내 프로필
           </h2>
-          <span className='text-[var(--color-gray-600)] text-[14px] tb:text-[20px]'>
-            *그룹 내 유저는 기업 담당자의 초대 메일을 통해 가입이 가능합니다.
-          </span>
         </div>
-
-        {renderInputField('기업명', 'name', '이름을 입력해주세요', form.name)}
-        {/* {renderInputField('이메일', 'email', form.email, disabled.email, true)} */}
+        {renderInputField(
+          '기업명',
+          'company',
+          form.company,
+          safeUser.role !== 'SUPERADMIN',
+          '기업명을 입력해주세요',
+        )}
+        {renderInputField('권한', 'role', safeUser.role, true)}
+        {renderInputField('이름', 'name', safeUser.name, true)}
+        {renderInputField('이메일', 'email', safeUser.email, true)}
         {renderPasswordField(
           '비밀번호',
           'password',
@@ -204,19 +240,6 @@ export default function Profile() {
           form.validatePassword,
           passwordVisibility.validatePassword,
         )}
-        {renderInputField(
-          '회사명',
-          'company',
-          '회사명을 입력해주세요',
-          form.company,
-        )}
-        {renderInputField(
-          '사업자 번호',
-          'bizno',
-          '사업자 번호를 입력해주세요',
-          form.bizno,
-        )}
-
         <Button
           className='mt-[16px] tb:mt-[40px]'
           filled='orange'

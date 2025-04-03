@@ -1,8 +1,8 @@
 'use client';
-import { motion } from 'framer-motion';
 import { notFound, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -11,10 +11,8 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import FloatingButton from '@/components/productList/FloatingButton';
 import Loading from '@/components/productList/Loading';
 import MoreButton from '@/components/productList/MoreButton';
-import ProductnotAuth from '@/components/productList/ProductNotAuth';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import { SortDropDown } from '@/components/ui/SortDropDown';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
 import useCategory from '@/hooks/product/useCategory';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { DEFAULT_SORT } from '@/lib/constants';
@@ -43,7 +41,7 @@ interface IFetchData {
 }
 
 export default function ProductList() {
-  const { user, isAuth } = useAuthStore();
+  const { user } = useAuthStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -59,9 +57,6 @@ export default function ProductList() {
   const [products, setProducts] = useState<IFetchData | null>(null);
 
   useEffect(() => {
-    if (!isAuth) {
-      return;
-    }
     const newParams = new URLSearchParams(searchParams.toString());
     let isChanged: boolean = false;
     if (!sort) {
@@ -78,7 +73,7 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
-    if (!categoryId || !sort || !isAuth) {
+    if (!categoryId || !sort) {
       return;
     }
 

@@ -32,10 +32,15 @@ const NavItem = ({ href, currentPath, children }: navItemProps) => {
 };
 
 export default function Header() {
-  const { user, isAuth, logout } = useAuthStore();
+  const { user, isAuth, isHydrated, logout } = useAuthStore();
+
   const pathname: string = usePathname();
   const isAuthPage: boolean =
     pathname === '/auth/login' || pathname === '/auth/signUp';
+
+  if (!isHydrated) {
+    return null;
+  }
 
   return (
     <>
@@ -55,6 +60,7 @@ export default function Header() {
                   height={32}
                   alt='gnb snack logo'
                   className='max-tb:w-20 max-tb:h-[54px]'
+                  priority
                 />
               </Link>
             </div>

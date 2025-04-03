@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import StatusModal from '../components/StatusModal';
-import Image from 'next/image';
 import router from 'next/router';
+
+import StatusModal from '../components/StatusModal';
 
 interface OrderItem {
   id: string;
@@ -59,9 +59,12 @@ const OrderDetailPage = () => {
 
     const fetchOrderDetail = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
-          credentials: 'include',
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`,
+          {
+            credentials: 'include',
+          },
+        );
 
         if (!res.ok) {
           console.error('API 응답 오류:', res.status, res.statusText);
@@ -72,8 +75,7 @@ const OrderDetailPage = () => {
         console.log('✅ 상세 응답 전체:', data);
 
         const transformed: OrderDetail = {
-
-          id:data.requestId,
+          id: data.requestId,
           date: data.requestedAt?.slice(0, 10) ?? '-',
           requestDate: data.requestedAt?.slice(0, 10) ?? '-',
           requester: data.requesterName ?? '-',
@@ -82,18 +84,15 @@ const OrderDetailPage = () => {
           status: data.status,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
-              id: item.id ?? '',
-              name: item.productName ?? '상품명 없음', // ✅ 여기!
-              category: item.categoryName ?? '기타',
-              quantity: item.quantity ?? 0,
-              price: item.price ?? 0,
-              imageUrl: item.imageUrl ?? '/images/default.png',
+                id: item.id ?? '',
+                name: item.productName ?? '상품명 없음', // ✅ 여기!
+                category: item.categoryName ?? '기타',
+                quantity: item.quantity ?? 0,
+                price: item.price ?? 0,
+                imageUrl: item.imageUrl ?? '/images/default.png',
               }))
-
             : [],
-            
         };
-        
 
         setOrder(transformed);
       } catch (err) {
@@ -107,23 +106,24 @@ const OrderDetailPage = () => {
   useEffect(() => {
     const fetchBudget = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/budgets/inquiry`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/budgets/inquiry`,
+          {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
           },
-          body: JSON.stringify({
-          }),
-        });
-  
+        );
+
         if (!res.ok) {
           throw new Error('예산 조회 실패');
         }
-  
+
         const data = await res.json();
-        
-  
+
         setBudget({
           monthlyLimit: data.monthlyLimit ?? 0,
           remaining: data.remaining ?? 0,
@@ -132,10 +132,9 @@ const OrderDetailPage = () => {
         console.error('예산 불러오기 에러:', err);
       }
     };
-  
+
     fetchBudget();
   }, []);
-  
 
   const handleApprove = async () => {
     if (!order) {
@@ -162,7 +161,7 @@ const OrderDetailPage = () => {
       console.error('승인 에러:', err);
     }
   };
-  
+
   const handleReject = async () => {
     if (!order) {
       return;
@@ -214,9 +213,9 @@ const OrderDetailPage = () => {
                     className='w-14 h-14 rounded-md'
                   />
                   <div>
-                    <p className="text-sm text-gray-500">{item.category}</p>
-                    <p className="text-lg font-semibold">{item.name}</p>
-                    <p className="text-sm font-semibold">
+                    <p className='text-sm text-gray-500'>{item.category}</p>
+                    <p className='text-lg font-semibold'>{item.name}</p>
+                    <p className='text-sm font-semibold'>
                       수량: {item.quantity}개
                     </p>
                   </div>
@@ -268,14 +267,14 @@ const OrderDetailPage = () => {
       {/* 오른쪽 요청 정보 + 예산 */}
       <div className='w-1/3 px-16 pt-10 pb-10'>
         {/* 요청 정보 */}
-        <div className="bg-#FBF8F4 rounded-md p-6">
-          <h2 className="text-xl font-bold border-b-2 border-black-100">
+        <div className='bg-#FBF8F4 rounded-md p-6'>
+          <h2 className='text-xl font-bold border-b-2 border-black-100'>
             요청 정보
           </h2>
-          <p className="text-xl text-gray-400 mt-2">{order?.requestDate}</p>
+          <p className='text-xl text-gray-400 mt-2'>{order?.requestDate}</p>
 
-          <div className="mt-2">
-            <label className="block text-xl font-semibold text-black-400">
+          <div className='mt-2'>
+            <label className='block text-xl font-semibold text-black-400'>
               요청인
             </label>
             <input
@@ -286,8 +285,8 @@ const OrderDetailPage = () => {
             />
           </div>
 
-          <div className="mt-4">
-            <label className="block text-xl font-semibold text-black-400">
+          <div className='mt-4'>
+            <label className='block text-xl font-semibold text-black-400'>
               요청 메시지
             </label>
             <textarea
@@ -300,14 +299,14 @@ const OrderDetailPage = () => {
         </div>
 
         {/* 예산 정보 */}
-        <div className="bg-#FBF8F4 rounded-md p-6 mt-6">
-          <h2 className="text-xl font-bold border-b-2 border-black-100">
+        <div className='bg-#FBF8F4 rounded-md p-6 mt-6'>
+          <h2 className='text-xl font-bold border-b-2 border-black-100'>
             예산 정보
           </h2>
 
           <div className='mt-4 space-y-4'>
             <div>
-              <label className="block font-semibold text-black-400 text-xl">
+              <label className='block font-semibold text-black-400 text-xl'>
                 이번 달 지원예산
               </label>
               <input
@@ -318,7 +317,7 @@ const OrderDetailPage = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-black-400 text-xl">
+              <label className='block font-semibold text-black-400 text-xl'>
                 이번 달 남은 예산
               </label>
               <input
@@ -336,7 +335,7 @@ const OrderDetailPage = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-black-400 text-xl">
+              <label className='block font-semibold text-black-400 text-xl'>
                 구매 후 예산
               </label>
               <input

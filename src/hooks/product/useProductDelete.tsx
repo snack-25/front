@@ -12,6 +12,7 @@ export default function useProductDelete() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (!response.ok) {

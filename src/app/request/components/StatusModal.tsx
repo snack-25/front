@@ -41,7 +41,11 @@ const StatusModal: React.FC<StatusModalProps> = ({
   return (
     <div className='fixed inset-0 bg-black/30 flex items-center justify-center z-50'>
       <div className='bg-white rounded-xl p-6 w-full max-w-md shadow-lg text-center'>
-        <img src={imageSrc} alt={status} className='mx-auto w-28 h-28 mb-4' />
+        <img
+          src={imageSrc}
+          alt={status}
+          className='mx-auto w-28 h-28 mb-4'
+        />
         <h2 className='text-xl font-bold mb-2'>{title}</h2>
         <p className='text-gray-500 whitespace-pre-line mb-6'>{message}</p>
 
@@ -49,7 +53,10 @@ const StatusModal: React.FC<StatusModalProps> = ({
         {orderRequestItems.length > 0 && (
           <div className='mb-6 text-left max-h-64 overflow-y-auto'>
             {orderRequestItems.map((item, index) => (
-              <div key={index} className='flex justify-between border rounded-lg p-4 mb-2'>
+              <div
+                key={index}
+                className='flex justify-between border rounded-lg p-4 mb-2'
+              >
                 <div className='flex gap-4 items-center'>
                   <img
                     src={item.product.imageUrl || '/images/default.png'}
@@ -57,8 +64,12 @@ const StatusModal: React.FC<StatusModalProps> = ({
                     className='w-14 h-14 rounded-md'
                   />
                   <div>
-                    <p className='text-sm text-gray-500'>{item.product.categoryName || '기타'}</p>
-                    <p className='text-lg font-semibold'>{item.product.name || '상품명 없음'}</p>
+                    <p className='text-sm text-gray-500'>
+                      {item.product.categoryName || '기타'}
+                    </p>
+                    <p className='text-lg font-semibold'>
+                      {item.product.name || '상품명 없음'}
+                    </p>
                     <p className='text-sm'>수량: {item.quantity}개</p>
                   </div>
                 </div>

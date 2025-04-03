@@ -73,8 +73,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div
           className={cn(
             containerVariants({ height }),
-            disabled &&
-              'border border-[#E6E6E6] bg-[#FBF8F4] text-[#999999]cursor-not-allowed opacity-50', // ✅ 직접 처리
+            disabled
+              ? 'border-[#d1d1d1] bg-[#FBF8F4] text-[#999999] cursor-not-allowed opacity-50' // ✅ disabled일 때 border 색상 지정
+              : 'border-[#FCC49C]', // ✅ 기본 border 색 유지
           )}
         >
           <input
@@ -84,7 +85,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               // 포커스 상태일 때 텍스트 색상
               isFocused || value ? 'text-black' : '', // 포커스가 있을 때 검정색
               // 수정된 값이 있을 때 텍스트 색상
-              isModified ? 'text-black' : 'text-gray-400', // 수정된 값은 검정색, 기본값은 회색
+              isModified ? 'text-black' : '##999999', // 수정된 값은 검정색, 기본값은 회색
               className,
               titleClassName,
             )}

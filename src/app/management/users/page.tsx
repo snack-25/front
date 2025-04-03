@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { inviteUserApi } from '@/app/api/users/api';
 import ManagementTabMenu from '@/components/gnb/ManagementTabMenu';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
-import { inviteUserApi } from '@/app/api/users/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 const mockUsers = [
   { id: 1, name: '김스낵', email: 'snack1@codeit.com', role: 'admin' },

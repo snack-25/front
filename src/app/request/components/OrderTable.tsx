@@ -43,9 +43,12 @@ const OrderTable: React.FC<OrderTableProps> = ({
 
   const handleOpenModal = async (id: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
-        credentials: 'include',
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`,
+        {
+          credentials: 'include',
+        },
+      );
       const data = await res.json();
 
       const transformed: Order = {
@@ -78,7 +81,10 @@ const OrderTable: React.FC<OrderTableProps> = ({
           {/* 헤더 */}
           <div className='flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6'>
             {headers.map((header) => (
-              <span key={header} className='flex-1 text-center'>
+              <span
+                key={header}
+                className='flex-1 text-center'
+              >
                 {header}
               </span>
             ))}
