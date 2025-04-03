@@ -1,10 +1,11 @@
 'use client';
 import { useEffect } from 'react';
-import { useAuthStore } from './api/auth/useAuthStore';
 import Image from 'next/image';
+
 import HeroImg from '@public/img/landing/landing-hero-md.svg';
 import LogoImg from '@public/img/landing/landing-title-md.svg';
-import TextBubble from '@/components/ui/TextBubble';
+
+import { useAuthStore } from './api/auth/useAuthStore';
 
 export default function Home() {
   const { user, company, logout } = useAuthStore();

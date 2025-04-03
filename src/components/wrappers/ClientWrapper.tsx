@@ -1,8 +1,9 @@
 'use client';
 
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { useAuthStore } from '@/app/api/auth/useAuthStore';
 
 interface IProps {
   children: React.ReactNode;

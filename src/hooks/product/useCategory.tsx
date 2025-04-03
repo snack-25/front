@@ -1,12 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/ProductList';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
 import { Category } from '@/components/gnb/TabMenu';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function useCategory() {
   const searchParams = useSearchParams();

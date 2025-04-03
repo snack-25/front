@@ -1,8 +1,8 @@
 'use client';
-import { motion } from 'framer-motion';
 import { notFound, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -13,7 +13,6 @@ import Loading from '@/components/productList/Loading';
 import MoreButton from '@/components/productList/MoreButton';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import { SortDropDown } from '@/components/ui/SortDropDown';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
 import useCategory from '@/hooks/product/useCategory';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { DEFAULT_SORT } from '@/lib/constants';

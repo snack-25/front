@@ -1,12 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
+
+import { updatePasswordApi } from '@/app/api/auth/api';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useMemo } from 'react';
-import { updatePasswordApi } from '@/app/api/auth/api';
 
 interface IError {
   isError: boolean;
