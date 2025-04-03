@@ -53,7 +53,9 @@ const OrderDetailPage = () => {
 
   useEffect(() => {
     console.log('params id:', id); // 여긴 무조건 실행됨
-    if (!id) return;
+    if (!id) {
+      return;
+    }
 
     const fetchOrderDetail = async () => {
       try {
@@ -115,7 +117,9 @@ const OrderDetailPage = () => {
           }),
         });
   
-        if (!res.ok) throw new Error('예산 조회 실패');
+        if (!res.ok) {
+          throw new Error('예산 조회 실패');
+        }
   
         const data = await res.json();
         
@@ -134,7 +138,9 @@ const OrderDetailPage = () => {
   
 
   const handleApprove = async () => {
-    if (!order) return;
+    if (!order) {
+      return;
+    }
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${order.id}/accept`,
@@ -147,7 +153,10 @@ const OrderDetailPage = () => {
           }),
         },
       );
-      if (!res.ok) throw new Error('승인 실패');
+      if (!res.ok) {
+        throw new Error('승인 실패');
+      }
+
       setModalType('approved');
     } catch (err) {
       console.error('승인 에러:', err);
@@ -155,7 +164,9 @@ const OrderDetailPage = () => {
   };
   
   const handleReject = async () => {
-    if (!order) return;
+    if (!order) {
+      return;
+    }
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${order.id}/reject`,
