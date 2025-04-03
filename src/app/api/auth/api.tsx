@@ -23,7 +23,6 @@ interface budgetProps {
 }
 
 export async function signupApi(body: SignProps) {
-  console.log('body');
   // 여기에서 body를 문자열로 변환 (JSON.stringify)해서 보내야 함
   return await fetchApi('/auth/signup', {
     method: 'POST',
@@ -36,12 +35,11 @@ export async function loginApi(body: loginProps) {
     method: 'POST',
     body: JSON.stringify(body),
   });
-  console.log('d?', data);
+  console.log('loginApi(백엔드 넘어가는)', data);
   return data;
 }
 
 export async function logoutApi() {
-  console.log('12321');
   return await fetchApi('/auth/logout', {
     method: 'POST',
     credentials: 'include',
@@ -85,7 +83,6 @@ export async function invitationSignupApi(params: {
 }
 
 export async function getBudgetApi(body: { companyId: string }) {
-  console.log('body', body);
   try {
     const res = await fetchApi('/budgets/inquiry', {
       method: 'POST',
@@ -114,7 +111,6 @@ export async function updatePasswordApi(body: {
   password: string;
 }) {
   try {
-    console.log('body', body);
     const res = await fetchApi('/auth/update/info', {
       method: 'PATCH',
       body: JSON.stringify(body),
@@ -122,6 +118,6 @@ export async function updatePasswordApi(body: {
     console.log('res', res);
     return res;
   } catch (err) {
-    return { msg: '비밀번호 변경이 실패하였습니다' };
+    return { msg: '프로필 변경이 실패하였습니다' };
   }
 }

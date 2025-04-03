@@ -5,11 +5,12 @@ import Form from 'next/form';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { loginApi } from '@/app/api/auth/api';
+import { fetchApi } from '@/app/api/instance';
 
 interface IError {
   isError: boolean;
@@ -66,16 +67,22 @@ export default function Login() {
 
     const result = await login(form);
     console.log('result', result);
-    if (result) {
+
+    // 예를 들어, 정상 응답은 result.data가 존재한다고 가정
+    if (result && result.data) {
       showCustomToast({
         label: '로그인 성공했습니다.',
         variant: 'success',
-        onClick: () => {},
+        onClick: () => {
+          router.replace('/');
+        },
       });
-      router.replace('/');
+      // router.replace('/');
     } else {
+      // 오류 객체에서 message를 가져옵니다.
+      const errorMessage = result?.message || '로그인 실패!';
       showCustomToast({
-        label: '로그인 실패했습니다.',
+        label: errorMessage,
         variant: 'error',
         onClick: () => {},
       });
@@ -86,6 +93,7 @@ export default function Login() {
     if (isAuth) {
       // router.replace('/');
     }
+    fetchApi('/test/test2');
   }, [isAuth]);
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;
