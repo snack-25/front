@@ -1,16 +1,15 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
+import useCategory from '@/hooks/product/useCategory';
 
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
-import useCategory from '@/hooks/product/useCategory';
-import Loading from '../productList/Loading';
 
 export interface Category {
   id: string;

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware'; // 로컬스토리지 사용할 시
 
 import { initFormType } from '@/app/auth/login/page';
+
 import { loginApi, logoutApi } from './api';
 
 // 백엔드에서 보내는거

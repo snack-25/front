@@ -43,11 +43,14 @@ const OrderTable: React.FC<OrderTableProps> = ({
 
   const handleOpenModal = async (id: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
-        credentials: 'include',
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`,
+        {
+          credentials: 'include',
+        },
+      );
       const data = await res.json();
-      console.log(data.items)
+      console.log(data.items);
 
       const transformed: Order = {
         id: data.id,
@@ -62,8 +65,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
           category: i.categoryName || '기타',
           price: i.price ?? 0,
           quantity: i.quantity ?? 0,
-        }))
-        ,
+        })),
       };
 
       setSelectedOrder(transformed);
@@ -80,7 +82,10 @@ const OrderTable: React.FC<OrderTableProps> = ({
           {/* 헤더 */}
           <div className='flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6'>
             {headers.map((header) => (
-              <span key={header} className='flex-1 text-center'>
+              <span
+                key={header}
+                className='flex-1 text-center'
+              >
                 {header}
               </span>
             ))}

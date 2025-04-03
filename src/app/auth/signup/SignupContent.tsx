@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { InvitationUser } from './Invitation';
 import { SuperAdmin } from './SuperAdmin';

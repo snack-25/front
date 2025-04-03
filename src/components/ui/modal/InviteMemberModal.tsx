@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { CheckIcon, ChevronDownIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Listbox } from '@headlessui/react';
-import { ChevronDownIcon, CheckIcon } from 'lucide-react';
 
 import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
+import { Listbox } from '@headlessui/react';
 
 interface InviteMemberModalProps {
   isOpen: boolean;

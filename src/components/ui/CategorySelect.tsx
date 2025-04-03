@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { CheckIcon, ChevronDownIcon } from 'lucide-react';
+
 import useCategory from '@/hooks/product/useCategory';
 import { Listbox } from '@headlessui/react';
-import { ChevronDownIcon, CheckIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
 import { Category } from '../gnb/TabMenu';
 
 export default function CategorySelect({
@@ -31,8 +33,8 @@ export default function CategorySelect({
   useEffect(() => {
     const fetchSub = async () => {
       if (!selectedCategoryId) {
-        return
-      };
+        return;
+      }
 
       const subs = await getSub(selectedCategoryId);
       setSubCategories(subs);
