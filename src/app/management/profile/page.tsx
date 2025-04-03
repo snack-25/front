@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import Image from 'next/image';
-
-import { updatePasswordApi } from '@/app/api/auth/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { updatePasswordApi } from '@/app/auth/api';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useRouter } from 'next/navigation';
 
 interface IError {
   isError: boolean;
@@ -36,7 +37,9 @@ const initForm = {
 const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Profile() {
-  const { isAuth, user, company } = useAuthStore();
+  const router = useRouter();
+
+  const { isAuth, edit, user, company } = useAuthStore();
 
   const [form, setForm] = useState(initForm);
   const [errors, setErrors] = useState<Record<string, IError>>(initErrors);
@@ -99,37 +102,53 @@ export default function Profile() {
 
   const handleSubmit = () => {
     // 필수 값 검증 (비밀번호가 비어있으면 중단)
-    if (!form.password.trim()) {
-      alert('비밀번호를 입력해주세요!');
-      return;
-    }
+    // if (!form.password.trim()) {
+    //   alert('비밀번호를 입력해주세요!');
+    //   return;
+    // }
 
     // 보낼 데이터 결정 (기업명 변경 여부 확인)
     const requestBody: { password: string; company?: string } = {
       password: form.password, // 비밀번호는 항상 포함
     };
 
-    if (form.company !== safeCompany.name) {
+    if (form.company !== safeCompany.companyName) {
       requestBody.company = form.company; // 기업명이 변경된 경우에만 포함
     }
 
     // 변경할 내용이 없으면 API 요청하지 않음
     if (!requestBody.company && !requestBody.password) {
-      alert('변경된 사항이 없습니다.');
+      showCustomToast({
+        label: '변경 사항이 없습니다',
+        variant: 'error',
+        onClick: () => {},
+      });
       return;
     }
 
     updatePasswordApi(requestBody)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error('비밀번호 변경 실패');
+        // statusCode가 존재하고 200이 아니거나 error 프로퍼티가 있으면 오류로 처리
+        if (res.statusCode && res.statusCode !== 200) {
+          throw new Error(res.message || '프로필 변경 실패');
         }
-        console.log('성공res', res);
-        alert('비밀번호 변경 성공!');
+        const successMessage = res.message || '프로필 변경 성공!';
+        showCustomToast({
+          label: successMessage,
+          variant: 'success',
+          onClick: () => {},
+        });
+        edit(res.data.company.name);
+        router.replace('?');
       })
       .catch((err) => {
-        console.error(err);
-        alert('비밀번호 변경 실패!');
+        // 서버에서 내려온 오류 메시지를 사용
+        const errorMessage = err.message || '프로필 변경 실패!';
+        showCustomToast({
+          label: errorMessage,
+          variant: 'error',
+          onClick: () => {},
+        });
       });
 
     console.log('보낸 데이터:', requestBody);
@@ -192,17 +211,22 @@ export default function Profile() {
   );
 
   // company가 변경될 때만 safeCompany를 다시 계산
-  const safeCompany = useMemo(() => company ?? { name: '' }, [company]);
+  const safeCompany = useMemo(() => company ?? { companyName: '' }, [company]);
   // user가 변경될 때만 safeUser를 다시 계산
   const safeUser = useMemo(
     () => user ?? { role: '', name: '', email: '' },
     [user],
   );
 
-  // company 값이 바뀌면 form.company도 업데이트하도록 설정
   useEffect(() => {
-    setForm((prev) => ({ ...prev, company: safeCompany.name }));
-  }, [safeCompany.name]);
+    setForm((prev) => {
+      // companyName이 존재하고 form.company가 비어있을 때만 업데이트
+      if (!prev.company && safeCompany.companyName) {
+        return { ...prev, company: safeCompany.companyName };
+      }
+      return prev;
+    });
+  }, [safeCompany.companyName]);
 
   const isFormValid = Object.values(form).every(
     (value) => (value ?? '').length > 0,
@@ -244,7 +268,7 @@ export default function Profile() {
           className='mt-[16px] tb:mt-[40px]'
           filled='orange'
           onClick={handleSubmit}
-          disabled={!isFormValid}
+          // disabled={!isFormValid}
         >
           시작하기
         </Button>
