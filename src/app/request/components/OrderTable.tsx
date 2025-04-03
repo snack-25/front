@@ -47,7 +47,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
         credentials: 'include',
       });
       const data = await res.json();
-      console.log(data.items)
 
       const transformed: Order = {
         id: data.id,
@@ -55,15 +54,14 @@ const OrderTable: React.FC<OrderTableProps> = ({
         requester: data.requesterName,
         price: data.totalAmount ?? 0,
         budgetLeft: data.budgetLeft ?? 0,
-        items: (data.items || []).map((i: any, idx: number) => ({
-          id: `${data.id}-${idx}`, // 고유한 key 보장용
-          name: i.productName || '상품 없음',
-          imageUrl: i.imageUrl || '/images/default.png',
-          category: i.categoryName || '기타',
-          price: i.price ?? 0,
-          quantity: i.quantity ?? 0,
-        }))
-        ,
+        items: (data.items || []).map((i: any) => ({
+          id: i.product?.id ?? i.id ?? `${Math.random()}`,
+          name: i.product?.name || '상품 없음',
+          imageUrl: i.product?.imageUrl || '/images/default.png',
+          category: i.product?.categoryName || '기타',
+          price: i.price ?? i.product?.price ?? 0,
+          quantity: i.quantity ?? 1,
+        })),
       };
 
       setSelectedOrder(transformed);

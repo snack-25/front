@@ -56,6 +56,7 @@ const PurchaseRequestPage = () => {
         }
 
         const fetchedData = await res.json();
+        console.log('✅ 서버 응답 결과', fetchedData);
 
         if (!Array.isArray(fetchedData)) {
           console.error('응답이 배열이 아님:', fetchedData);
