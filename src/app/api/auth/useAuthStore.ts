@@ -31,7 +31,7 @@ interface AuthState {
   user: userInfo | null;
   company: companyInfo | null;
   isAuth: boolean;
-  login: (form: initFormType) => Promise<void>;
+  login: (form: initFormType) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -47,15 +47,30 @@ export const useAuthStore = create<AuthState>()(
       login: async (form) => {
         try {
           const loginData = await loginApi(form);
-          const { company, companyId, ...rest } = loginData.data;
+          const { company, companyId, id, ...rest } = loginData.data;
+
+          console.log('🪵 백엔드 응답 loginData.data:', loginData.data);
+          console.log('🧩 rest:', rest);
+          console.log('🧩 id:', id);
+          console.log('🧩 companyId:', companyId);
 
           if (loginData) {
-            set({ user: rest, company, isAuth: true });
+            const user = {
+              ...rest,
+              id, // 직접 포함
+              companyId, // 직접 포함
+            };
+
+            console.log('✅ 저장될 user:', user);
+            set({ user, company, isAuth: true });
+            return true;
           } else {
             set({ user: null, company: null, isAuth: false });
+            return false;
           }
         } catch (error) {
           console.error('로그인 실패:', error);
+          return false;
         }
       },
 

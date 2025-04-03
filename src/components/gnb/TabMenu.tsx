@@ -1,14 +1,15 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
 
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
+import useCategory from '@/hooks/product/useCategory';
 
 export interface Category {
   id: string;
@@ -30,6 +31,7 @@ export default function TabMenu() {
   const pathName = usePathname();
   const searchParams = useSearchParams();
   const { isAuth } = useAuthStore();
+  const { getParents, getSub } = useCategory();
 
   const parentId = searchParams.get('parentId');
   const categoryId = searchParams.get('categoryId');
@@ -38,44 +40,24 @@ export default function TabMenu() {
   const [sub, setSub] = useState<Category[] | null>(null); //하위 카테고리 목록
 
   useEffect(() => {
-    const getParents = async () => {
-      try {
-        const parents: Category[] = await fetchApi('/categories/parents', {
-          method: 'GET',
-        });
-        if (process.env.NODE_ENV === 'development') {
-          console.log('상위 카테고리 패칭 완료:', parents);
-        }
-        setParents(parents);
-      } catch (err) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('상위 카테고리 패칭 실패:', err);
-        }
-      }
+    const fetchParents = async () => {
+      const parents = await getParents();
+      setParents(parents);
     };
-
-    getParents();
+    if(!isAuth) {
+      router.replace('/notAuth');
+    }
+    fetchParents();
   }, []);
 
   useEffect(() => {
-    const getSub = async () => {
-      //하위 카테고리 목록 패칭 함수
-      try {
-        const sub: Category[] = await fetchApi(
-          `/categories/parents/${parentId}`,
-          { method: 'GET' },
-        );
-        if (process.env.NODE_ENV === 'development') {
-          console.log('초기 하위 카테고리 패칭 완료:', sub);
-        }
+    const fetchSub = async () => {
+      if (parentId) {
+        const sub = await getSub(parentId);
         setSub(sub);
-      } catch (err) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('초기 하위 카테고리 패칭 실패:', err);
-        }
       }
     };
-    getSub();
+    fetchSub();
   }, [parentId]);
 
   useEffect(() => {
@@ -117,10 +99,6 @@ export default function TabMenu() {
       router.replace(`?${newParams.toString()}`);
     }
   };
-
-  if (!isAuth) {
-    return;
-  }
 
   return (
     <motion.div

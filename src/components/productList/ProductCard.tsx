@@ -17,7 +17,7 @@ export default function ProductCard({ data }: cardProps) {
         <CardHeader className='bg-white w-auto aspect-square flex items-center justify-center rounded-2xl hover:shadow-xl'>
           <div className='relative w-1/2 h-1/2'>
             <Image
-              src={imageUrl}
+              src={imageUrl || 'https://placehold.co/400x400?text=tmp'}
               fill
               sizes='(max-width: 745px) 45vw, (max-width: 1920px) 25vw'
               alt='product Image'
