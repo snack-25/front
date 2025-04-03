@@ -32,6 +32,8 @@ interface OrderTableProps {
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '요청인', '비고'];
 
+
+
 const OrderTable: React.FC<OrderTableProps> = ({
   orders = [],
   onApprove,
@@ -50,7 +52,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
         },
       );
       const data = await res.json();
-      console.log(data.items);
 
       const transformed: Order = {
         id: data.id,
@@ -58,13 +59,13 @@ const OrderTable: React.FC<OrderTableProps> = ({
         requester: data.requesterName,
         price: data.totalAmount ?? 0,
         budgetLeft: data.budgetLeft ?? 0,
-        items: (data.items || []).map((i: any, idx: number) => ({
-          id: `${data.id}-${idx}`, // 고유한 key 보장용
-          name: i.productName || '상품 없음',
-          imageUrl: i.imageUrl || '/images/default.png',
-          category: i.categoryName || '기타',
-          price: i.price ?? 0,
-          quantity: i.quantity ?? 0,
+        items: (data.items || []).map((i: any) => ({
+          id: i.product?.id ?? i.id ?? `${Math.random()}`,
+          name: i.product?.name || '상품 없음',
+          imageUrl: i.product?.imageUrl || '/images/default.png',
+          category: i.product?.categoryName || '기타',
+          price: i.price ?? i.product?.price ?? 0,
+          quantity: i.quantity ?? 1,
         })),
       };
 

@@ -56,6 +56,7 @@ const PurchaseRequestPage = () => {
         }
 
         const fetchedData = await res.json();
+        console.log('✅ 서버 응답 결과', fetchedData);
 
         if (!Array.isArray(fetchedData)) {
           console.error('응답이 배열이 아님:', fetchedData);
@@ -64,7 +65,7 @@ const PurchaseRequestPage = () => {
 
         const transformed: Order[] = fetchedData.map((item: any) => ({
           id: item.id,
-          date: item.createdAt.slice(0, 10),
+          date: item.createdAt ? item.createdAt.slice(0, 10) : '-', // 오류나서 임시로 처리
           requester: item.requester?.name || '-',
           price: item.totalAmount,
           budgetLeft: item.budgetLeft ?? 0,

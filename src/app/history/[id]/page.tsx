@@ -18,31 +18,53 @@ interface OrderDetail {
   requester: string;
   handler: string;
   requestDate: string;
+  message?: string;
+  approvalMessage?: string;
 }
 
 const OrderDetailPage = () => {
   const { id } = useParams();
   const [order, setOrder] = useState<OrderDetail | null>(null);
-
   useEffect(() => {
-    // Mock 데이터 설정
-    const mockOrder: OrderDetail = {
-      id: id as string,
-      date: '2024.07.24',
-      items: Array(6).fill({
-        id: '1',
-        category: '청량.음료',
-        name: '코카콜라 제로',
-        quantity: 4,
-        price: 2000,
-      }),
-      requester: '김스낵',
-      handler: '김코드',
-      requestDate: '2024.07.20',
+    if (!id) { 
+      return;
+    }
+  
+    const fetchOrderDetail = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
+          credentials: 'include',
+        });
+  
+        const data = await res.json();
+        console.log('상세 주문 데이터:', data);
+  
+        const transformed: OrderDetail = {
+          id: data.requestId ?? id,
+          date: data.approvedAt?.slice(0, 10) ?? '-', // ✅ 승인일
+          requestDate: data.requestedAt?.slice(0, 10) ?? '-', // ✅ 요청일
+          requester: data.requesterName ?? '-',
+          handler: data.resolverName ?? '-',
+          message: data.requestMessage ?? '',
+          approvalMessage: data.resolverMessage ?? '',
+          items: (data.items || []).map((item: any) => ({
+            id: item.id ?? '',
+            name: item.productName ?? '상품 없음',
+            category: item.categoryName ?? '기타',
+            quantity: item.quantity ?? 0,
+            price: item.price ?? 0,
+          })),
+        };
+  
+        setOrder(transformed);
+      } catch (err) {
+        console.error('상세 내역 가져오기 실패:', err);
+      }
     };
-
-    setOrder(mockOrder);
+  
+    fetchOrderDetail();
   }, [id]);
+  
 
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
@@ -103,7 +125,7 @@ const OrderDetailPage = () => {
           <h2 className='text-xl font-bold border-b-2 border-black-100'>
             요청 정보
           </h2>
-          <p className='text-xl text-gray-400 mt-2'>2024. 07. 20.</p>
+          <p className='text-xl text-gray-400 mt-2'>{new Date(order?.requestDate || '').toLocaleDateString('ko-KR')}</p>
 
           <div className='mt-2'>
             <label className='block text-xl font-semibold text-black-400'>
@@ -122,7 +144,7 @@ const OrderDetailPage = () => {
               요청 메시지
             </label>
             <textarea
-              value='코카콜라 제로 인기가 많아요.'
+              value={order?.message ?? ''}
               readOnly
               rows={2}
               className='mt-1 w-full rounded-md border-2 text-2lg resize-none pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500'
@@ -134,7 +156,7 @@ const OrderDetailPage = () => {
           <h2 className='text-xl font-bold border-b-2 border-black-100'>
             승인 정보
           </h2>
-          <p className='text-xl text-gray-400 mt-2'>2024. 07. 24.</p>
+          <p className='text-xl text-gray-400 mt-2'>{new Date(order?.requestDate || '').toLocaleDateString('ko-KR')}</p>
 
           <div className='mt-2'>
             <label className='block text-xl font-semibold text-black-400'>
@@ -153,7 +175,7 @@ const OrderDetailPage = () => {
               승인 메시지
             </label>
             <textarea
-              value='재고가 얼마 남지 않아 승인합니다.'
+              value={order?.approvalMessage ?? ''}
               readOnly
               rows={1}
               className='mt-1 w-full rounded-md border-2 text-21g resize-none pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500'
