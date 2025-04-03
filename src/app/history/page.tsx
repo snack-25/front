@@ -34,7 +34,7 @@ const OrdersPage = () => {
           }
         );
 
-        if (!res.ok) throw new Error('주문 불러오기 실패');
+        if (!res.ok) {throw new Error('주문 불러오기 실패');}
 
         const data = await res.json();
         console.log('✅ 서버 응답 확인', data);

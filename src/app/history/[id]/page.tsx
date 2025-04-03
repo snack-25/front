@@ -26,7 +26,9 @@ const OrderDetailPage = () => {
   const { id } = useParams();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   useEffect(() => {
-    if (!id) return;
+    if (!id) { 
+      return;
+    }
   
     const fetchOrderDetail = async () => {
       try {

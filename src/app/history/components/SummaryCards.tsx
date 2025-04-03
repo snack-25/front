@@ -68,7 +68,7 @@ const SummaryCards = () => {
     fetchBudgetSummary();
   }, []);
 
-  if (!summary) return null;
+  if (!summary) { return null; }
 
   return (
     <motion.div
@@ -98,15 +98,15 @@ const SummaryCards = () => {
         <CardHeader>
           <CardTitle className='text-[24px]'>이번 달 남은 예산</CardTitle>
           <p className='text-gray-400'>
-            {summary.lastMonthSpending != null ? (
-             summary.lastMonthSpending - summary.monthlySpending > 0 ? (
-            `지난 달보다 ${(summary.lastMonthSpending - summary.monthlySpending).toLocaleString()}원 더 남았어요`
-            ) : (
-            `지난 달보다 ${(summary.monthlySpending - summary.lastMonthSpending).toLocaleString()}원 덜 남았어요`
-            )
-           ) : (
-          '지난 달이랑 비교 할 데이터가 없어요!'
-  )}
+          {typeof summary.lastMonthSpending === 'number' ? (
+  summary.lastMonthSpending - summary.monthlySpending > 0 ? (
+    `지난 달보다 ${(summary.lastMonthSpending - summary.monthlySpending).toLocaleString()}원 더 남았어요`
+  ) : (
+    `지난 달보다 ${(summary.monthlySpending - summary.lastMonthSpending).toLocaleString()}원 덜 남았어요`
+  )
+) : (
+  '지난 달이랑 비교 할 데이터가 없어요!'
+)}
 </p>
 
         </CardHeader>
