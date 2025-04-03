@@ -3,8 +3,7 @@ export async function fetchApi(
   options: RequestInit = {},
 ): Promise<any> {
   // 환경변수에서 API_URL을 가져오거나, 기본값을 사용
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const fullUrl = `${baseUrl}${url}`;
 
   try {
