@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import router from 'next/router';
-
 import StatusModal from '../components/StatusModal';
+import Image from 'next/image';
+import router from 'next/router';
 
 interface OrderItem {
   id: string;
@@ -12,6 +12,7 @@ interface OrderItem {
   name: string;
   quantity: number;
   price: number;
+  imageUrl: string;
 }
 
 interface OrderDetail {
@@ -21,6 +22,8 @@ interface OrderDetail {
   requester: string;
   handler: string;
   requestDate: string;
+  message: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
 interface BudgetInfo {
@@ -29,8 +32,9 @@ interface BudgetInfo {
 }
 
 const OrderDetailPage = () => {
-  const Router = useRouter();
+  const router = useRouter();
   const { id } = useParams();
+  console.log('id 원본:', id);
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [budget, setBudget] = useState<BudgetInfo>({
     monthlyLimit: 1500000,
@@ -48,24 +52,134 @@ const OrderDetailPage = () => {
   const isOverBudget = remainingAfterPurchase < 0;
 
   useEffect(() => {
-    // Mock 데이터 설정
-    const mockOrder: OrderDetail = {
-      id: id as string,
-      date: '2024.07.24',
-      items: Array(6).fill({
-        id: '1',
-        category: '청량.음료',
-        name: '코카콜라 제로',
-        quantity: 4,
-        price: 2000,
-      }),
-      requester: '김스낵',
-      handler: '김코드',
-      requestDate: '2024.07.20',
+    console.log('params id:', id); // 여긴 무조건 실행됨
+    if (!id) return;
+
+    const fetchOrderDetail = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          console.error('API 응답 오류:', res.status, res.statusText);
+          throw new Error('데이터 불러오기 실패');
+        }
+
+        const data = await res.json();
+        console.log('✅ 상세 응답 전체:', data);
+
+        const transformed: OrderDetail = {
+
+          id:data.requestId,
+          date: data.requestedAt?.slice(0, 10) ?? '-',
+          requestDate: data.requestedAt?.slice(0, 10) ?? '-',
+          requester: data.requesterName ?? '-',
+          handler: data.resolverName ?? '-',
+          message: data.requestMessage ?? '',
+          status: data.status,
+          items: Array.isArray(data.items)
+            ? data.items.map((item: any) => ({
+              id: item.id ?? '',
+              name: item.productName ?? '상품명 없음', // ✅ 여기!
+              category: item.categoryName ?? '기타',
+              quantity: item.quantity ?? 0,
+              price: item.price ?? 0,
+              imageUrl: item.imageUrl ?? '/images/default.png',
+              }))
+
+            : [],
+            
+        };
+        
+
+        setOrder(transformed);
+      } catch (err) {
+        console.error('데이터 불러오기 실패:', err);
+      }
     };
 
-    setOrder(mockOrder);
+    fetchOrderDetail();
   }, [id]);
+
+  useEffect(() => {
+    const fetchBudget = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/budgets/inquiry`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+          }),
+        });
+  
+        if (!res.ok) throw new Error('예산 조회 실패');
+  
+        const data = await res.json();
+        
+  
+        setBudget({
+          monthlyLimit: data.monthlyLimit ?? 0,
+          remaining: data.remaining ?? 0,
+        });
+      } catch (err) {
+        console.error('예산 불러오기 에러:', err);
+      }
+    };
+  
+    fetchBudget();
+  }, []);
+  
+
+  const handleApprove = async () => {
+    if (!order) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${order.id}/accept`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            adminNotes: '승인합니다.',
+          }),
+        },
+      );
+      if (!res.ok) throw new Error('승인 실패');
+      setModalType('approved');
+    } catch (err) {
+      console.error('승인 에러:', err);
+    }
+  };
+  
+  const handleReject = async () => {
+    if (!order) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${order.id}/reject`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            adminNotes: '사유 부족으로 반려합니다.',
+          }),
+        },
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('반려 실패 - 상태코드:', res.status);
+        console.error('반려 실패 - 응답 메시지:', text);
+        console.log(order.id);
+        throw new Error('반려 실패');
+      }
+      setModalType('rejected');
+    } catch (err) {
+      console.error('반려 에러:', err);
+    }
+  };
 
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
@@ -84,14 +198,14 @@ const OrderDetailPage = () => {
               >
                 <div className='flex items-center gap-4'>
                   <img
-                    src='/images/coke-zero.png'
+                    src={item.imageUrl}
                     alt={item.name}
                     className='w-14 h-14 rounded-md'
                   />
                   <div>
-                    <p className='text-sm text-gray-500'>{item.category}</p>
-                    <p className='text-lg font-semibold'>{item.name}</p>
-                    <p className='text-sm font-semibold'>
+                    <p className="text-sm text-gray-500">{item.category}</p>
+                    <p className="text-lg font-semibold">{item.name}</p>
+                    <p className="text-sm font-semibold">
                       수량: {item.quantity}개
                     </p>
                   </div>
@@ -116,14 +230,24 @@ const OrderDetailPage = () => {
         {/* 하단 승인/반려 버튼 */}
         <div className='mt-6 flex justify-center gap-4'>
           <button
-            className='bg-gray-300 text-gray-600 px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105'
-            onClick={() => setModalType('rejected')}
+            className={`px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 ${
+              !order || order.status !== 'PENDING'
+                ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                : 'bg-gray-300 text-gray-600 hover:scale-105'
+            }`}
+            disabled={!order || order.status !== 'PENDING'}
+            onClick={handleReject}
           >
             요청 반려
           </button>
           <button
-            className='bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 hover:scale-105'
-            onClick={() => setModalType('approved')}
+            className={`px-6 py-3 rounded-lg font-semibold w-[509px] h-[62px] transition-transform duration-200 ${
+              !order || order.status !== 'PENDING' || isOverBudget
+                ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                : 'bg-orange-500 text-white hover:scale-105'
+            }`}
+            disabled={!order || order.status !== 'PENDING' || isOverBudget}
+            onClick={handleApprove}
           >
             요청 승인
           </button>
@@ -133,14 +257,14 @@ const OrderDetailPage = () => {
       {/* 오른쪽 요청 정보 + 예산 */}
       <div className='w-1/3 px-16 pt-10 pb-10'>
         {/* 요청 정보 */}
-        <div className='bg-#FBF8F4 rounded-md p-6'>
-          <h2 className='text-xl font-bold border-b-2 border-black-100'>
+        <div className="bg-#FBF8F4 rounded-md p-6">
+          <h2 className="text-xl font-bold border-b-2 border-black-100">
             요청 정보
           </h2>
-          <p className='text-xl text-gray-400 mt-2'>{order?.requestDate}</p>
+          <p className="text-xl text-gray-400 mt-2">{order?.requestDate}</p>
 
-          <div className='mt-2'>
-            <label className='block text-xl font-semibold text-black-400'>
+          <div className="mt-2">
+            <label className="block text-xl font-semibold text-black-400">
               요청인
             </label>
             <input
@@ -151,12 +275,12 @@ const OrderDetailPage = () => {
             />
           </div>
 
-          <div className='mt-4'>
-            <label className='block text-xl font-semibold text-black-400'>
+          <div className="mt-4">
+            <label className="block text-xl font-semibold text-black-400">
               요청 메시지
             </label>
             <textarea
-              value='코카콜라 제로 인기가 많아요.'
+              value={order?.message || '요청 메시지가 없습니다.'}
               readOnly
               rows={2}
               className='mt-1 w-full rounded-md border-2 text-21g resize-none pl-[24px] pt-[14px] pb-[18px] pr-[24px] text-gray-500'
@@ -165,14 +289,14 @@ const OrderDetailPage = () => {
         </div>
 
         {/* 예산 정보 */}
-        <div className='bg-#FBF8F4 rounded-md p-6 mt-6'>
-          <h2 className='text-xl font-bold border-b-2 border-black-100'>
+        <div className="bg-#FBF8F4 rounded-md p-6 mt-6">
+          <h2 className="text-xl font-bold border-b-2 border-black-100">
             예산 정보
           </h2>
 
           <div className='mt-4 space-y-4'>
             <div>
-              <label className='block font-semibold text-gray-700 text-xl'>
+              <label className="block font-semibold text-black-400 text-xl">
                 이번 달 지원예산
               </label>
               <input
@@ -183,7 +307,7 @@ const OrderDetailPage = () => {
             </div>
 
             <div>
-              <label className='block font-semibold text-gray-700'>
+              <label className="block font-semibold text-black-400 text-xl">
                 이번 달 남은 예산
               </label>
               <input
@@ -201,7 +325,7 @@ const OrderDetailPage = () => {
             </div>
 
             <div>
-              <label className='block font-semibold text-gray-700'>
+              <label className="block font-semibold text-black-400 text-xl">
                 구매 후 예산
               </label>
               <input

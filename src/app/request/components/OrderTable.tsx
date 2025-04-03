@@ -6,50 +6,72 @@ import { useState } from 'react';
 
 import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 
+interface OrderItem {
+  id: string;
+  name: string;
+  imageUrl: string;
+  category: string;
+  price: number;
+  quantity: number;
+}
+
 interface Order {
   id: string;
   date: string;
-  product: string;
-  price: string;
   requester: string;
+  price: number;
+  items: OrderItem[];
+  budgetLeft: number;
 }
 
 interface OrderTableProps {
   orders?: Order[];
-  onApprove?: (id: string) => void;
+  onApprove?: (id: string, message: string) => void;
   onReject?: (id: string) => void;
 }
-
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    date: '2025-03-20',
-    product: '코카콜라 제로 외 1건',
-    price: '21000',
-    requester: '김스낵',
-  },
-  {
-    id: '2',
-    date: '2025-03-19',
-    product: '코카콜라 제로 외 1건',
-    price: '63000',
-    requester: '김스낵',
-  },
-];
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '요청인', '비고'];
 
 const OrderTable: React.FC<OrderTableProps> = ({
-  orders = mockOrders,
+  orders = [],
   onApprove,
   onReject,
 }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [modalType, setModalType] = useState<'approved' | 'rejected' | null>(
-    null,
-  );
+
+  const handleOpenModal = async (id: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
+        credentials: 'include',
+      });
+      const data = await res.json();
+      console.log(data.items)
+
+      const transformed: Order = {
+        id: data.id,
+        date: data.requestedAt?.slice(0, 10) ?? '-',
+        requester: data.requesterName,
+        price: data.totalAmount ?? 0,
+        budgetLeft: data.budgetLeft ?? 0,
+        items: (data.items || []).map((i: any, idx: number) => ({
+          id: `${data.id}-${idx}`, // 고유한 key 보장용
+          name: i.productName || '상품 없음',
+          imageUrl: i.imageUrl || '/images/default.png',
+          category: i.categoryName || '기타',
+          price: i.price ?? 0,
+          quantity: i.quantity ?? 0,
+        }))
+        ,
+      };
+
+      setSelectedOrder(transformed);
+      setIsOpen(true);
+    } catch (err) {
+      console.error('상세 데이터 불러오기 실패', err);
+    }
+  };
 
   return (
     <div className='w-full'>
@@ -58,10 +80,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
           {/* 헤더 */}
           <div className='flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6'>
             {headers.map((header) => (
-              <span
-                key={header}
-                className='flex-1 text-center'
-              >
+              <span key={header} className='flex-1 text-center'>
                 {header}
               </span>
             ))}
@@ -75,9 +94,11 @@ const OrderTable: React.FC<OrderTableProps> = ({
               onClick={() => router.push(`/request/${order.id}`)}
             >
               <span className='flex-1 text-center'>{order.date}</span>
-              <span className='flex-1 text-center'>{order.product}</span>
               <span className='flex-1 text-center'>
-                {parseInt(order.price).toLocaleString()}원
+                {order.items[0]?.name || '상품 없음'}
+              </span>
+              <span className='flex-1 text-center'>
+                {(order.price ?? 0).toLocaleString()}원
               </span>
               <span className='flex-1 text-center'>{order.requester}</span>
               <div
@@ -91,10 +112,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
                   반려
                 </button>
                 <button
-                  onClick={() => {
-                    setSelectedOrder(order);
-                    setIsOpen(true);
-                  }}
+                  onClick={() => handleOpenModal(order.id)}
                   className='bg-orange-400 text-white px-3 py-1 rounded hover:bg-orange-600 w-[94px] h-[44px]'
                 >
                   승인
@@ -120,22 +138,14 @@ const OrderTable: React.FC<OrderTableProps> = ({
         <PurchaseApprovalModal
           isOpen={isOpen}
           onCloseAction={() => setIsOpen(false)}
-          onConfirmAction={() => {
-            onApprove?.(selectedOrder.id);
+          onConfirmAction={(message) => {
+            onApprove?.(selectedOrder.id, message);
             setIsOpen(false);
           }}
           requester={selectedOrder.requester}
-          items={[
-            {
-              id: '1',
-              name: '코카콜라 제로',
-              imageUrl: '/images/coke-zero.png',
-              category: '청량음료',
-              price: parseInt(selectedOrder.price),
-              quantity: 1,
-            },
-          ]}
-          totalAmount={parseInt(selectedOrder.price)}
+          items={selectedOrder.items}
+          totalAmount={selectedOrder.price ?? 0}
+          budgetLeft={selectedOrder.budgetLeft ?? 0}
         />
       )}
     </div>
