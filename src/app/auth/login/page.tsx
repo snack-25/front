@@ -93,7 +93,6 @@ export default function Login() {
     if (isAuth) {
       // router.replace('/');
     }
-    fetchApi('/test/test2');
   }, [isAuth]);
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;

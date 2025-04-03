@@ -17,7 +17,7 @@ export async function fetchApi(
     });
 
     const data = await res.json();
-
+    console.log('data', data);
     return data;
   } catch (err) {
     console.error('❌ [API 호출 실패]', fullUrl, err);
