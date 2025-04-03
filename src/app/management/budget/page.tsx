@@ -48,6 +48,8 @@ export default function Budget() {
       try {
         const response = await getBudgetApi({ companyId: company.companyId });
 
+        console.log('response', response);
+
         if (response) {
           const { currentAmount, initialAmount, year, month } = response.data;
 

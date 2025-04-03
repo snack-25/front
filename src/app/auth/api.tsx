@@ -24,40 +24,53 @@ interface budgetProps {
 
 export async function signupApi(body: SignProps) {
   // 여기에서 body를 문자열로 변환 (JSON.stringify)해서 보내야 함
-  return await fetchApi('/auth/signup', {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/signup', {
     method: 'POST',
-    body: JSON.stringify(body), // 객체를 문자열로 변환해서 보내야 합니다.
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    credentials: 'include',
   });
+  const data = await res.json();
+  return data;
 }
 
 export async function loginApi(body: loginProps) {
-  const data = await fetchApi('/auth/login', {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/login', {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
+    credentials: 'include',
   });
-  console.log('loginApi(백엔드 넘어가는)', data);
+  const data = await res.json();
   return data;
 }
 
 export async function logoutApi() {
-  return await fetchApi('/auth/logout', {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/logout', {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({}),
   });
+  const data = await res.json();
+  return data;
 }
 
 export async function invitationCodeApi(params: {
   token: string;
 }): Promise<any> {
   try {
-    const res = await fetchApi('/auth/signup/invitationcode', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    });
-
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + '/auth/signup/invitationcode',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+        credentials: 'include',
+      },
+    );
+    const data = await res.json();
     // token을 URL 쿼리 파라미터에 포함하여 요청 (혹은 body에 함께 보내도 됨)
-    return await res;
+    return data;
   } catch (error) {
     console.error('초대 코드 정보 요청 에러:', error);
     return { msg: '초대 코드 정보 요청 오류가 발생했습니다.', error };
@@ -72,11 +85,17 @@ export async function invitationSignupApi(params: {
   console.log('params', params);
   console.log('token', token);
   try {
-    const res = await fetchApi(`/auth/signup/invite/${token}`, {
-      method: 'POST',
-      body: JSON.stringify({ password }),
-    });
-    return await res;
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + `/auth/signup/invite/${token}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+        credentials: 'include',
+      },
+    );
+    const data = await res.json();
+    return data;
   } catch (error) {
     return { msg: '회원가입에 실패했습니다', error };
   }
@@ -84,11 +103,17 @@ export async function invitationSignupApi(params: {
 
 export async function getBudgetApi(body: { companyId: string }) {
   try {
-    const res = await fetchApi('/budgets/inquiry', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
-    return res;
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + '/budgets/inquiry',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include',
+      },
+    );
+    const data = await res.json();
+    return data;
   } catch (error) {
     return { msg: '예산 조회에 실패하였습니다' };
   }
@@ -96,11 +121,17 @@ export async function getBudgetApi(body: { companyId: string }) {
 
 export async function updateBudgetApi(body: budgetProps) {
   try {
-    const res = await fetchApi('/budgets/update', {
-      method: 'PUT',
-      body: JSON.stringify(body),
-    });
-    return res;
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + '/budgets/update',
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include',
+      },
+    );
+    const data = await res.json();
+    return data;
   } catch (err) {
     return { msg: '예산 변경이 실패하였습니다' };
   }
@@ -111,12 +142,17 @@ export async function updatePasswordApi(body: {
   password: string;
 }) {
   try {
-    const res = await fetchApi('/auth/update/info', {
-      method: 'PATCH',
-      body: JSON.stringify(body),
-    });
-    console.log('res', res);
-    return res;
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + '/auth/update/info',
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include',
+      },
+    );
+    const data = await res.json();
+    return data;
   } catch (err) {
     return { msg: '프로필 변경이 실패하였습니다' };
   }
