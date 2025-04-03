@@ -109,7 +109,7 @@ export default function Profile() {
       password: form.password, // 비밀번호는 항상 포함
     };
 
-    if (form.company !== safeCompany.name) {
+    if (form.company !== safeCompany.companyName) {
       requestBody.company = form.company; // 기업명이 변경된 경우에만 포함
     }
 
@@ -192,7 +192,7 @@ export default function Profile() {
   );
 
   // company가 변경될 때만 safeCompany를 다시 계산
-  const safeCompany = useMemo(() => company ?? { name: '' }, [company]);
+  const safeCompany = useMemo(() => company ?? { companyName: '' }, [company]);
   // user가 변경될 때만 safeUser를 다시 계산
   const safeUser = useMemo(
     () => user ?? { role: '', name: '', email: '' },
@@ -201,8 +201,8 @@ export default function Profile() {
 
   // company 값이 바뀌면 form.company도 업데이트하도록 설정
   useEffect(() => {
-    setForm((prev) => ({ ...prev, company: safeCompany.name }));
-  }, [safeCompany.name]);
+    setForm((prev) => ({ ...prev, company: safeCompany.companyName }));
+  }, [safeCompany.companyName]);
 
   const isFormValid = Object.values(form).every(
     (value) => (value ?? '').length > 0,

@@ -22,8 +22,8 @@ interface userInfo {
   role: 'SUPERADMIN' | 'ADMIN' | 'USER';
 }
 interface companyInfo {
-  name: string;
-  id: string;
+  companyName: string;
+  companyId: string;
 }
 
 // Zustand Store 타입 정의
@@ -32,7 +32,7 @@ interface AuthState {
   company: companyInfo | null;
   isAuth: boolean;
   isHydrated: boolean;
-  login: (form: initFormType) => Promise<boolean>;
+  login: (form: initFormType) => Promise<any>;
   logout: () => void;
 }
 
@@ -49,30 +49,34 @@ export const useAuthStore = create<AuthState>()(
       login: async (form: initFormType) => {
         try {
           const loginData = await loginApi(form);
-          const { company, companyId, id, ...rest } = loginData.data;
+          console.log('loginData', loginData);
+          const { id, companyId, companyName, ...res } = loginData.data;
 
           console.log('🪵 백엔드 응답 loginData.data:', loginData.data);
-          console.log('🧩 rest:', rest);
+
           console.log('🧩 id:', id);
           console.log('🧩 companyId:', companyId);
 
           if (loginData) {
-            const user = {
-              ...rest,
-              id, // 직접 포함
-              companyId, // 직접 포함
+            const userInfo = {
+              ...res,
+              id,
             };
 
-            console.log('✅ 저장될 user:', user);
-            set({ user, company, isAuth: true });
-            return true;
+            const companyInfo = { companyId, companyName };
+
+            console.log('✅ 저장될 user:', userInfo);
+            console.log('✅ 저장될 company:', companyInfo);
+
+            set({ user: userInfo, company: companyInfo, isAuth: true });
+            return loginData;
           } else {
             set({ user: null, company: null, isAuth: false });
             return false;
           }
         } catch (error) {
           console.error('로그인 실패:', error);
-          return false;
+          return error;
         }
       },
 

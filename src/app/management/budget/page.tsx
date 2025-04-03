@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
 import { getBudgetApi, updateBudgetApi } from '@/app/api/auth/api';
 import { useAuthStore } from '@/app/api/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
@@ -34,23 +33,26 @@ export default function Budget() {
 
   // 서버에서 예산 정보를 받아와 form 상태 업데이트 (초기 로딩)
   useEffect(() => {
+    console.log('company', company);
+    console.log('user', user);
+    // console.log('dlrj', user.data.campany);
     if (!load) {
       return;
     }
-    console.log('company', company);
 
     const fetchBudgetInfo = async () => {
-      if (!company || !company.id) {
+      if (!company || !company.companyId) {
         console.error('회사 ID가 없습니다.');
         return;
       }
       try {
-        const response = await getBudgetApi({ companyId: company.id });
-        if (response && response.ok) {
-          const { currentAmount, initialAmount, year, month } = response.data;
+        const response = await getBudgetApi({ companyId: company.companyId });
+
+        if (response) {
+          const { currentAmount, initialAmount, year, month } = response;
 
           if (!year || !month) {
-            console.error('올바른 연도와 월이 없습니다.', response.data);
+            console.error('올바른 연도와 월이 없습니다.', response);
             return;
           }
 
@@ -69,7 +71,7 @@ export default function Budget() {
             month,
           });
         }
-        console.log('form', form);
+        console.log('response', response);
       } catch (error) {
         console.error('예산 정보 조회 실패', error);
       }
@@ -79,13 +81,13 @@ export default function Budget() {
   }, [company, load]);
 
   // 로그인/권한 체크
-  useEffect(() => {
-    if (load) {
-      if (user?.role !== 'SUPERADMIN' || !isAuth) {
-        router.replace('/');
-      }
-    }
-  }, [load, user, isAuth, router]);
+  // useEffect(() => {
+  //   if (load) {
+  //     if (user?.role !== 'SUPERADMIN' || !isAuth) {
+  //       router.replace('/');
+  //     }
+  //   }
+  // }, [load, user, isAuth, router]);
 
   // onChange: 입력된 값 업데이트, 천단위 포맷 적용, 수정 여부 계산
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +138,7 @@ export default function Budget() {
 
     try {
       const sendData = {
-        companyId: company?.id || '',
+        companyId: company?.companyId || '',
         currentAmount: Number(form.currentAmount.value.replace(/,/g, '')),
         initialAmount: Number(form.initialAmount.value.replace(/,/g, '')),
         year: form.year,
