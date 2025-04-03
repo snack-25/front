@@ -32,6 +32,8 @@ interface OrderTableProps {
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '요청인', '비고'];
 
+
+
 const OrderTable: React.FC<OrderTableProps> = ({
   orders = [],
   onApprove,
