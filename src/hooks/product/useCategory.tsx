@@ -58,11 +58,6 @@ export default function useCategory() {
   };
 
   useEffect(() => {
-    if (!isAuth) {
-      showCustomToast({ label: '인증에 실패하였습니다', variant: 'error' });
-      return;
-    }
-
     let isMounted = true;
 
     const fetchName = async () => {

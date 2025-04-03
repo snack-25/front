@@ -10,6 +10,7 @@ import { fetchApi } from '@/app/api/instance';
 import ParentTab from './ParentTab';
 import SubTab from './SubTab';
 import useCategory from '@/hooks/product/useCategory';
+import Loading from '../productList/Loading';
 
 export interface Category {
   id: string;
@@ -30,7 +31,7 @@ export default function TabMenu() {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const { isAuth } = useAuthStore();
+  const { isAuth, isHydrated } = useAuthStore();
   const { getParents, getSub } = useCategory();
 
   const parentId = searchParams.get('parentId');
@@ -44,9 +45,6 @@ export default function TabMenu() {
       const parents = await getParents();
       setParents(parents);
     };
-    if(!isAuth) {
-      router.replace('/notAuth');
-    }
     fetchParents();
   }, []);
 
@@ -99,6 +97,7 @@ export default function TabMenu() {
       router.replace(`?${newParams.toString()}`);
     }
   };
+
 
   return (
     <motion.div
