@@ -98,7 +98,6 @@ export default function TabMenu() {
     }
   };
 
-
   return (
     <motion.div
       initial={{ x: -300, opacity: 0 }}

@@ -42,7 +42,7 @@ interface IFetchData {
 }
 
 export default function ProductList() {
-  const { user, isAuth } = useAuthStore();
+  const { user } = useAuthStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
