@@ -10,6 +10,11 @@ import Loading from '../productList/Loading';
 
 
 
+
+
+
+
+
 interface Props {
   sub: Category[] | null;
   currentCategoryId: string | null;
