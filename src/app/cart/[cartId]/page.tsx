@@ -63,7 +63,9 @@ export default function CartsPage() {
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    if (allIds.length === 0) return;
+    if (allIds.length === 0) {
+      return;
+    }
 
     try {
       await deleteCartItems(cartId, allIds);
@@ -75,8 +77,9 @@ export default function CartsPage() {
     }
   };
 
-  if (!cartData)
+  if (!cartData) {
     return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
+  }
 
   return (
     <div className='min-h-screen bg-[#F9F6F1] px-[120px] pt-[40px] pb-[80px]'>

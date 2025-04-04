@@ -46,7 +46,8 @@ const MyRequestPage = () => {
         const data = await res.json();
 
         if (!Array.isArray(data)) {
-          return;}
+          return;
+        }
 
         const transformed: Order[] = data.map((item: any) => ({
           id: item.id,
@@ -74,8 +75,12 @@ const MyRequestPage = () => {
 
   // ✅ 정렬된 목록
   const sortedOrders = [...orders].sort((a, b) => {
-    if (sortOption === '낮은금액순') { return a.price - b.price; }
-    if (sortOption === '높은금액순') { return b.price - a.price; }
+    if (sortOption === '낮은금액순') {
+      return a.price - b.price;
+    }
+    if (sortOption === '높은금액순') {
+      return b.price - a.price;
+    }
     return 0; // 최신순: 서버 반환 순서 그대로
   });
 
@@ -88,10 +93,13 @@ const MyRequestPage = () => {
 
   const handleCancel = async (id: string) => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/cancel`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/cancel`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        },
+      );
       setOrders((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
       console.error('요청 취소 실패:', err);
@@ -114,19 +122,28 @@ const MyRequestPage = () => {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='text-gray-500'>
-              <DropdownMenuItem onClick={() => setSortOption('최신순')}>최신순</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSortOption('낮은금액순')}>낮은금액순</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSortOption('높은금액순')}>높은금액순</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('최신순')}>
+                최신순
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('낮은금액순')}>
+                낮은금액순
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('높은금액순')}>
+                높은금액순
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
         {/* 테이블 */}
-        <MyRequestTable orders={paginatedOrders} onCancel={handleCancel} />
+        <MyRequestTable
+          orders={paginatedOrders}
+          onCancel={handleCancel}
+        />
 
         {/* 페이지네이션 */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-6 gap-2">
+          <div className='flex justify-center mt-6 gap-2'>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
