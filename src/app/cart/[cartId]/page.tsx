@@ -102,9 +102,7 @@ export default function CartsPage() {
       </h1>
 
       <div className='flex gap-6'>
-        {/* 장바구니 상품 리스트 */}
         <div className='w-[1254px] h-[850px] bg-[#FBF8F4] border border-[#FFFDF9] flex flex-col'>
-          {/* 테이블 헤더 */}
           <div className='flex w-full h-[80px] border-b border-[#C4C4C4] items-center px-6 font-semibold text-sm bg-[#FFFDF9]'>
             <input
               type='checkbox'
@@ -122,7 +120,6 @@ export default function CartsPage() {
             </div>
           </div>
 
-          {/* 상품 리스트 */}
           <div className='h-[720px] overflow-y-auto'>
             {cartData.items.map((item) => (
               <CartItem
