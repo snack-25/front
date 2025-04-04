@@ -26,19 +26,22 @@ const OrderDetailPage = () => {
   const { id } = useParams();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   useEffect(() => {
-    if (!id) { 
+    if (!id) {
       return;
     }
-  
+
     const fetchOrderDetail = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
-          credentials: 'include',
-        });
-  
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`,
+          {
+            credentials: 'include',
+          },
+        );
+
         const data = await res.json();
         console.log('상세 주문 데이터:', data);
-  
+
         const transformed: OrderDetail = {
           id: data.requestId ?? id,
           date: data.approvedAt?.slice(0, 10) ?? '-', // ✅ 승인일
@@ -55,16 +58,15 @@ const OrderDetailPage = () => {
             price: item.price ?? 0,
           })),
         };
-  
+
         setOrder(transformed);
       } catch (err) {
         console.error('상세 내역 가져오기 실패:', err);
       }
     };
-  
+
     fetchOrderDetail();
   }, [id]);
-  
 
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
@@ -125,7 +127,9 @@ const OrderDetailPage = () => {
           <h2 className='text-xl font-bold border-b-2 border-black-100'>
             요청 정보
           </h2>
-          <p className='text-xl text-gray-400 mt-2'>{new Date(order?.requestDate || '').toLocaleDateString('ko-KR')}</p>
+          <p className='text-xl text-gray-400 mt-2'>
+            {new Date(order?.requestDate || '').toLocaleDateString('ko-KR')}
+          </p>
 
           <div className='mt-2'>
             <label className='block text-xl font-semibold text-black-400'>
@@ -156,7 +160,9 @@ const OrderDetailPage = () => {
           <h2 className='text-xl font-bold border-b-2 border-black-100'>
             승인 정보
           </h2>
-          <p className='text-xl text-gray-400 mt-2'>{new Date(order?.requestDate || '').toLocaleDateString('ko-KR')}</p>
+          <p className='text-xl text-gray-400 mt-2'>
+            {new Date(order?.requestDate || '').toLocaleDateString('ko-KR')}
+          </p>
 
           <div className='mt-2'>
             <label className='block text-xl font-semibold text-black-400'>
