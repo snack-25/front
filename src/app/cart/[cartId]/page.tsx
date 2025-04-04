@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import CartItem from '@/components/cartItems/cartItem';
 import { deleteCartItems, getCartItems } from '@/lib/api/cart';
 import { CartResponse } from '@/types/cart';
@@ -11,18 +11,18 @@ export default function CartsPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { cartId } = useParams() as { cartId: string };
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     try {
       const data = await getCartItems(cartId);
       setCartData(data);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [cartId]);
 
   useEffect(() => {
     fetchCart();
-  }, []);
+  }, [fetchCart]);
 
   const toggleSelect = (itemId: string) => {
     setSelectedIds((prev) => {
@@ -102,6 +102,7 @@ export default function CartsPage() {
               <CartItem
                 key={item.id}
                 id={item.id}
+                imageUrl={item?.product?.imageUrl ?? undefined}
                 name={item.product.name}
                 price={item.product.price}
                 quantity={item.quantity}

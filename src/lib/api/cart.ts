@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '@/lib/constants';
+import { CartResponse, DeleteCartItemsResponse } from '@/types/cart';
 
-export async function getCartItems(cartId: string) {
+export async function getCartItems(cartId: string): Promise<CartResponse> {
   const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items`, {
     method: 'GET',
     credentials: 'include',
@@ -13,7 +14,10 @@ export async function getCartItems(cartId: string) {
   return res.json();
 }
 
-export async function deleteCartItems(cartId: string, itemIds: string[]) {
+export async function deleteCartItems(
+  cartId: string,
+  itemIds: string[],
+): Promise<DeleteCartItemsResponse> {
   const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items`, {
     method: 'DELETE',
     headers: {

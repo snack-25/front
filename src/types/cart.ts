@@ -1,17 +1,19 @@
 // types/cart.ts
-export interface Product {
+export interface CartProduct {
   id: string;
   name: string;
   price: number;
-  description: string;
-  imageUrl: string | null;
+  imageUrl?: string | null;
 }
 
 export interface CartItem {
   id: string;
+  cartId: string;
   productId: string;
   quantity: number;
-  product: Product;
+  createdAt: string;
+  updatedAt: string;
+  product: CartProduct;
 }
 
 export interface CartResponse {
@@ -19,4 +21,9 @@ export interface CartResponse {
   totalAmount: number;
   shippingFee: number;
   estimatedRemainingBudget: number;
+}
+
+interface DeleteCartItemsResponse {
+  success: boolean;
+  message?: string;
 }

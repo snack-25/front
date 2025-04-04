@@ -7,6 +7,7 @@ interface CartItemProps {
   name: string;
   price: number;
   quantity: number;
+  imageUrl?: string;
   total: number;
   deliveryFee: number;
   deliveryType: string;
@@ -17,6 +18,7 @@ interface CartItemProps {
 
 export default function CartItem({
   name,
+  imageUrl,
   price,
   quantity,
   total,
@@ -38,7 +40,7 @@ export default function CartItem({
           />
           <div className='w-[160px] h-[160px] rounded-[16px] bg-white border border-[#E6E6E6] flex items-center justify-center'>
             <Image
-              src='/img/card/item-coke-zero.png'
+              src={imageUrl || '/img/card/item-coke-zero.png'}
               alt={name}
               width={56}
               height={97.2}
@@ -52,10 +54,10 @@ export default function CartItem({
             className='absolute top-[24px] right-[24px] cursor-pointer'
           >
             <Image
-              src='/icon/X.png'
+              src='/icon/flat/X.svg'
               alt='삭제 버튼'
-              width={14}
-              height={14}
+              width={36}
+              height={36}
             />
           </button>
           <div className='ml-5'>
