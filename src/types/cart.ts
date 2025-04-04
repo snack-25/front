@@ -23,7 +23,7 @@ export interface CartResponse {
   estimatedRemainingBudget: number;
 }
 
-interface DeleteCartItemsResponse {
+export interface DeleteCartItemsResponse {
   success: boolean;
   message?: string;
 }
