@@ -131,7 +131,7 @@ export default function Header() {
 
             <div className='flex items-center gap-12 ml-auto max-tb:hidden'>
               <NavItem
-                href='/tmp'
+                href={`/cart/${user.cartId}`}
                 currentPath={pathname}
               >
                 Cart

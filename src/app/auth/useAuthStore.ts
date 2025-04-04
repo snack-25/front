@@ -20,6 +20,7 @@ interface userInfo {
   name: string;
   companyId: string;
   role: 'SUPERADMIN' | 'ADMIN' | 'USER';
+  cartId: string;
 }
 interface companyInfo {
   companyName: string;
