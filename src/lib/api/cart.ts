@@ -75,3 +75,22 @@ export async function addCartItem(
 
   return res.json();
 }
+
+export async function updateCartItemQuantity(
+  cartId: string,
+  itemId: string,
+  quantity: number,
+) {
+  const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items/${itemId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ quantity }),
+  });
+
+  if (!res.ok) {
+    throw new Error('수량 변경에 실패했습니다.');
+  }
+
+  return res.json();
+}

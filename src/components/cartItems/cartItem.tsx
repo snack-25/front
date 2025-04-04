@@ -1,6 +1,12 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+import NumberInput from '@/components/ui/NumberInput';
+import { useDebounce } from '@/hooks/cart/useDebounce';
+import { updateCartItemQuantity } from '@/lib/api/cart';
+import { useParams } from 'next/navigation';
 
 interface CartItemProps {
   id: string;
@@ -17,6 +23,7 @@ interface CartItemProps {
 }
 
 export default function CartItem({
+  id,
   name,
   imageUrl,
   price,
@@ -28,6 +35,18 @@ export default function CartItem({
   onToggle,
   onDelete,
 }: CartItemProps) {
+  const [localQuantity, setLocalQuantity] = useState<number>(quantity);
+  const debouncedQuantity = useDebounce(localQuantity, 800);
+  const { cartId } = useParams() as { cartId: string };
+
+  useEffect(() => {
+    if (debouncedQuantity !== quantity) {
+      updateCartItemQuantity(cartId, id, debouncedQuantity).catch((err) =>
+        console.error('PATCH 실패:', err),
+      );
+    }
+  }, [debouncedQuantity, cartId, id, quantity]);
+
   return (
     <div className='flex justify-between w-[1250px] h-[208px] items-center border-b border-[#C4C4C4] px-6 bg-[#FFFDF9]'>
       <div className='w-[594px] h-[208px] flex justify-between border-b border-[#E6E6E6] p-[24px]'>
@@ -70,15 +89,17 @@ export default function CartItem({
       </div>
 
       <div className='w-[150px] text-center'>
-        <input
-          type='number'
-          defaultValue={quantity}
-          className='w-[80px] text-center border rounded'
+        <NumberInput
+          value={localQuantity}
+          onChange={(val) => setLocalQuantity(val)}
+          className='mx-auto'
         />
       </div>
 
       <div className='w-[150px] text-center'>
-        <div className='font-bold text-lg'>{total.toLocaleString()}원</div>
+        <div className='font-bold text-lg'>
+          {(price * localQuantity).toLocaleString()}원
+        </div>
         <button className='mt-2 bg-orange-400 text-white px-4 py-1 rounded'>
           즉시 구매
         </button>
