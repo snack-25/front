@@ -80,7 +80,7 @@ export default function CartsPage() {
 
   return (
     <div className='min-h-screen bg-[#F9F6F1] px-[120px] pt-[40px] pb-[80px]'>
-      <h1 className='h-[144px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
+      <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
 
