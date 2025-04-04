@@ -1,14 +1,16 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+
 import CartItem from '@/components/cartItems/cartItem';
 import { deleteCartItems, getCartItems } from '@/lib/api/cart';
 import { CartResponse } from '@/types/cart';
-import { useParams } from 'next/navigation';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
   const { cartId } = useParams() as { cartId: string };
 
   const fetchCart = useCallback(async () => {
@@ -29,10 +31,24 @@ export default function CartsPage() {
       const updated = prev.includes(itemId)
         ? prev.filter((id) => id !== itemId)
         : [...prev, itemId];
-      console.log('✔ 선택된 ID 목록:', updated);
       return updated;
     });
   };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedIds([]);
+    } else {
+      const allIds = cartData?.items.map((item) => item.id) || [];
+      setSelectedIds(allIds);
+    }
+    setSelectAll((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const allIds = cartData?.items.map((item) => item.id) || [];
+    setSelectAll(selectedIds.length === allIds.length && allIds.length > 0);
+  }, [selectedIds, cartData]);
 
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
@@ -63,9 +79,7 @@ export default function CartsPage() {
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    if (allIds.length === 0) {
-      return;
-    }
+    if (allIds.length === 0) return;
 
     try {
       await deleteCartItems(cartId, allIds);
@@ -82,24 +96,33 @@ export default function CartsPage() {
   }
 
   return (
-    <div className='min-h-screen bg-[#F9F6F1] px-[120px] pt-[40px] pb-[80px]'>
+    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px]'>
       <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
 
       <div className='flex gap-6'>
-        <div className='w-[1254px] h-[850px] bg-white border border-[#FFFDF9] flex flex-col'>
+        {/* 장바구니 상품 리스트 */}
+        <div className='w-[1254px] h-[850px] bg-[#FBF8F4] border border-[#FFFDF9] flex flex-col'>
+          {/* 테이블 헤더 */}
           <div className='flex w-full h-[80px] border-b border-[#C4C4C4] items-center px-6 font-semibold text-sm bg-[#FFFDF9]'>
             <input
               type='checkbox'
               className='mr-4'
+              checked={selectAll}
+              onChange={handleSelectAll}
             />
-            <div className='flex-1'>상품정보</div>
-            <div className='w-[150px] text-center'>수량</div>
-            <div className='w-[150px] text-center'>주문 금액</div>
-            <div className='w-[150px] text-center'>배송 정보</div>
+            <div className='flex flex-row justify-between'>
+              <div className='w-[594px] text-center'>상품정보</div>
+              <div className='flex flex-row'>
+                <div className='w-[200px] text-center'>수량</div>
+                <div className='w-[200px] text-center'>주문 금액</div>
+                <div className='w-[200px] text-center'>배송 정보</div>
+              </div>
+            </div>
           </div>
 
+          {/* 상품 리스트 */}
           <div className='h-[720px] overflow-y-auto'>
             {cartData.items.map((item) => (
               <CartItem
@@ -120,18 +143,20 @@ export default function CartsPage() {
           </div>
 
           <div className='flex justify-between px-6 py-4 bg-[#F9F6F1] text-sm text-gray-600 border-t'>
-            <button
-              className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
-              onClick={handleDeleteAll}
-            >
-              전체 상품 삭제
-            </button>
-            <button
-              className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
-              onClick={handleDelete}
-            >
-              선택 상품 삭제
-            </button>
+            <div className='w-[310px] flex justify-between'>
+              <button
+                className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
+                onClick={handleDeleteAll}
+              >
+                전체 상품 삭제
+              </button>
+              <button
+                className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
+                onClick={handleDelete}
+              >
+                선택 상품 삭제
+              </button>
+            </div>
           </div>
         </div>
 

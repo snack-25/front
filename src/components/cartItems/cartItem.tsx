@@ -29,7 +29,7 @@ export default function CartItem({
   onDelete,
 }: CartItemProps) {
   return (
-    <div className='flex w-[1250px] h-[208px] items-center border-b border-[#C4C4C4] px-6 bg-[#FFFDF9]'>
+    <div className='flex justify-between w-[1250px] h-[208px] items-center border-b border-[#C4C4C4] px-6 bg-[#FFFDF9]'>
       <div className='w-[594px] h-[208px] flex justify-between border-b border-[#E6E6E6] p-[24px]'>
         <div className='flex flex-row gap-5'>
           <input
@@ -84,11 +84,13 @@ export default function CartItem({
         </button>
       </div>
 
-      <div className='w-[150px] text-center text-sm'>
-        <div className='font-bold'>{deliveryFee.toLocaleString()}원</div>
-      </div>
-      <div className='w-[150px] text-center text-sm'>
-        <div className='font-bold'>{deliveryType}</div>
+      <div className='flex flex-col'>
+        <div className='w-[150px] text-center text-sm'>
+          <div className='font-bold'>{deliveryFee.toLocaleString()}원</div>
+        </div>
+        <div className='w-[150px] text-center text-sm'>
+          <div className='font-bold'>{deliveryType}</div>
+        </div>
       </div>
     </div>
   );
