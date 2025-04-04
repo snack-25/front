@@ -147,13 +147,13 @@ export default function CartsPage() {
               <div className='flex justify-between mb-2'>
                 <span className='text-gray-600'>상품금액</span>
                 <span className='font-semibold'>
-                  {cartData.totalAmount.toLocaleString()}원
+                  {(cartData?.totalAmount ?? 0).toLocaleString()}원
                 </span>
               </div>
               <div className='flex justify-between'>
                 <span className='text-gray-600'>배송비</span>
                 <span className='font-semibold'>
-                  {cartData.shippingFee.toLocaleString()}원
+                  {(cartData?.shippingFee ?? 0).toLocaleString()}원
                 </span>
               </div>
             </div>
@@ -161,7 +161,9 @@ export default function CartsPage() {
             <div className='flex justify-between mb-2'>
               <span className='text-gray-800 font-bold'>총 주문금액</span>
               <span className='text-orange-500 font-bold text-lg'>
-                {(cartData.totalAmount + cartData.shippingFee).toLocaleString()}
+                {(
+                  (cartData?.totalAmount ?? 0) + (cartData?.shippingFee ?? 0)
+                ).toLocaleString()}
                 원
               </span>
             </div>
@@ -169,7 +171,7 @@ export default function CartsPage() {
             <div className='flex justify-between mb-6'>
               <span className='text-gray-600'>남은 예산 금액</span>
               <span className='font-semibold'>
-                {cartData.estimatedRemainingBudget.toLocaleString()}원
+                {(cartData?.estimatedRemainingBudget ?? 0).toLocaleString()}원
               </span>
             </div>
           </div>
