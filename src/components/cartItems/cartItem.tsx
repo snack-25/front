@@ -29,7 +29,7 @@ export default function CartItem({
   onDelete,
 }: CartItemProps) {
   return (
-    <div className='flex w-[1254px] h-[208px] items-center border-b border-[#C4C4C4] px-6 bg-[#FFFDF9]'>
+    <div className='flex w-[1250px] h-[208px] items-center border-b border-[#C4C4C4] px-6 bg-[#FFFDF9]'>
       <div className='w-[594px] h-[208px] flex justify-between border-b border-[#E6E6E6] p-[24px]'>
         <div className='flex flex-row gap-5'>
           <input
