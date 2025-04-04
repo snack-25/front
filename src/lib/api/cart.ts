@@ -55,3 +55,23 @@ export async function deleteCartItems(
     throw new Error(error.message || '알 수 없는 오류가 발생했습니다.');
   }
 }
+
+export async function addCartItem(
+  cartId: string,
+  productId: string,
+  quantity: number = 1,
+) {
+  const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ productId, quantity }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `상품 추가 실패 (HTTP ${res.status})`);
+  }
+
+  return res.json();
+}
