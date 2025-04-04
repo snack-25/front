@@ -24,34 +24,35 @@ const OrdersPage = () => {
           sortOption === '높은금액순'
             ? 'highPrice'
             : sortOption === '낮은금액순'
-            ? 'lowPrice'
-            : 'latest';
+              ? 'lowPrice'
+              : 'latest';
 
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=1&pageSize=100&status=APPROVED&sort=${sortQuery}`,
           {
             credentials: 'include',
-          }
+          },
         );
 
-        if (!res.ok) {throw new Error('주문 불러오기 실패');}
+        if (!res.ok) {
+          throw new Error('주문 불러오기 실패');
+        }
 
         const data = await res.json();
         console.log('✅ 서버 응답 확인', data);
         const transformed: Order[] = data.map((item: any) => ({
           id: item.id,
           date: item.createdAt?.slice(0, 10) ?? '-',
-          items: item.orderRequestItems?.map((it: any) => ({
-            name: it.product?.name || '상품 없음',
-            quantity: it.quantity || 0,
-          })) || [],
+          items:
+            item.orderRequestItems?.map((it: any) => ({
+              name: it.product?.name || '상품 없음',
+              quantity: it.quantity || 0,
+            })) || [],
           price: item.totalAmount?.toLocaleString() || '0',
           requester: item.requester?.name || '-',
           handler: item.resolver?.name || '-',
           requestDate: item.CreatedAt?.slice(0, 10) ?? '-',
         }));
-        
-        
 
         setOrders(transformed);
       } catch (err) {
@@ -64,7 +65,9 @@ const OrdersPage = () => {
   }, [sortOption]);
 
   return (
-    <div className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen'}>
+    <div
+      className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen'}
+    >
       <div className={'w-full h-[114px] flex justify-between items-center'}>
         <h1 className={'text-[42px] font-bold'}>구매 내역 확인</h1>
       </div>
@@ -78,9 +81,15 @@ const OrdersPage = () => {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className={'text-gray-500'}>
-              <DropdownMenuItem onClick={() => setSortOption('최신순')}>최신순</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSortOption('높은금액순')}>높은금액순</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSortOption('낮은금액순')}>낮은금액순</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('최신순')}>
+                최신순
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('높은금액순')}>
+                높은금액순
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('낮은금액순')}>
+                낮은금액순
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

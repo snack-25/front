@@ -86,7 +86,6 @@ const mockOrders: Order[] = [
   },
 ];
 
-
 const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
   const router = useRouter();
 
@@ -115,7 +114,8 @@ const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
             >
               <span className='flex-1 text-center'>{order.date}</span>
               <span className='flex-1 text-center'>
-                {order.items[0]?.name || '상품 없음'} 외 {order.items.length - 1}건
+                {order.items[0]?.name || '상품 없음'} 외{' '}
+                {order.items.length - 1}건
               </span>
               <span className='flex-1 text-center'>
                 {(order.price ?? 0).toLocaleString()}원
@@ -145,7 +145,6 @@ const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
             width={300}
             height={200}
           />
-          
         </div>
       )}
     </div>

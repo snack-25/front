@@ -18,12 +18,9 @@ interface Order {
   requestDate: string;
 }
 
-
 interface HistoryTableProps {
   orders?: Order[];
 }
-
-
 
 const headers = [
   '구매승인일',
@@ -36,7 +33,6 @@ const headers = [
 
 const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
   const router = useRouter();
-  
 
   return (
     <div className='w-full'>
@@ -56,32 +52,38 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
 
           {/* 내용 */}
           {orders.map((order) => {
-  console.log('📦 주문 하나 확인:', order);
-  return (
-    <div
-      key={order.id}
-      className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
-      onClick={() => router.push(`/history/${order.id}`)}
-    >
-      <span className='flex-1 text-center'>{order.date}</span>
-      <span className="flex-1 text-center">
-        {order.items && order.items.length > 0
-          ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
-          : '상품 없음'}
-        <br />
-        <span className="text-sm text-gray-500">
-          총 수량: {order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0}개
-        </span>
-      </span>
+            console.log('📦 주문 하나 확인:', order);
+            return (
+              <div
+                key={order.id}
+                className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
+                onClick={() => router.push(`/history/${order.id}`)}
+              >
+                <span className='flex-1 text-center'>{order.date}</span>
+                <span className='flex-1 text-center'>
+                  {order.items && order.items.length > 0
+                    ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
+                    : '상품 없음'}
+                  <br />
+                  <span className='text-sm text-gray-500'>
+                    총 수량:{' '}
+                    {order.items
+                      ? order.items.reduce(
+                          (sum, item) => sum + (item.quantity || 0),
+                          0,
+                        )
+                      : 0}
+                    개
+                  </span>
+                </span>
 
-      <span className='flex-1 text-center'>{order.price}원</span>
-      <span className='flex-1 text-center'>{order.requester}</span>
-      <span className='flex-1 text-center'>{order.handler}</span>
-      <span className='flex-1 text-center'>{order.requestDate}</span>
-    </div>
-  );
-})}
-
+                <span className='flex-1 text-center'>{order.price}원</span>
+                <span className='flex-1 text-center'>{order.requester}</span>
+                <span className='flex-1 text-center'>{order.handler}</span>
+                <span className='flex-1 text-center'>{order.requestDate}</span>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center py-10'>
