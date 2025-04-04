@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 import CartItem from '@/components/cartItems/cartItem';
 import { deleteCartItems, getCartItems } from '@/lib/api/cart';
@@ -79,7 +79,9 @@ export default function CartsPage() {
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    if (allIds.length === 0) return;
+    if (allIds.length === 0) {
+      return;
+    }
 
     try {
       await deleteCartItems(cartId, allIds);
