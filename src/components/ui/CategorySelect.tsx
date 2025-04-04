@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { CheckIcon, ChevronDownIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import useCategory from '@/hooks/product/useCategory';
+
 import { Listbox } from '@headlessui/react';
 
 import { Category } from '../gnb/TabMenu';
