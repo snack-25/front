@@ -1,17 +1,19 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 import CartItem from '@/components/cartItems/cartItem';
-import { deleteCartItems, getCartItems } from '@/lib/api/cart';
+import { createOrder, deleteCartItems, getCartItems } from '@/lib/api/cart';
 import { CartResponse } from '@/types/cart';
+import CartSummary from '@/components/cartItems/cartSummary';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const { cartId } = useParams() as { cartId: string };
+  const router = useRouter();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -93,6 +95,29 @@ export default function CartsPage() {
     }
   };
 
+  const handleOrder = async () => {
+    if (selectedIds.length === 0 || !cartData) {
+      alert('주문할 상품을 선택해주세요.');
+      return;
+    }
+
+    const selectedItems = cartData.items
+      .filter((item) => selectedIds.includes(item.id))
+      .map((item) => ({
+        productId: item.product.id ?? item.productId,
+        quantity: item.quantity,
+      }));
+
+    try {
+      await createOrder(selectedItems);
+      alert('주문이 완료되었습니다.');
+      router.push('/history');
+    } catch (error) {
+      console.error('주문 실패:', error);
+      alert('주문에 실패했습니다.');
+    }
+  };
+
   if (!cartData) {
     return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
   }
@@ -127,6 +152,7 @@ export default function CartsPage() {
               <CartItem
                 key={item.id}
                 id={item.id}
+                productId={item.product.id}
                 imageUrl={item?.product?.imageUrl ?? undefined}
                 name={item.product.name}
                 price={item.product.price}
@@ -137,6 +163,7 @@ export default function CartsPage() {
                 checked={selectedIds.includes(item.id)}
                 onToggle={() => toggleSelect(item.id)}
                 onDelete={() => handleDeleteItem(item.id)}
+                onQuantityChange={fetchCart}
               />
             ))}
           </div>
@@ -159,56 +186,10 @@ export default function CartsPage() {
           </div>
         </div>
 
-        <div className='flex flex-col gap-7'>
-          <div className='w-[386px] h-[384px] flex flex-col gap-[24px] pt-[60px] pr-[24px] pb-[60px] pl-[24px] rounded-[16px] border border-[#F2F2F2] bg-white'>
-            <div className='border-b pb-4 mb-4'>
-              <div className='flex justify-between mb-2'>
-                <span className='text-gray-600'>총 주문 상품</span>
-                <span className='font-bold text-orange-500'>
-                  {cartData.items.length}개
-                </span>
-              </div>
-              <div className='flex justify-between mb-2'>
-                <span className='text-gray-600'>상품금액</span>
-                <span className='font-semibold'>
-                  {(cartData?.totalAmount ?? 0).toLocaleString()}원
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-gray-600'>배송비</span>
-                <span className='font-semibold'>
-                  {(cartData?.shippingFee ?? 0).toLocaleString()}원
-                </span>
-              </div>
-            </div>
-
-            <div className='flex justify-between mb-2'>
-              <span className='text-gray-800 font-bold'>총 주문금액</span>
-              <span className='text-orange-500 font-bold text-lg'>
-                {(
-                  (cartData?.totalAmount ?? 0) + (cartData?.shippingFee ?? 0)
-                ).toLocaleString()}
-                원
-              </span>
-            </div>
-
-            <div className='flex justify-between mb-6'>
-              <span className='text-gray-600'>남은 예산 금액</span>
-              <span className='font-semibold'>
-                {(cartData?.estimatedRemainingBudget ?? 0).toLocaleString()}원
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <button className='w-full bg-orange-500 text-white py-3 rounded-lg font-bold mb-2'>
-              구매하기
-            </button>
-            <button className='w-full border border-orange-500 text-orange-500 py-3 rounded-lg font-bold'>
-              계속 쇼핑하기
-            </button>
-          </div>
-        </div>
+        <CartSummary
+          cartData={cartData}
+          onOrder={handleOrder}
+        />
       </div>
     </div>
   );

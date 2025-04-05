@@ -94,3 +94,23 @@ export async function updateCartItemQuantity(
 
   return res.json();
 }
+
+export async function createOrder(
+  items: { productId: string; quantity: number }[],
+) {
+  const res = await fetch(`${API_BASE_URL}/orders`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ items }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `주문 실패 (HTTP ${res.status})`);
+  }
+
+  return res.json();
+}

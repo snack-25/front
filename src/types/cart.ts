@@ -27,3 +27,13 @@ export interface DeleteCartItemsResponse {
   success: boolean;
   message?: string;
 }
+
+export interface CartSummaryProps {
+  cartData: {
+    totalAmount: number;
+    shippingFee: number;
+    estimatedRemainingBudget: number;
+    items: { id: string }[];
+  };
+  onOrder: () => void;
+}
