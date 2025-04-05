@@ -63,7 +63,9 @@ export default function CartItem({
     if (debouncedQuantity !== quantity) {
       updateCartItemQuantity(cartId, id, debouncedQuantity)
         .then(() => {
-          if (onQuantityChange) onQuantityChange();
+          if (onQuantityChange) {
+            onQuantityChange();
+          }
         })
         .catch((err) => console.error('PATCH 실패:', err));
     }
