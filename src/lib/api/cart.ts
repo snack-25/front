@@ -1,5 +1,9 @@
 import { API_BASE_URL } from '@/lib/constants';
-import { CartResponse, DeleteCartItemsResponse } from '@/types/cart';
+import {
+  CartResponse,
+  CreateOrderRequestPayload,
+  DeleteCartItemsResponse,
+} from '@/types/cart';
 
 export async function getCartItems(cartId: string): Promise<CartResponse> {
   const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items`, {
@@ -110,6 +114,23 @@ export async function createOrder(
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.message || `주문 실패 (HTTP ${res.status})`);
+  }
+
+  return res.json();
+}
+
+export async function createOrderRequest(data: CreateOrderRequestPayload) {
+  const res = await fetch(`${API_BASE_URL}/order-requests`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error('주문 요청 생성에 실패했습니다.');
   }
 
   return res.json();

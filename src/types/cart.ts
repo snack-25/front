@@ -4,6 +4,7 @@ export interface CartProduct {
   name: string;
   price: number;
   imageUrl?: string | null;
+  categoryId: string;
 }
 
 export interface CartItem {
@@ -36,4 +37,40 @@ export interface CartSummaryProps {
     items: { id: string }[];
   };
   onOrder: () => void;
+}
+
+export interface CreateOrderRequestItem {
+  productId: string;
+  quantity: number;
+  productName?: string;
+  price?: number;
+  imageUrl?: string | null;
+  categoryId?: string;
+}
+export interface CreateOrderRequestPayload {
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
+  requestMessage: string;
+  requesterId?: string;
+  companyId?: string;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+}
+
+export interface CartItemProps {
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  categoryId?: string;
+  imageUrl?: string;
+  total: number;
+  deliveryFee: number;
+  deliveryType: string;
+  checked: boolean;
+  onToggle: () => void;
+  onDelete: () => void;
+  onQuantityChange?: () => void;
 }

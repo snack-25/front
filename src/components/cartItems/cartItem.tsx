@@ -4,24 +4,15 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import NumberInput from '@/components/ui/NumberInput';
 import { useDebounce } from '@/hooks/cart/useDebounce';
-import { createOrder, updateCartItemQuantity } from '@/lib/api/cart';
+import {
+  createOrder,
+  createOrderRequest,
+  updateCartItemQuantity,
+} from '@/lib/api/cart';
 import { useParams, useRouter } from 'next/navigation';
-
-interface CartItemProps {
-  id: string;
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  imageUrl?: string;
-  total: number;
-  deliveryFee: number;
-  deliveryType: string;
-  checked: boolean;
-  onToggle: () => void;
-  onDelete: () => void;
-  onQuantityChange?: () => void;
-}
+import { useAuthStore } from '@/app/auth/useAuthStore';
+import OrderRequestModal from '../ui/modal/OrderRequestModal';
+import { CartItemProps, CreateOrderRequestPayload } from '@/types/cart';
 
 export default function CartItem({
   id,
@@ -30,20 +21,28 @@ export default function CartItem({
   imageUrl,
   price,
   quantity,
-  total,
   deliveryFee,
   deliveryType,
   checked,
   onToggle,
   onDelete,
   onQuantityChange,
+  categoryId,
 }: CartItemProps) {
   const [localQuantity, setLocalQuantity] = useState<number>(quantity);
+  const [showModal, setShowModal] = useState(false);
   const debouncedQuantity = useDebounce(localQuantity, 800);
   const { cartId } = useParams() as { cartId: string };
+  const { user } = useAuthStore();
   const router = useRouter();
 
   const handleInstantBuy = async () => {
+    if (user?.role === 'USER') {
+      setShowModal(true);
+
+      return;
+    }
+
     try {
       await createOrder([
         {
@@ -128,7 +127,7 @@ export default function CartItem({
           className='mt-2 bg-orange-400 text-white px-4 py-1 rounded'
           onClick={handleInstantBuy}
         >
-          즉시 구매
+          {user?.role === 'USER' ? '즉시 요청' : '즉시 구매'}
         </button>
       </div>
 
@@ -140,6 +139,54 @@ export default function CartItem({
           <div className='font-bold'>{deliveryType}</div>
         </div>
       </div>
+
+      <OrderRequestModal
+        visible={showModal}
+        items={[
+          {
+            productId,
+            quantity: localQuantity,
+            price,
+            productName: name,
+            imageUrl,
+            categoryId,
+          },
+        ]}
+        shippingFee={deliveryFee}
+        onClose={() => setShowModal(false)}
+        onConfirm={async (message) => {
+          try {
+            if (!user) {
+              alert('로그인이 필요합니다.');
+              return;
+            }
+
+            const payload: CreateOrderRequestPayload = {
+              requestMessage: message,
+              items: [
+                {
+                  productId,
+                  quantity: localQuantity,
+                },
+              ],
+              requesterId: String(user.id),
+              companyId: String(user.companyId),
+              status: 'PENDING',
+            };
+
+            console.log('단일 주문 요청 payload:', payload);
+
+            await createOrderRequest(payload);
+
+            alert('주문 요청이 제출되었습니다.');
+            setShowModal(false);
+            router.push('/history');
+          } catch (err) {
+            console.error('주문 요청 실패:', err);
+            alert('주문 요청에 실패했습니다.');
+          }
+        }}
+      />
     </div>
   );
 }
