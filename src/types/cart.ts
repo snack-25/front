@@ -28,7 +28,7 @@ export interface DeleteCartItemsResponse {
   message?: string;
 }
 
-interface CartSummaryProps {
+export interface CartSummaryProps {
   cartData: {
     totalAmount: number;
     shippingFee: number;

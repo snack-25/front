@@ -2,16 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-
-interface CartSummaryProps {
-  cartData: {
-    totalAmount: number;
-    shippingFee: number;
-    estimatedRemainingBudget: number;
-    items: { id: string }[];
-  };
-  onOrder: () => void;
-}
+import { CartSummaryProps } from '@/types/cart';
 
 export default function CartSummary({ cartData, onOrder }: CartSummaryProps) {
   const router = useRouter();
