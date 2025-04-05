@@ -234,7 +234,7 @@ export default function Profile() {
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
-      <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
+      <div className='flex flex-col gap-[16px] tb:gap-[36px]'>
         <div className='pr-[10px]'>
           <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
             내 프로필

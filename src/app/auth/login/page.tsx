@@ -68,8 +68,7 @@ export default function Login() {
     const result = await login(form);
     console.log('result', result);
 
-    // 예를 들어, 정상 응답은 result.data가 존재한다고 가정
-    if (result && result.data) {
+    if (result.status === 200) {
       showCustomToast({
         label: '로그인 성공했습니다.',
         variant: 'success',
@@ -77,12 +76,13 @@ export default function Login() {
           router.replace('/');
         },
       });
-      // router.replace('/');
+      setTimeout(() => {
+        router.replace('/');
+      }, 4500);
     } else {
-      // 오류 객체에서 message를 가져옵니다.
-      const errorMessage = result?.message || '로그인 실패!';
+      console.log('에러result', result);
       showCustomToast({
-        label: errorMessage,
+        label: result.message, // 백엔드에서 온 오류 메시지 그대로 사용
         variant: 'error',
         onClick: () => {},
       });

@@ -30,19 +30,31 @@ export async function signupApi(body: SignProps) {
     body: JSON.stringify(body),
     credentials: 'include',
   });
+
   const data = await res.json();
-  return data;
+  return { status: res.status, data };
 }
 
-export async function loginApi(body: loginProps) {
-  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    credentials: 'include',
-  });
-  const data = await res.json();
-  return data;
+export async function loginApi(body: { email: string; password: string }) {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    // 상태 코드가 200~299가 아니면, 에러 메시지를 반환
+    if (!res.ok) {
+      return { status: res.status, message: data.message || '로그인 실패' };
+    }
+
+    return { status: res.status, data };
+  } catch (error) {
+    console.error('로그인 요청 실패:', error);
+    return { status: 500, message: '서버 오류 발생' };
+  }
 }
 
 export async function logoutApi() {
