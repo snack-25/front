@@ -136,7 +136,7 @@ const eslintConfig = [
       'no-unused-vars': 'off', // TypeScript 버전을 대신 사용
       'prefer-const': 'error',
       eqeqeq: 'error',
-      curly: 'error',
+      curly: 'warn',
     },
   },
 

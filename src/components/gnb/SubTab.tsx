@@ -5,11 +5,6 @@ import { cn } from '@/lib/utils';
 import { buttonStyle, Category, ulStyle } from './TabMenu';
 import Loading from '../productList/Loading';
 
-
-
-
-
-
 interface Props {
   sub: Category[] | null;
   currentCategoryId: string | null;
