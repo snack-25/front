@@ -65,8 +65,8 @@ const PurchaseRequestPage = () => {
 
         const transformed: Order[] = fetchedData.map((item: any) => ({
           id: item.id,
-          date: item.createdAt ? item.createdAt.slice(0, 10) : '-', // 오류나서 임시로 처리
-          requester: item.requester?.name || '-',
+          date: item.requestedAt ? item.requestedAt.slice(0, 10) : '-', // 요청일
+          requester: item.requesterName || '-',
           price: item.totalAmount,
           budgetLeft: item.budgetLeft ?? 0,
           items: (item.orderRequestItems || []).map((i: any) => {
@@ -92,12 +92,19 @@ const PurchaseRequestPage = () => {
   }, [sortOption]);
 
   const handleApprove = async (id: string, message: string) => {
+    const token = localStorage.getItem('token');
+    console.log('보내는 주문 ID:', id);
+    
     try {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include', // ✅ 요거 꼭 필요
           body: JSON.stringify({ adminNotes: message }),
         },
       );
@@ -108,12 +115,17 @@ const PurchaseRequestPage = () => {
   };
 
   const handleReject = async (id: string) => {
+    const token = localStorage.getItem('token');
     try {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/reject`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include',
           body: JSON.stringify({ adminNotes: '사유 부족으로 반려합니다.' }),
         },
       );
