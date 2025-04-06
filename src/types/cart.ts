@@ -22,6 +22,7 @@ export interface CartResponse {
   totalAmount: number;
   shippingFee: number;
   estimatedRemainingBudget: number;
+  originalBudget: number;
 }
 
 export interface DeleteCartItemsResponse {
@@ -30,12 +31,13 @@ export interface DeleteCartItemsResponse {
 }
 
 export interface CartSummaryProps {
-  cartData: {
+  cartData: CartResponse;
+  summary: {
     totalAmount: number;
     shippingFee: number;
     estimatedRemainingBudget: number;
-    items: { id: string }[];
-  };
+    originalBudget: number;
+  } | null;
   onOrder: () => void;
 }
 
@@ -82,4 +84,11 @@ export interface OrderRequestModalProps {
   shippingFee?: number;
   onClose: () => void;
   onConfirm: (message: string) => void;
+}
+
+export interface GetCartSummaryResponse {
+  totalAmount: number;
+  shippingFee: number;
+  estimatedRemainingBudget: number;
+  originalBudget: number;
 }

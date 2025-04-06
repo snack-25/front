@@ -3,8 +3,17 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import CartItem from '@/components/cartItems/cartItem';
-import { createOrder, deleteCartItems, getCartItems } from '@/lib/api/cart';
-import { CartResponse, CreateOrderRequestItem } from '@/types/cart';
+import {
+  createOrder,
+  deleteCartItems,
+  getCartItems,
+  getSelectedCartSummary,
+} from '@/lib/api/cart';
+import {
+  CartResponse,
+  CreateOrderRequestItem,
+  GetCartSummaryResponse,
+} from '@/types/cart';
 import CartSummary from '@/components/cartItems/cartSummary';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
@@ -18,6 +27,8 @@ export default function CartsPage() {
   const [pendingItems, setPendingItems] = useState<CreateOrderRequestItem[]>(
     [],
   );
+  const [selectedSummary, setSelectedSummary] =
+    useState<GetCartSummaryResponse | null>(null);
   const { cartId } = useParams() as { cartId: string };
   const { user } = useAuthStore();
   const router = useRouter();
@@ -59,6 +70,31 @@ export default function CartsPage() {
     const allIds = cartData?.items.map((item) => item.id) || [];
     setSelectAll(selectedIds.length === allIds.length && allIds.length > 0);
   }, [selectedIds, cartData]);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      if (!cartData || selectedIds.length === 0) {
+        setSelectedSummary(null);
+        return;
+      }
+
+      const selectedItems = cartData.items
+        .filter((item) => selectedIds.includes(item.id))
+        .map((item) => ({
+          productId: item.product.id ?? item.productId,
+          quantity: item.quantity,
+        }));
+
+      try {
+        const summary = await getSelectedCartSummary(cartId, selectedItems);
+        setSelectedSummary(summary);
+      } catch (err) {
+        console.error('요약 정보 조회 실패', err);
+      }
+    };
+
+    fetchSummary();
+  }, [selectedIds, cartData, cartId]);
 
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
@@ -206,6 +242,7 @@ export default function CartsPage() {
 
         <CartSummary
           cartData={cartData}
+          summary={selectedSummary}
           onOrder={handleOrder}
         />
 
@@ -216,7 +253,9 @@ export default function CartsPage() {
           onClose={() => setShowModal(false)}
           onConfirm={async (message) => {
             const success = await submitOrderRequest(pendingItems, message);
-            if (success) setShowModal(false);
+            if (success) {
+              setShowModal(false);
+            }
           }}
         />
       </div>
