@@ -13,6 +13,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '../ui/modal/OrderRequestModal';
 import { CartItemProps, CreateOrderRequestPayload } from '@/types/cart';
+import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 
 export default function CartItem({
   id,
@@ -35,6 +36,7 @@ export default function CartItem({
   const { cartId } = useParams() as { cartId: string };
   const { user } = useAuthStore();
   const router = useRouter();
+  const { submitOrderRequest } = useOrderRequest();
 
   const handleInstantBuy = async () => {
     if (user?.role === 'USER') {
@@ -155,36 +157,16 @@ export default function CartItem({
         shippingFee={deliveryFee}
         onClose={() => setShowModal(false)}
         onConfirm={async (message) => {
-          try {
-            if (!user) {
-              alert('로그인이 필요합니다.');
-              return;
-            }
-
-            const payload: CreateOrderRequestPayload = {
-              requestMessage: message,
-              items: [
-                {
-                  productId,
-                  quantity: localQuantity,
-                },
-              ],
-              requesterId: String(user.id),
-              companyId: String(user.companyId),
-              status: 'PENDING',
-            };
-
-            console.log('단일 주문 요청 payload:', payload);
-
-            await createOrderRequest(payload);
-
-            alert('주문 요청이 제출되었습니다.');
-            setShowModal(false);
-            router.push('/history');
-          } catch (err) {
-            console.error('주문 요청 실패:', err);
-            alert('주문 요청에 실패했습니다.');
-          }
+          const success = await submitOrderRequest(
+            [
+              {
+                productId,
+                quantity: localQuantity,
+              },
+            ],
+            message,
+          );
+          if (success) setShowModal(false);
         }}
       />
     </div>

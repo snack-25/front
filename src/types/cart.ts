@@ -64,7 +64,7 @@ export interface CartItemProps {
   name: string;
   price: number;
   quantity: number;
-  categoryId?: string;
+  categoryId: string;
   imageUrl?: string;
   total: number;
   deliveryFee: number;
@@ -75,14 +75,7 @@ export interface CartItemProps {
   onQuantityChange?: () => void;
 }
 
-export interface OrderRequestItem {
-  productId: string;
-  quantity: number;
-  productName?: string;
-  price?: number;
-  imageUrl?: string | null;
-  categoryId?: string;
-}
+export type OrderRequestItem = CreateOrderRequestItem;
 export interface OrderRequestModalProps {
   visible: boolean;
   items: OrderRequestItem[];

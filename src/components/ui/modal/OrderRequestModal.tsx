@@ -32,9 +32,17 @@ export default function OrderRequestModal({
   const finalTotalAmount = totalProductAmount + shippingFee;
 
   return (
-    <div className='fixed inset-0 bg-black/60 flex justify-center items-center z-99999 px-4 py-2'>
+    <div
+      className='fixed inset-0 bg-black/60 flex justify-center items-center z-99999 px-4 py-2'
+      role='dialog'
+      aria-modal='true'
+      aria-labelledby='modal-title'
+    >
       <div className='bg-[#FFFCF8] rounded-[16px] w-[688px] max-h-[calc(100vh-64px)] overflow-y-auto p-6'>
-        <h2 className='font-bold text-[24px] leading-[32px] align-middle text-[#1F1F1F]'>
+        <h2
+          id='modal-title'
+          className='font-bold text-[24px] leading-[32px] align-middle text-[#1F1F1F]'
+        >
           구매 요청
         </h2>
         <div className='w-[640px] border border-[#FDE1CD] my-8' />
@@ -115,24 +123,33 @@ export default function OrderRequestModal({
             className='w-full rounded-[16px] border border-[#FCC49C] px-3 py-2 text-sm resize-none overflow-y-auto'
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            maxLength={500}
+            aria-describedby='message-description'
           />
-        </div>
-
-        <div className='flex justify-between'>
-          <button
-            type='button'
-            className='flex-1 bg-[#FDF0DF] h-[64px] text-[#F97B22] font-bold py-2 rounded-[16px] mr-2 cursor-pointer'
-            onClick={onClose}
+          <div
+            id='message-description'
+            className='text-xs text-gray-500 mt-1 text-right'
           >
-            취소
-          </button>
-          <button
-            type='button'
-            className='flex-1 bg-[#F97B22] h-[64px] text-white font-bold py-2 rounded-[16px] cursor-pointer'
-            onClick={() => onConfirm(message)}
-          >
-            구매 요청하기
-          </button>
+            {message.length}/500자
+          </div>
+          <div className='flex justify-between'>
+            <button
+              type='button'
+              className='flex-1 bg-[#FDF0DF] h-[64px] text-[#F97B22] font-bold py-2 rounded-[16px] mr-2 cursor-pointer'
+              onClick={onClose}
+            >
+              취소
+            </button>
+            <button
+              type='button'
+              className={`flex-1 h-[64px] text-white font-bold py-2 rounded-[16px] ${message.trim() ? 'bg-[#F97B22] cursor-pointer' : 'bg-[#F97B22]/50 cursor-not-allowed'}`}
+              onClick={() => onConfirm(message)}
+              disabled={!message.trim()}
+              aria-label='구매 요청 확인'
+            >
+              구매 요청하기
+            </button>
+          </div>
         </div>
       </div>
     </div>

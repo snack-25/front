@@ -3,20 +3,12 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import CartItem from '@/components/cartItems/cartItem';
-import {
-  createOrder,
-  createOrderRequest,
-  deleteCartItems,
-  getCartItems,
-} from '@/lib/api/cart';
-import {
-  CartResponse,
-  CreateOrderRequestItem,
-  CreateOrderRequestPayload,
-} from '@/types/cart';
+import { createOrder, deleteCartItems, getCartItems } from '@/lib/api/cart';
+import { CartResponse, CreateOrderRequestItem } from '@/types/cart';
 import CartSummary from '@/components/cartItems/cartSummary';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
+import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -29,6 +21,7 @@ export default function CartsPage() {
   const { cartId } = useParams() as { cartId: string };
   const { user } = useAuthStore();
   const router = useRouter();
+  const { submitOrderRequest } = useOrderRequest();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -222,32 +215,8 @@ export default function CartsPage() {
           shippingFee={cartData.shippingFee}
           onClose={() => setShowModal(false)}
           onConfirm={async (message) => {
-            if (!user) {
-              alert('로그인이 필요합니다.');
-              return;
-            }
-
-            const payload: CreateOrderRequestPayload = {
-              requestMessage: message,
-              items: pendingItems.map((item) => ({
-                productId: item.productId,
-                quantity: item.quantity,
-              })),
-              requesterId: String(user.id),
-              companyId: String(user.companyId),
-              status: 'PENDING',
-            };
-
-            try {
-              await createOrderRequest(payload);
-
-              alert('주문 요청이 제출되었습니다.');
-              setShowModal(false);
-              router.push('/history');
-            } catch (error) {
-              console.error('요청 실패:', error);
-              alert('주문 요청에 실패했습니다.');
-            }
+            const success = await submitOrderRequest(pendingItems, message);
+            if (success) setShowModal(false);
           }}
         />
       </div>
