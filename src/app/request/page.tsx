@@ -26,6 +26,7 @@ interface Order {
   requester: string;
   price: number;
   items: OrderItem[];
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   budgetLeft: number;
 }
 
@@ -69,6 +70,7 @@ const PurchaseRequestPage = () => {
           requester: item.requesterName || '-',
           price: item.totalAmount,
           budgetLeft: item.budgetLeft ?? 0,
+          status: item.status,
           items: (item.orderRequestItems || []).map((i: any) => {
             console.log('✅ 주문 아이템 확인:', JSON.stringify(i, null, 2));
             return {
@@ -105,7 +107,7 @@ const PurchaseRequestPage = () => {
             Authorization: `Bearer ${token}`,
           },
           credentials: 'include', // ✅ 요거 꼭 필요
-          body: JSON.stringify({ adminNotes: message }),
+          body: JSON.stringify({ resolveMessage: message }),
         },
       );
       setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -126,7 +128,7 @@ const PurchaseRequestPage = () => {
             Authorization: `Bearer ${token}`,
           },
           credentials: 'include',
-          body: JSON.stringify({ adminNotes: '사유 부족으로 반려합니다.' }),
+          body: JSON.stringify({ resolveMessage: '사유 부족으로 반려합니다.' }),
         },
       );
       setOrders((prev) => prev.filter((o) => o.id !== id));

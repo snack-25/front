@@ -85,7 +85,7 @@ export default function Header() {
               </Link>
               {user.role === 'USER' && (
                 <NavItem
-                  href='/history'
+                  href='/my-request'
                   currentPath={pathname}
                 >
                   구매 요청 내역

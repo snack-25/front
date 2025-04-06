@@ -73,6 +73,7 @@ const OrderDetailPage = () => {
 
         const data = await res.json();
         console.log('✅ 상세 응답 전체:', data);
+        
 
         const transformed: OrderDetail = {
           id: data.requestId,
@@ -80,7 +81,7 @@ const OrderDetailPage = () => {
           requestDate: data.requestedAt?.slice(0, 10) ?? '-',
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
-          message: data.requestMessage ?? '',
+          message: data.items?.[0]?.requestMessage ?? '',
           status: data.status,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({

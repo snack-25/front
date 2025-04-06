@@ -1,7 +1,8 @@
 'use client';
 
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface OrderItem {
   id: string;
@@ -27,67 +28,59 @@ interface Props {
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '상태', '비고'];
 
-const mockOrders: Order[] = [
-  {
-    id: 'order-1',
-    date: '2024-07-04',
-    price: 21000,
-    status: '승인 대기',
-    items: [
-      {
-        id: 'item-1',
-        name: '코카콜라 제로',
-        imageUrl: '/images/coke.png',
-        category: '음료',
-        price: 3000,
-        quantity: 4,
-      },
-      {
-        id: 'item-2',
-        name: '포카칩',
-        imageUrl: '/images/chip.png',
-        category: '스낵',
-        price: 3000,
-        quantity: 3,
-      },
-    ],
-  },
-  {
-    id: 'order-2',
-    date: '2024-07-01',
-    price: 27000,
-    status: '승인 완료',
-    items: [
-      {
-        id: 'item-3',
-        name: '비요뜨',
-        imageUrl: '/images/yogurt.png',
-        category: '유제품',
-        price: 1500,
-        quantity: 8,
-      },
-    ],
-  },
-  {
-    id: 'order-3',
-    date: '2024-06-27',
-    price: 45000,
-    status: '구매 반려',
-    items: [
-      {
-        id: 'item-4',
-        name: '커누들',
-        imageUrl: '/images/noodle.png',
-        category: '식품',
-        price: 4500,
-        quantity: 10,
-      },
-    ],
-  },
-];
-
-const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
+const MyRequestTable = ( ) => {
   const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    const fetchMyOrders = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true`, {
+          credentials: 'include',
+        });
+
+        const data = await res.json();
+        console.log('✅ 내 주문 목록:', data);
+
+        // API 응답 구조에 따라 변환
+        const transformed: Order[] = data.map((order: any) => ({
+          id: order.id,
+          date: order.requestedAt?.slice(0, 10) || '-',
+          price: order.totalAmount ?? 0,
+          status: order.status ?? 'PENDING',
+          items: (order.orderRequestItems || []).map((item: any) => ({
+            id: item.product?.id ?? '',
+            name: item.product?.name ?? '상품 없음',
+            imageUrl: item.product?.imageUrl ?? '/images/default.png',
+            category: item.product?.category?.name ?? '기타',
+            price: item.price ?? 0,
+            quantity: item.quantity ?? 0,
+          })),
+        }));
+
+        setOrders(transformed);
+      } catch (err) {
+        console.error('❌ 주문 목록 불러오기 실패:', err);
+      }
+    };
+
+    fetchMyOrders();
+  }, []);
+
+  const handleCancel = async (id: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!res.ok) throw new Error('삭제 실패');
+
+      setOrders((prev) => prev.filter((order) => order.id !== id));
+    } catch (err) {
+      console.error('❌ 요청 취소 실패:', err);
+    }
+  };
 
   return (
     <div className='w-full'>
@@ -96,10 +89,7 @@ const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
           {/* 헤더 */}
           <div className='flex justify-between items-center h-20 bg-gray-50 rounded-full border border-gray-200 text-black-100 text-xl font-medium px-6'>
             {headers.map((header) => (
-              <span
-                key={header}
-                className='flex-1 text-center'
-              >
+              <span key={header} className='flex-1 text-center'>
                 {header}
               </span>
             ))}
@@ -110,24 +100,21 @@ const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
             <div
               key={order.id}
               className='flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6'
-              onClick={() => router.push(`/request/${order.id}`)}
+              onClick={() => router.push(`/my-request/${order.id}`)}
             >
               <span className='flex-1 text-center'>{order.date}</span>
               <span className='flex-1 text-center'>
-                {order.items[0]?.name || '상품 없음'} 외{' '}
-                {order.items.length - 1}건
+                {order.items[0]?.name ?? '상품 없음'} 외 {order.items.length - 1}건
               </span>
-              <span className='flex-1 text-center'>
-                {(order.price ?? 0).toLocaleString()}원
-              </span>
+              <span className='flex-1 text-center'>{order.price.toLocaleString()}원</span>
               <span className='flex-1 text-center'>{order.status}</span>
               <div
                 className='flex-1 flex justify-center'
                 onClick={(e) => e.stopPropagation()}
               >
-                {order.status === '승인 대기' && (
+                {order.status === 'PENDING' && (
                   <button
-                    onClick={() => onCancel(order.id)}
+                    onClick={() => handleCancel(order.id)}
                     className='bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
                   >
                     요청 취소
@@ -145,6 +132,7 @@ const MyRequestTable = ({ orders = mockOrders, onCancel }: Props) => {
             width={300}
             height={200}
           />
+          <p className='text-gray-500 text-xl mt-4'>구매 요청이 없습니다.</p>
         </div>
       )}
     </div>

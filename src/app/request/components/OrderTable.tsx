@@ -22,6 +22,7 @@ interface Order {
   price: number;
   items: OrderItem[];
   budgetLeft: number;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
 interface OrderTableProps {
@@ -106,6 +107,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
         price: totalAmount, // 총 금액 계산
         budgetLeft: budgetData.data.currentAmount ?? 0,
         items, // 매핑된 품목 데이터
+        status: orderData.status,
       };
 
       console.log('변환된 주문 데이터:', transformed);
@@ -166,16 +168,26 @@ const OrderTable: React.FC<OrderTableProps> = ({
                 className='flex-1 flex justify-center gap-2 pb-0.5'
                 onClick={(e) => e.stopPropagation()}
               >
-                <button
+               <button
                   onClick={() => onReject?.(order.id)}
-                  className='bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
-                >
+                  className={`px-3 py-1 rounded w-[94px] h-[44px] font-medium ${
+                  order.status !== 'PENDING'
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  disabled={order.status !== 'PENDING'}
+                  >
                   반려
                 </button>
                 <button
                   onClick={() => handleOpenModal(order.id)}
-                  className='bg-orange-400 text-white px-3 py-1 rounded hover:bg-orange-600 w-[94px] h-[44px]'
-                >
+                  className={`px-3 py-1 rounded w-[94px] h-[44px] font-medium ${
+                  order.status !== 'PENDING'
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-orange-400 text-white hover:bg-orange-600'
+                  }`}
+                  disabled={order.status !== 'PENDING'}
+                  >
                   승인
                 </button>
               </div>
