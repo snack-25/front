@@ -2,18 +2,26 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-
 import CartItem from '@/components/cartItems/cartItem';
 import { createOrder, deleteCartItems, getCartItems } from '@/lib/api/cart';
-import { CartResponse } from '@/types/cart';
+import { CartResponse, CreateOrderRequestItem } from '@/types/cart';
 import CartSummary from '@/components/cartItems/cartSummary';
+import { useAuthStore } from '@/app/auth/useAuthStore';
+import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
+import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState(false);
+  const [pendingItems, setPendingItems] = useState<CreateOrderRequestItem[]>(
+    [],
+  );
   const { cartId } = useParams() as { cartId: string };
+  const { user } = useAuthStore();
   const router = useRouter();
+  const { submitOrderRequest } = useOrderRequest();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -106,15 +114,24 @@ export default function CartsPage() {
       .map((item) => ({
         productId: item.product.id ?? item.productId,
         quantity: item.quantity,
+        price: item.product.price,
+        productName: item.product.name,
+        imageUrl: item.product.imageUrl ?? undefined,
+        categoryId: item.product.categoryId,
       }));
 
-    try {
-      await createOrder(selectedItems);
-      alert('주문이 완료되었습니다.');
-      router.push('/history');
-    } catch (error) {
-      console.error('주문 실패:', error);
-      alert('주문에 실패했습니다.');
+    if (user?.role === 'SUPERADMIN' || user?.role === 'ADMIN') {
+      try {
+        await createOrder(selectedItems);
+        alert('주문이 완료되었습니다.');
+        router.push('/history');
+      } catch (error) {
+        console.error('주문 실패:', error);
+        alert('주문에 실패했습니다.');
+      }
+    } else {
+      setPendingItems(selectedItems);
+      setShowModal(true);
     }
   };
 
@@ -123,7 +140,7 @@ export default function CartsPage() {
   }
 
   return (
-    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px]'>
+    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px] mt-auto'>
       <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
@@ -164,6 +181,7 @@ export default function CartsPage() {
                 onToggle={() => toggleSelect(item.id)}
                 onDelete={() => handleDeleteItem(item.id)}
                 onQuantityChange={fetchCart}
+                categoryId={item.product.categoryId}
               />
             ))}
           </div>
@@ -189,6 +207,17 @@ export default function CartsPage() {
         <CartSummary
           cartData={cartData}
           onOrder={handleOrder}
+        />
+
+        <OrderRequestModal
+          visible={showModal}
+          items={pendingItems}
+          shippingFee={cartData.shippingFee}
+          onClose={() => setShowModal(false)}
+          onConfirm={async (message) => {
+            const success = await submitOrderRequest(pendingItems, message);
+            if (success) setShowModal(false);
+          }}
         />
       </div>
     </div>

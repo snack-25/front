@@ -3,9 +3,11 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { CartSummaryProps } from '@/types/cart';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 
 export default function CartSummary({ cartData, onOrder }: CartSummaryProps) {
   const router = useRouter();
+  const { user } = useAuthStore();
 
   const handleContinueShopping = () => {
     router.push('/');
@@ -58,7 +60,7 @@ export default function CartSummary({ cartData, onOrder }: CartSummaryProps) {
           className='w-full bg-orange-500 text-white py-3 rounded-lg font-bold mb-2 cursor-pointer'
           onClick={onOrder}
         >
-          구매하기
+          {user?.role === 'USER' ? '구매 요청' : '구매하기'}
         </button>
         <button
           onClick={handleContinueShopping}
