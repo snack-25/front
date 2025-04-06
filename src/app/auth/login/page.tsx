@@ -9,8 +9,6 @@ import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { loginApi } from '@/app/auth/api';
-import { fetchApi } from '@/app/api/instance';
 
 interface IError {
   isError: boolean;
@@ -68,8 +66,7 @@ export default function Login() {
     const result = await login(form);
     console.log('result', result);
 
-    // 예를 들어, 정상 응답은 result.data가 존재한다고 가정
-    if (result && result.data) {
+    if (result.status === 200) {
       showCustomToast({
         label: '로그인 성공했습니다.',
         variant: 'success',
@@ -77,12 +74,13 @@ export default function Login() {
           router.replace('/');
         },
       });
-      // router.replace('/');
+      setTimeout(() => {
+        router.replace('/');
+      }, 4500);
     } else {
-      // 오류 객체에서 message를 가져옵니다.
-      const errorMessage = result?.message || '로그인 실패!';
+      console.log('에러result', result);
       showCustomToast({
-        label: errorMessage,
+        label: result.message, // 백엔드에서 온 오류 메시지 그대로 사용
         variant: 'error',
         onClick: () => {},
       });
@@ -108,7 +106,7 @@ export default function Login() {
       </div>
       <Form
         action={handleSubmit}
-        className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'
+        className='flex flex-col gap-[16px] mt-[20px] tb:gap-[36px]'
       >
         <div className='flex flex-col gap-[4px]'>
           <Input
@@ -163,12 +161,12 @@ export default function Login() {
 
         <Button
           className='mt-[16px] tb:mt-[40px] cursor-pointer w-full'
-          filled='orange'
+          filled={isFormValid ? 'orange' : 'gray'}
           type='button'
           onClick={handleSubmit}
           disabled={!isFormValid}
         >
-          시작하기
+          로그인
         </Button>
         <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
           <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>
