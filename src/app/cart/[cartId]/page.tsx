@@ -1,17 +1,27 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-
 import CartItem from '@/components/cartItems/cartItem';
-import { deleteCartItems, getCartItems } from '@/lib/api/cart';
-import { CartResponse } from '@/types/cart';
+import { createOrder, deleteCartItems, getCartItems } from '@/lib/api/cart';
+import { CartResponse, CreateOrderRequestItem } from '@/types/cart';
+import CartSummary from '@/components/cartItems/cartSummary';
+import { useAuthStore } from '@/app/auth/useAuthStore';
+import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
+import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState(false);
+  const [pendingItems, setPendingItems] = useState<CreateOrderRequestItem[]>(
+    [],
+  );
   const { cartId } = useParams() as { cartId: string };
+  const { user } = useAuthStore();
+  const router = useRouter();
+  const { submitOrderRequest } = useOrderRequest();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -93,12 +103,44 @@ export default function CartsPage() {
     }
   };
 
+  const handleOrder = async () => {
+    if (selectedIds.length === 0 || !cartData) {
+      alert('주문할 상품을 선택해주세요.');
+      return;
+    }
+
+    const selectedItems = cartData.items
+      .filter((item) => selectedIds.includes(item.id))
+      .map((item) => ({
+        productId: item.product.id ?? item.productId,
+        quantity: item.quantity,
+        price: item.product.price,
+        productName: item.product.name,
+        imageUrl: item.product.imageUrl ?? undefined,
+        categoryId: item.product.categoryId,
+      }));
+
+    if (user?.role === 'SUPERADMIN' || user?.role === 'ADMIN') {
+      try {
+        await createOrder(selectedItems);
+        alert('주문이 완료되었습니다.');
+        router.push('/history');
+      } catch (error) {
+        console.error('주문 실패:', error);
+        alert('주문에 실패했습니다.');
+      }
+    } else {
+      setPendingItems(selectedItems);
+      setShowModal(true);
+    }
+  };
+
   if (!cartData) {
     return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
   }
 
   return (
-    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px]'>
+    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px] mt-auto'>
       <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
@@ -127,6 +169,7 @@ export default function CartsPage() {
               <CartItem
                 key={item.id}
                 id={item.id}
+                productId={item.product.id}
                 imageUrl={item?.product?.imageUrl ?? undefined}
                 name={item.product.name}
                 price={item.product.price}
@@ -137,6 +180,8 @@ export default function CartsPage() {
                 checked={selectedIds.includes(item.id)}
                 onToggle={() => toggleSelect(item.id)}
                 onDelete={() => handleDeleteItem(item.id)}
+                onQuantityChange={fetchCart}
+                categoryId={item.product.categoryId}
               />
             ))}
           </div>
@@ -159,56 +204,21 @@ export default function CartsPage() {
           </div>
         </div>
 
-        <div className='flex flex-col gap-7'>
-          <div className='w-[386px] h-[384px] flex flex-col gap-[24px] pt-[60px] pr-[24px] pb-[60px] pl-[24px] rounded-[16px] border border-[#F2F2F2] bg-white'>
-            <div className='border-b pb-4 mb-4'>
-              <div className='flex justify-between mb-2'>
-                <span className='text-gray-600'>총 주문 상품</span>
-                <span className='font-bold text-orange-500'>
-                  {cartData.items.length}개
-                </span>
-              </div>
-              <div className='flex justify-between mb-2'>
-                <span className='text-gray-600'>상품금액</span>
-                <span className='font-semibold'>
-                  {(cartData?.totalAmount ?? 0).toLocaleString()}원
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-gray-600'>배송비</span>
-                <span className='font-semibold'>
-                  {(cartData?.shippingFee ?? 0).toLocaleString()}원
-                </span>
-              </div>
-            </div>
+        <CartSummary
+          cartData={cartData}
+          onOrder={handleOrder}
+        />
 
-            <div className='flex justify-between mb-2'>
-              <span className='text-gray-800 font-bold'>총 주문금액</span>
-              <span className='text-orange-500 font-bold text-lg'>
-                {(
-                  (cartData?.totalAmount ?? 0) + (cartData?.shippingFee ?? 0)
-                ).toLocaleString()}
-                원
-              </span>
-            </div>
-
-            <div className='flex justify-between mb-6'>
-              <span className='text-gray-600'>남은 예산 금액</span>
-              <span className='font-semibold'>
-                {(cartData?.estimatedRemainingBudget ?? 0).toLocaleString()}원
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <button className='w-full bg-orange-500 text-white py-3 rounded-lg font-bold mb-2'>
-              구매하기
-            </button>
-            <button className='w-full border border-orange-500 text-orange-500 py-3 rounded-lg font-bold'>
-              계속 쇼핑하기
-            </button>
-          </div>
-        </div>
+        <OrderRequestModal
+          visible={showModal}
+          items={pendingItems}
+          shippingFee={cartData.shippingFee}
+          onClose={() => setShowModal(false)}
+          onConfirm={async (message) => {
+            const success = await submitOrderRequest(pendingItems, message);
+            if (success) setShowModal(false);
+          }}
+        />
       </div>
     </div>
   );
