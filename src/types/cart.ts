@@ -92,9 +92,3 @@ export interface GetCartSummaryResponse {
   estimatedRemainingBudget: number;
   originalBudget: number;
 }
-
-export interface CartSummaryProps {
-  cartData: CartResponse;
-  summary: GetCartSummaryResponse | null;
-  onOrder: () => void;
-}

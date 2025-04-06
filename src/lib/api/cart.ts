@@ -142,17 +142,14 @@ export async function getSelectedCartSummary(
   cartId: string,
   items: { productId: string; quantity: number }[],
 ): Promise<GetCartSummaryResponse> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/summary`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ items }),
+  const res = await fetch(`${API_BASE_URL}/carts/${cartId}/summary`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    credentials: 'include',
+    body: JSON.stringify({ items }),
+  });
 
   if (!res.ok) {
     throw new Error('선택된 상품 요약 정보 조회 실패');
