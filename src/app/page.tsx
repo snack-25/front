@@ -1,24 +1,9 @@
-'use client';
-import { useEffect } from 'react';
 import Image from 'next/image';
 
 import HeroImg from '@public/img/landing/landing-hero-md.svg';
 import LogoImg from '@public/img/landing/landing-title-md.svg';
 
-import { useAuthStore } from './auth/useAuthStore';
-
 export default function Home() {
-  const { user, company, logout } = useAuthStore();
-
-  useEffect(() => {
-    console.log('landing user', user);
-    console.log('landing company', company);
-  }, [user]);
-
-  const handleLogout = () => {
-    logout();
-  };
-
   return (
     <section className='grid place-items-center min-h-[calc(100dvh-54px)] bg-background'>
       <div className='container grid place-items-center gap-y-12 max-w-3xl'>
