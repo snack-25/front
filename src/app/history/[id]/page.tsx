@@ -39,17 +39,19 @@ const OrderDetailPage = () => {
           },
         );
 
+        
+
         const data = await res.json();
         console.log('상세 주문 데이터:', data);
 
         const transformed: OrderDetail = {
           id: data.requestId ?? id,
-          date: data.approvedAt?.slice(0, 10) ?? '-', // ✅ 승인일
+          date: data.resolvedAt?.slice(0, 10) ?? '-', // ✅ 승인일
           requestDate: data.requestedAt?.slice(0, 10) ?? '-', // ✅ 요청일
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
           message: data.requestMessage ?? '',
-          approvalMessage: data.resolverMessage ?? '',
+          approvalMessage: data.resolveMessage ?? '',
           items: (data.items || []).map((item: any) => ({
             id: item.id ?? '',
             name: item.productName ?? '상품 없음',

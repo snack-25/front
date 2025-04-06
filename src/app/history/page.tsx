@@ -41,18 +41,17 @@ const OrdersPage = () => {
         const data = await res.json();
         console.log('✅ 서버 응답 확인', data);
         const transformed: Order[] = data.map((item: any) => ({
-          id: item.id,
-          date: item.createdAt?.slice(0, 10) ?? '-',
-          items:
-            item.orderRequestItems?.map((it: any) => ({
-              name: it.product?.name || '상품 없음',
-              quantity: it.quantity || 0,
-            })) || [],
-          price: item.totalAmount?.toLocaleString() || '0',
-          requester: item.requester?.name || '-',
-          handler: item.resolver?.name || '-',
-          requestDate: item.CreatedAt?.slice(0, 10) ?? '-',
-        }));
+  id: item.id,
+  date: item.resolvedAt?.slice(0, 10) ?? '-',         // ✅ 구매승인일
+  requestDate: item.requestedAt?.slice(0, 10) ?? '-', // ✅ 구매요청일
+  requester: item.requesterName || '-',               // ✅ 요청인
+  handler: item.resolverName || '-',                  // ✅ 담당자
+  price: item.totalAmount?.toLocaleString() || '0',
+  items: item.orderRequestItems?.map((it: any) => ({
+    name: it.product?.name || '상품 없음',
+    quantity: it.quantity || 0,
+  })) || [],
+}));
 
         setOrders(transformed);
       } catch (err) {

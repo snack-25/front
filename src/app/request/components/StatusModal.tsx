@@ -21,6 +21,11 @@ interface StatusModalProps {
   onClose: () => void;
   onNavigate: () => void;
   orderRequestItems?: ProductItem[];
+  budget?: {
+    currentAmount: number;
+    totalAmount: number;
+    remainingAmount: number;
+  };
 }
 
 const StatusModal: React.FC<StatusModalProps> = ({
