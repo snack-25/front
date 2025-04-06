@@ -74,3 +74,19 @@ export interface CartItemProps {
   onDelete: () => void;
   onQuantityChange?: () => void;
 }
+
+export interface OrderRequestItem {
+  productId: string;
+  quantity: number;
+  productName?: string;
+  price?: number;
+  imageUrl?: string | null;
+  categoryId?: string;
+}
+export interface OrderRequestModalProps {
+  visible: boolean;
+  items: OrderRequestItem[];
+  shippingFee?: number;
+  onClose: () => void;
+  onConfirm: (message: string) => void;
+}

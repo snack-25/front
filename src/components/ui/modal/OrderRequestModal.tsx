@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useAuthStore } from '@/app/auth/useAuthStore';
+import { OrderRequestModalProps } from '@/types/cart';
 
 // categoryId → 카테고리명 매핑
 const CATEGORY_MAP: Record<string, string> = {
@@ -10,23 +11,6 @@ const CATEGORY_MAP: Record<string, string> = {
   'other-id-1': '청량 · 탄산음료',
   'other-id-2': '커피 · 차',
 };
-
-interface OrderRequestItem {
-  productId: string;
-  quantity: number;
-  productName?: string;
-  price?: number;
-  imageUrl?: string | null;
-  categoryId?: string;
-}
-
-interface OrderRequestModalProps {
-  visible: boolean;
-  items: OrderRequestItem[];
-  shippingFee?: number;
-  onClose: () => void;
-  onConfirm: (message: string) => void;
-}
 
 export default function OrderRequestModal({
   visible,
@@ -48,69 +32,77 @@ export default function OrderRequestModal({
   const finalTotalAmount = totalProductAmount + shippingFee;
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50'>
-      <div className='bg-[#FFFCF8] rounded-[16px] w-[400px] max-h-[90vh] overflow-y-auto p-6'>
-        <h2 className='text-xl font-semibold mb-4'>구매 요청</h2>
-
+    <div className='fixed inset-0 bg-black/60 flex justify-center items-center z-99999 px-4 py-2'>
+      <div className='bg-[#FFFCF8] rounded-[16px] w-[688px] max-h-[calc(100vh-64px)] overflow-y-auto p-6'>
+        <h2 className='font-bold text-[24px] leading-[32px] align-middle text-[#1F1F1F]'>
+          구매 요청
+        </h2>
+        <div className='w-[640px] border border-[#FDE1CD] my-8' />
         <div className='mb-4'>
-          <label className='text-sm font-medium mb-1 block'>요청인</label>
+          <label className='font-semibold text-[24px] leading-[32px] align-middle text-[#1F1F1F]'>
+            요청인
+          </label>
           <input
             type='text'
-            className='w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100'
+            className='w-full rounded-[16px] border border-[#FCC49C]  px-3 py-2 mt-4 text-sm bg-[#FFFCF8]'
             value={user?.name || ''}
             disabled
           />
         </div>
-
-        <div className='mb-4 border border-orange-200 rounded p-3'>
-          <p className='font-semibold mb-2 text-sm'>요청 품목</p>
+        <p className='font-semibold text-[20px] leading-[32px] align-middle mt-6 text-[#1F1F1F]'>
+          요청 품목
+        </p>
+        <div className='mb-4 border border-[#FCC49C] rounded-[16px] p-3 max-h-[220px] overflow-y-auto'>
           {items.map((item, idx) => (
             <div
               key={idx}
-              className='flex justify-between items-start mb-4'
+              className='mb-4'
             >
-              <div className='flex gap-3'>
-                <div className='w-[60px] h-[60px] rounded-[12px] bg-white border border-[#E6E6E6] flex items-center justify-center'>
-                  <Image
-                    src={item.imageUrl || '/img/card/item-coke-zero.png'}
-                    alt='상품 이미지'
-                    width={28}
-                    height={48}
-                  />
-                </div>
-                <div className='text-sm'>
-                  <div className='text-gray-400 text-xs mb-[2px]'>
-                    {CATEGORY_MAP[item.categoryId || ''] || '카테고리 없음'}
+              <div className='flex justify-between'>
+                <div className='flex gap-3'>
+                  <div className='w-[60px] h-[60px] rounded-[12px] bg-white border border-[#E6E6E6] flex items-center justify-center'>
+                    <Image
+                      src={item.imageUrl || '/img/card/item-coke-zero.png'}
+                      alt='상품 이미지'
+                      width={28}
+                      height={48}
+                    />
                   </div>
-                  <div className='font-medium mb-[4px]'>{item.productName}</div>
-                  <div className='text-xs text-gray-600'>
-                    수량: {item.quantity}개
+                  <div className='text-sm mt-2'>
+                    <div className='text-gray-400 text-xs mb-[2px]'>
+                      {CATEGORY_MAP[item.categoryId || ''] || '카테고리 없음'}
+                    </div>
+                    <div className='font-medium text-sm text-[#1F1F1F]'>
+                      {item.productName}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className='text-right text-sm'>
-                <div className='text-gray-600'>
+                <div className='text-[16px] text-right font-semibold text-[#1F1F1F] mt-5'>
                   {(item.price ?? 0).toLocaleString()}원
                 </div>
-                <div className='font-semibold mt-1'>
+              </div>
+
+              {/* 하단 줄: 수량 / 총금액 */}
+              <div className='flex justify-between mt-4'>
+                <div className='text-[16px] text-[#1F1F1F] font-semibold'>
+                  수량: {item.quantity}개
+                </div>
+                <div className='text-[24px] font-bold text-[#1F1F1F]'>
                   {((item.price ?? 0) * item.quantity).toLocaleString()}원
                 </div>
               </div>
+              <div className='w-[600px] border border-[#FDE1CD] my-2' />
             </div>
           ))}
         </div>
 
-        <div className='mb-2 text-sm flex justify-between'>
-          <span>상품 금액</span>
-          <span>{totalProductAmount.toLocaleString()}원</span>
-        </div>
-        <div className='mb-2 text-sm flex justify-between'>
-          <span>배송비</span>
-          <span>{shippingFee.toLocaleString()}원</span>
-        </div>
+        <div className='w-[640px] border border-[#FDE1CD] my-8' />
+
         <div className='mb-4 text-sm font-semibold flex justify-between'>
-          <span>총 {totalQuantity}건</span>
-          <span className='text-orange-500'>
+          <span className='text-[24px] font-bold text-[#1F1F1F]'>
+            총 {totalQuantity}건
+          </span>
+          <span className='text-[32px] font-bold text-[#F97B22]'>
             {finalTotalAmount.toLocaleString()}원
           </span>
         </div>
@@ -120,7 +112,7 @@ export default function OrderRequestModal({
           <textarea
             rows={3}
             placeholder='요청 메시지를 입력해주세요.'
-            className='w-full border border-gray-300 rounded px-3 py-2 text-sm resize-none overflow-y-auto'
+            className='w-full rounded-[16px] border border-[#FCC49C] px-3 py-2 text-sm resize-none overflow-y-auto'
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
@@ -128,13 +120,13 @@ export default function OrderRequestModal({
 
         <div className='flex justify-between'>
           <button
-            className='flex-1 bg-[#FFF1E9] text-[#1F1F1F] font-bold py-2 rounded mr-2'
+            className='flex-1 bg-[#FDF0DF] h-[64px] text-[#F97B22] font-bold py-2 rounded-[16px] mr-2 cursor-pointer'
             onClick={onClose}
           >
             취소
           </button>
           <button
-            className='flex-1 bg-orange-500 text-white font-bold py-2 rounded'
+            className='flex-1 bg-[#F97B22] h-[64px] text-white font-bold py-2 rounded-[16px] cursor-pointer'
             onClick={() => onConfirm(message)}
           >
             구매 요청하기

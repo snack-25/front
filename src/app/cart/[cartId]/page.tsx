@@ -147,7 +147,7 @@ export default function CartsPage() {
   }
 
   return (
-    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px]'>
+    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px] mt-auto'>
       <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
@@ -237,8 +237,6 @@ export default function CartsPage() {
               companyId: String(user.companyId),
               status: 'PENDING',
             };
-
-            console.log('주문 요청 payload:', payload);
 
             try {
               await createOrderRequest(payload);
