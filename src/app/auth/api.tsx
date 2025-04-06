@@ -155,7 +155,7 @@ export async function updatePasswordApi(body: {
 }) {
   try {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + '/auth/update/info',
+      process.env.NEXT_PUBLIC_API_URL + '/users/update/info',
       {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },

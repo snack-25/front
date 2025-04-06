@@ -1,17 +1,16 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuthStore } from '@/app/auth/useAuthStore';
-
 import { signupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Modal from '@/components/ui/modal/Modal';
 import { emailRegex } from '@/lib/constants';
-import { AwardIcon } from 'lucide-react';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import Image from 'next/image';
+import Link from 'next/link';
+import Modal from '@/components/ui/modal/Modal';
 
 interface IError {
   isError: boolean;
@@ -171,6 +170,16 @@ export function SuperAdmin() {
       return;
     }
 
+    // 이메일 유효성 검사
+    if (emailError.isError || !emailRegex.test(form.email)) {
+      showCustomToast({
+        label: '유효한 이메일을 입력하세요',
+        variant: 'error',
+        onClick: () => {},
+      });
+      return;
+    }
+
     // 비밀번호와 비밀번호 확인 값이 일치하는지 확인
     if (form.password !== form.validatePassword) {
       showCustomToast({
@@ -296,7 +305,7 @@ export function SuperAdmin() {
   );
 
   return (
-    <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
+    <div className='flex flex-col mt-[20px] gap-[16px]  tb:gap-[36px]'>
       <div className='pr-[10px]'>
         <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
           기업 담당자 회원가입
@@ -342,12 +351,23 @@ export function SuperAdmin() {
 
       <Button
         className='mt-[16px] tb:mt-[40px]'
-        filled='orange'
+        filled={isFormValid ? 'orange' : 'gray'}
         onClick={handleSubmit}
         disabled={!isFormValid}
       >
         시작하기
       </Button>
+      <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
+        <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>
+          이미 계정이 있으신가요?
+        </span>
+        <Link
+          href='/auth/signup'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+        >
+          로그인
+        </Link>
+      </div>
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
