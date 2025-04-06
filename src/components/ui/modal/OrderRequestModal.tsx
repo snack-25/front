@@ -120,12 +120,14 @@ export default function OrderRequestModal({
 
         <div className='flex justify-between'>
           <button
+            type='button'
             className='flex-1 bg-[#FDF0DF] h-[64px] text-[#F97B22] font-bold py-2 rounded-[16px] mr-2 cursor-pointer'
             onClick={onClose}
           >
             취소
           </button>
           <button
+            type='button'
             className='flex-1 bg-[#F97B22] h-[64px] text-white font-bold py-2 rounded-[16px] cursor-pointer'
             onClick={() => onConfirm(message)}
           >
