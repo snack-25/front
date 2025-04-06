@@ -9,8 +9,7 @@ export const config = {
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get('accessToken')?.value; // 쿠키에서 accessToken 가져오기
   const rtoken = req.cookies.get('refreshToken')?.value;
-  const isAuthPage = req.nextUrl.pathname.startsWith('/auth/login');
-  const isSignupPage = req.nextUrl.pathname.startsWith('/auth/signup');
+  const isAuthPage = req.nextUrl.pathname.startsWith('/auth/');
   const res = NextResponse.next();
 
   if (!token && rtoken) {
@@ -40,7 +39,8 @@ export async function middleware(req: NextRequest) {
   }
 
   // 1️⃣ 로그인 페이지 접근 시, 이미 로그인한 유저는 홈으로 리디렉트
-  if (isAuthPage || (isSignupPage && token)) {
+  if (token && isAuthPage) {
+    console.log('ser');
     return NextResponse.redirect(new URL('/', req.url));
   }
 
@@ -50,6 +50,7 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith(route),
   );
 
+  console.log('ddddd', isProtectedRoute);
   if (isProtectedRoute && !token) {
     return NextResponse.redirect(new URL('/auth/login', req.url));
   }

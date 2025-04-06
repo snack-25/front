@@ -29,7 +29,7 @@ const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Login() {
   const router = useRouter();
-  const { isAuth, login } = useAuthStore();
+  const { login } = useAuthStore();
 
   const [form, setForm] = useState<initFormType>(initForm);
   const [emailError, setEmailError] = useState<IError>(initError);
@@ -70,13 +70,8 @@ export default function Login() {
       showCustomToast({
         label: '로그인 성공했습니다.',
         variant: 'success',
-        onClick: () => {
-          router.replace('/');
-        },
       });
-      setTimeout(() => {
-        router.replace('/');
-      }, 4500);
+      router.replace('/');
     } else {
       console.log('에러result', result);
       showCustomToast({
@@ -86,12 +81,6 @@ export default function Login() {
       });
     }
   };
-
-  useEffect(() => {
-    if (isAuth) {
-      // router.replace('/');
-    }
-  }, [isAuth]);
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;
 
