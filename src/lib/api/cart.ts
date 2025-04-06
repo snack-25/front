@@ -1,8 +1,10 @@
 import { API_BASE_URL } from '@/lib/constants';
 import {
+  CartItem,
   CartResponse,
   CreateOrderRequestPayload,
   DeleteCartItemsResponse,
+  GetCartSummaryResponse,
 } from '@/types/cart';
 
 export async function getCartItems(cartId: string): Promise<CartResponse> {
@@ -64,7 +66,7 @@ export async function addCartItem(
   cartId: string,
   productId: string,
   quantity: number = 1,
-) {
+): Promise<CartItem> {
   const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -84,7 +86,7 @@ export async function updateCartItemQuantity(
   cartId: string,
   itemId: string,
   quantity: number,
-) {
+): Promise<CartItem> {
   const res = await fetch(`${API_BASE_URL}/carts/${cartId}/items/${itemId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -101,7 +103,7 @@ export async function updateCartItemQuantity(
 
 export async function createOrder(
   items: { productId: string; quantity: number }[],
-) {
+): Promise<{ message: string }> {
   const res = await fetch(`${API_BASE_URL}/orders`, {
     method: 'POST',
     headers: {
@@ -131,6 +133,29 @@ export async function createOrderRequest(data: CreateOrderRequestPayload) {
 
   if (!res.ok) {
     throw new Error('주문 요청 생성에 실패했습니다.');
+  }
+
+  return res.json();
+}
+
+export async function getSelectedCartSummary(
+  cartId: string,
+  items: { productId: string; quantity: number }[],
+): Promise<GetCartSummaryResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/summary`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ items }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('선택된 상품 요약 정보 조회 실패');
   }
 
   return res.json();
