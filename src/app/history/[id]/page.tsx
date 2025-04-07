@@ -46,8 +46,8 @@ const OrderDetailPage = () => {
 
         const transformed: OrderDetail = {
           id: data.requestId ?? id,
-          date: data.resolvedAt?.slice(0, 10) ?? '-', // ✅ 승인일
-          requestDate: data.requestedAt?.slice(0, 10) ?? '-', // ✅ 요청일
+          date: data.resolvedAt?.slice(0, 10) ?? '-', 
+          requestDate: data.requestedAt?.slice(0, 10) ?? '-', 
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
           message: data.items?.[0]?.requestMessage ?? '',
