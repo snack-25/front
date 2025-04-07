@@ -51,6 +51,7 @@ export async function middleware(req: NextRequest) {
   );
 
   console.log('ddddd', isProtectedRoute);
+  console.log('token', token);
   if (isProtectedRoute && !token) {
     return NextResponse.redirect(new URL('/auth/login', req.url));
   }
