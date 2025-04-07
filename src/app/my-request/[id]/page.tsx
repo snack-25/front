@@ -65,16 +65,20 @@ const OrderDetailPage = () => {
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
                 id: item.product?.id ?? '',
+
                 name: item.productName ?? '상품 없음',
                 imageUrl: item.imageUrl ?? '/images/default.png',
                 category: item.categoryName ?? '',
+
                 price: item.price ?? 0,
                 quantity: item.quantity ?? 0,
               }))
             : [],
+
           approvedAt: data.resolvedAt?.slice(0, 10),
           approver: data.resolverName,
           resultMessage: data.resolverMessage,
+
         };
         setOrder(transformed);
       } catch (err) {
@@ -93,6 +97,7 @@ const OrderDetailPage = () => {
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
+
 
   const handleAddToCart = async () => {
     try {
@@ -127,15 +132,14 @@ const OrderDetailPage = () => {
     }
   };
 
-  return (
-    <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
-      <div className='w-2/3 pr-8'>
-        <h1 className='text-3xl font-bold'>구매 요청 상세</h1>
+
+
 
         <div className='mt-6 bg-none rounded-md p-6'>
           <h2 className='text-xl font-bold mb-4'>요청 품목</h2>
 
           <div className='border-2 rounded-md max-h-[400px] overflow-y-auto bg-white'>
+
             {order.items.map((item, index) => (
               <div
                 key={index}
@@ -171,16 +175,20 @@ const OrderDetailPage = () => {
           <div className='mt-6 flex justify-center gap-4'>
             <button
               onClick={() => router.push('/my-request')}
+
               className='flex-1 h-[54px] rounded-lg bg-[#FFF1E8] text-orange-400 font-bold transition-transform duration-200 hover:bg-[#FFE0D4] hover:scale-105'
+
             >
               목록 보기
             </button>
             <button
+
               onClick={handleAddToCart}
               className='flex-1 h-[54px] rounded-lg bg-orange-400 text-white font-bold transition-transform duration-200 hover:bg-orange-500 hover:scale-105'
             >
               장바구니에 다시 담기
             </button>
+
           </div>
         </div>
       </div>
@@ -236,7 +244,9 @@ const OrderDetailPage = () => {
             <div>
               <label className='block font-semibold text-black-400 text-xl'>상태</label>
               <input
+
                 value={getStatusLabel(order.status)}
+
                 readOnly
                 className='mt-1 w-full rounded-md border-2 px-4 py-3 text-gray-500'
               />
