@@ -10,6 +10,7 @@ import DropdownMenu, {
 } from '@/components/ui/Dropdown-Menu';
 
 import OrderTable from './components/OrderTable'; // ✅ 테이블 컴포넌트
+import Pagination from '@/components/ui/Pagination'; // ✅ 페이지네이션 컴포넌트
 
 interface OrderItem {
   id: string;
@@ -34,6 +35,8 @@ const PurchaseRequestPage = () => {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [sortOption, setSortOption] = useState('최신순');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -46,7 +49,7 @@ const PurchaseRequestPage = () => {
 
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=1&pageSize=10&sort=${sortQuery}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=${currentPage}&pageSize=10&sort=${sortQuery}`,
           { credentials: 'include' },
         );
 
@@ -170,6 +173,10 @@ const PurchaseRequestPage = () => {
           onApprove={handleApprove}
           onReject={handleReject}
         />
+
+        <Pagination currentPage={currentPage} totalPage={totalPage} />
+
+
       </div>
     </div>
   );

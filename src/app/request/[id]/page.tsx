@@ -21,6 +21,7 @@ interface OrderDetail {
   items: OrderItem[];
   requester: string;
   handler: string;
+  totalAmount: number;
   requestDate: string;
   message: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -82,6 +83,7 @@ const OrderDetailPage = () => {
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
           message: data.items?.[0]?.requestMessage ?? '',
+          totalAmount: data.totalAmount ,
           status: data.status,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
@@ -200,6 +202,14 @@ const OrderDetailPage = () => {
     }
   };
 
+  const totalItemCost = order?.items.reduce(
+    (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+    0
+  ) || 0;
+  
+  // 배송비는 총합에서 상품 금액을 뺀 값, 음수 방지용
+  const shippingFee = Math.max(0, (order?.totalAmount || 0) - totalItemCost);
+
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
       {/* 왼쪽 품목 목록 */}
@@ -238,13 +248,23 @@ const OrderDetailPage = () => {
               </div>
             ))}
           </div>
-
-          {/* 총 금액 */}
-          <div className='flex justify-end mt-6 text-xl font-bold text-[#E67E22]'>
-            <span className='text-black'>총 {order?.items.length}건</span>
-            <span className='ml-2'>{totalCost.toLocaleString()}원</span>
           </div>
-        </div>
+ 
+
+          
+
+          
+
+          {/* 배송비 표기 */}
+          <div className='flex justify-end mt-4 text-base text-gray-500'>
+          배송비: {shippingFee.toLocaleString()}원
+          </div>
+
+          <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
+            <span className='text-black'>총 {order?.items.length}건</span>
+            <span className='ml-2'>{order?.totalAmount.toLocaleString()} 원</span>
+            <span className='ml-2 text-sm text-gray-500 font-normal'>배송비포함</span>
+          </div>
 
         {/* 하단 승인/반려 버튼 */}
         <div className='mt-6 flex justify-center gap-4'>
