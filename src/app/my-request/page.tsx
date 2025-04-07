@@ -8,6 +8,7 @@ import DropdownMenu, {
 } from '@/components/ui/Dropdown-Menu';
 import MyRequestTable from './components/MyRequestTable';
 import Pagenation from '@/components/ui/Pagination';
+import CancelModal from './components/CancelModal';
 
 interface OrderItem {
   id: string;
@@ -32,6 +33,8 @@ const MyRequestPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [totalPage, setTotalPage] = useState(1);
+  const [cancelTarget, setCancelTarget] = useState<Order | null>(null);
+
 
   useEffect(() => {
     const fetchMyOrders = async () => {
@@ -91,8 +94,8 @@ const MyRequestPage = () => {
 
   const handleCancel = async (id: string) => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/cancel`, {
-        method: 'POST',
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
+        method: 'DELETE',
         credentials: 'include',
       });
       setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -129,11 +132,28 @@ const MyRequestPage = () => {
           </DropdownMenu>
         </div>
 
-        <MyRequestTable  
-           orders={paginatedOrders}
-           onCancel={handleCancel}/>
+        <MyRequestTable
+        orders={orders} // ✅ 실제 데이터
+        onCancel={handleCancel}
+        sortOption={sortOption}
+        setSortOption={setSortOption}
+        setCancelTarget={setCancelTarget}
+        />
 
         <Pagenation currentPage={currentPage} totalPage={totalPage} />
+
+        {cancelTarget && (
+      <CancelModal
+      open={true}
+      itemName={cancelTarget.items[0]?.name || '상품'}
+      count={cancelTarget.items.length - 1}
+      onClose={() => setCancelTarget(null)}
+      onConfirm={async () => {
+      await handleCancel(cancelTarget.id);
+      setCancelTarget(null);
+      }}
+        />
+          )}
 
         {totalPages > 1 && (
           <div className='flex justify-center mt-6 gap-2'>
