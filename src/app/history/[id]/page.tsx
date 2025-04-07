@@ -42,15 +42,15 @@ const OrderDetailPage = () => {
         
 
         const data = await res.json();
-        console.log('상세 주문 데이터:', data);
+        console.log('상세 주문 데이터', data);
 
         const transformed: OrderDetail = {
           id: data.requestId ?? id,
-          date: data.resolvedAt?.slice(0, 10) ?? '-', // ✅ 승인일
-          requestDate: data.requestedAt?.slice(0, 10) ?? '-', // ✅ 요청일
+          date: data.resolvedAt?.slice(0, 10) ?? '-', 
+          requestDate: data.requestedAt?.slice(0, 10) ?? '-', 
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
-          message: data.requestMessage ?? '',
+          message: data.items?.[0]?.requestMessage ?? '',
           approvalMessage: data.resolveMessage ?? '',
           items: (data.items || []).map((item: any) => ({
             id: item.id ?? '',

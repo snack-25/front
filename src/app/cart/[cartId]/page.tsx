@@ -160,7 +160,7 @@ export default function CartsPage() {
       try {
         await createOrder(selectedItems);
         alert('주문이 완료되었습니다.');
-        router.push('/history');
+        router.push('/my-request');
       } catch (error) {
         console.error('주문 실패:', error);
         alert('주문에 실패했습니다.');
@@ -252,7 +252,12 @@ export default function CartsPage() {
           shippingFee={cartData.shippingFee}
           onClose={() => setShowModal(false)}
           onConfirm={async (message) => {
-            const success = await submitOrderRequest(pendingItems, message);
+            const itemsWithMessage = pendingItems.map((item) => ({
+              ...item,
+              requestMessage: message,
+            }));
+
+            const success = await submitOrderRequest(itemsWithMessage);
             if (success) {
               setShowModal(false);
             }
