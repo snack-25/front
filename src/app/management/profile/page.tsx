@@ -138,6 +138,12 @@ export default function Profile() {
           variant: 'success',
           onClick: () => {},
         });
+
+        // ✅ 입력값 초기화
+        setForm(initForm);
+        setPasswords(initForm);
+        setErrors(initErrors);
+
         edit(res.data.company.name);
         router.replace('?');
       })
@@ -234,7 +240,7 @@ export default function Profile() {
 
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
-      <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
+      <div className='flex flex-col gap-[16px] mt-[20px] tb:gap-[36px]'>
         <div className='pr-[10px]'>
           <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
             내 프로필
@@ -266,11 +272,11 @@ export default function Profile() {
         )}
         <Button
           className='mt-[16px] tb:mt-[40px]'
-          filled='orange'
+          filled={isFormValid ? 'orange' : 'gray'}
           onClick={handleSubmit}
-          // disabled={!isFormValid}
+          disabled={!isFormValid}
         >
-          시작하기
+          변경하기
         </Button>
       </div>
     </div>

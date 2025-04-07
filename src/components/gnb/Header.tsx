@@ -69,12 +69,6 @@ export default function Header() {
               <Link
                 href={{
                   pathname: '/productList',
-                  query: {
-                    parentId: 'cyxofxsgl8j37gs5ljr68xh1',
-                    categoryId: 'jvfkhtspnr4gvmtcue6xtjxf',
-                    sort: 'createdAt:desc',
-                    page: '1',
-                  },
                 }}
                 className={cn(
                   hoverStyle,
@@ -85,7 +79,7 @@ export default function Header() {
               </Link>
               {user.role === 'USER' && (
                 <NavItem
-                  href='/history'
+                  href='/my-request'
                   currentPath={pathname}
                 >
                   구매 요청 내역

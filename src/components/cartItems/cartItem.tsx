@@ -4,15 +4,11 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import NumberInput from '@/components/ui/NumberInput';
 import { useDebounce } from '@/hooks/cart/useDebounce';
-import {
-  createOrder,
-  createOrderRequest,
-  updateCartItemQuantity,
-} from '@/lib/api/cart';
+import { createOrder, updateCartItemQuantity } from '@/lib/api/cart';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '../ui/modal/OrderRequestModal';
-import { CartItemProps, CreateOrderRequestPayload } from '@/types/cart';
+import { CartItemProps } from '@/types/cart';
 import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 
 export default function CartItem({
@@ -157,16 +153,16 @@ export default function CartItem({
         shippingFee={deliveryFee}
         onClose={() => setShowModal(false)}
         onConfirm={async (message) => {
-          const success = await submitOrderRequest(
-            [
-              {
-                productId,
-                quantity: localQuantity,
-              },
-            ],
-            message,
-          );
-          if (success) setShowModal(false);
+          const success = await submitOrderRequest([
+            {
+              productId,
+              quantity: localQuantity,
+              requestMessage: message,
+            },
+          ]);
+          if (success) {
+            setShowModal(false);
+          }
         }}
       />
     </div>

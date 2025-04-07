@@ -138,6 +138,11 @@ export default function Budget() {
       return;
     }
 
+    if (!form.currentAmount.modified && !form.initialAmount.modified) {
+      showCustomToast({ label: '기존 예산과 동일합니다.', variant: 'error' });
+      return;
+    }
+
     try {
       const sendData = {
         companyId: company?.companyId || '',
@@ -170,6 +175,12 @@ export default function Budget() {
       console.error('Submit failed:', error);
     }
   };
+
+  const isCurrentInactive =
+    form.currentAmount.value === '0' || !form.currentAmount.modified;
+
+  const isInitialInactive =
+    form.initialAmount.value === '0' || !form.initialAmount.modified;
   //리턴
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
@@ -189,6 +200,7 @@ export default function Budget() {
             onBlur={handleBlur}
             value={form.currentAmount.value}
             isModified={form.currentAmount.modified}
+            className={isCurrentInactive ? 'text-[#ABABAB]' : ''}
           />
         </div>
         <div className='flex flex-col gap-[4px]'>
@@ -201,6 +213,7 @@ export default function Budget() {
             onBlur={handleBlur}
             value={form.initialAmount.value}
             isModified={form.initialAmount.modified}
+            className={isInitialInactive ? 'text-[#ABABAB] ' : ''}
           />
         </div>
         <Button

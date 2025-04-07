@@ -3,8 +3,17 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import CartItem from '@/components/cartItems/cartItem';
-import { createOrder, deleteCartItems, getCartItems } from '@/lib/api/cart';
-import { CartResponse, CreateOrderRequestItem } from '@/types/cart';
+import {
+  createOrder,
+  deleteCartItems,
+  getCartItems,
+  getSelectedCartSummary,
+} from '@/lib/api/cart';
+import {
+  CartResponse,
+  CreateOrderRequestItem,
+  GetCartSummaryResponse,
+} from '@/types/cart';
 import CartSummary from '@/components/cartItems/cartSummary';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
@@ -18,6 +27,8 @@ export default function CartsPage() {
   const [pendingItems, setPendingItems] = useState<CreateOrderRequestItem[]>(
     [],
   );
+  const [selectedSummary, setSelectedSummary] =
+    useState<GetCartSummaryResponse | null>(null);
   const { cartId } = useParams() as { cartId: string };
   const { user } = useAuthStore();
   const router = useRouter();
@@ -59,6 +70,31 @@ export default function CartsPage() {
     const allIds = cartData?.items.map((item) => item.id) || [];
     setSelectAll(selectedIds.length === allIds.length && allIds.length > 0);
   }, [selectedIds, cartData]);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      if (!cartData || selectedIds.length === 0) {
+        setSelectedSummary(null);
+        return;
+      }
+
+      const selectedItems = cartData.items
+        .filter((item) => selectedIds.includes(item.id))
+        .map((item) => ({
+          productId: item.product.id ?? item.productId,
+          quantity: item.quantity,
+        }));
+
+      try {
+        const summary = await getSelectedCartSummary(cartId, selectedItems);
+        setSelectedSummary(summary);
+      } catch (err) {
+        console.error('요약 정보 조회 실패', err);
+      }
+    };
+
+    fetchSummary();
+  }, [selectedIds, cartData, cartId]);
 
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
@@ -124,7 +160,7 @@ export default function CartsPage() {
       try {
         await createOrder(selectedItems);
         alert('주문이 완료되었습니다.');
-        router.push('/history');
+        router.push('/my-request');
       } catch (error) {
         console.error('주문 실패:', error);
         alert('주문에 실패했습니다.');
@@ -206,6 +242,7 @@ export default function CartsPage() {
 
         <CartSummary
           cartData={cartData}
+          summary={selectedSummary}
           onOrder={handleOrder}
         />
 
@@ -215,8 +252,15 @@ export default function CartsPage() {
           shippingFee={cartData.shippingFee}
           onClose={() => setShowModal(false)}
           onConfirm={async (message) => {
-            const success = await submitOrderRequest(pendingItems, message);
-            if (success) setShowModal(false);
+            const itemsWithMessage = pendingItems.map((item) => ({
+              ...item,
+              requestMessage: message,
+            }));
+
+            const success = await submitOrderRequest(itemsWithMessage);
+            if (success) {
+              setShowModal(false);
+            }
           }}
         />
       </div>
