@@ -143,7 +143,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
               className='flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6'
               onClick={() => router.push(`/request/${order.id}`)}
             >
-              <span className='flex-1 text-center'>{order.date}</span>
+              <span className='flex-1 text-center text-black-100'>{order.date}</span>
               <span className='flex-1 text-center'>
                   {order.items && order.items.length > 0
                     ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
@@ -160,10 +160,10 @@ const OrderTable: React.FC<OrderTableProps> = ({
                     개
                   </span>
               </span>
-              <span className='flex-1 text-center'>
+              <span className='flex-1 text-center text-black-100'>
                 {(order.price ?? 0).toLocaleString()}원
               </span>
-              <span className='flex-1 text-center'>{order.requester}</span>
+              <span className='flex-1 text-center text-black-100'>{order.requester}</span>
               <div
                 className='flex-1 flex justify-center gap-2 pb-0.5'
                 onClick={(e) => e.stopPropagation()}

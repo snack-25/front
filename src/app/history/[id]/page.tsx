@@ -86,10 +86,10 @@ const OrderDetailPage = () => {
       <div className='w-2/3 pr-8'>
         <h1 className='text-3xl font-bold'>구매 내역 상세</h1>
 
-        <div className='mt-6 bg-white rounded-md p-6 border-2'>
+        <div className='mt-6 bg-none rounded-md p-6 '>
           <h2 className='text-xl font-bold mb-4'>구매 품목</h2>
 
-          <div className='border rounded-md max-h-[400px] overflow-y-auto'>
+          <div className='border rounded-md max-h-[400px] overflow-y-auto bg-white'>
             {order?.items.map((item, index) => (
               <div
                 key={index}

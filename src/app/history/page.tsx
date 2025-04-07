@@ -11,11 +11,14 @@ import { Order } from '@/lib/api/orders';
 
 import HistoryTable from './components/HistoryTable';
 import SummaryCards from './components/SummaryCards';
+import Pagenation from '@/components/ui/Pagination';
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [sortOption, setSortOption] = useState('최신순');
   const [isError, setIsError] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
     const fetchApprovedOrders = async () => {
@@ -28,7 +31,7 @@ const OrdersPage = () => {
               : 'latest';
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=1&pageSize=100&status=APPROVED&sort=${sortQuery}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=${currentPage}&pageSize=10&status=APPROVED&sort=${sortQuery}`,
           {
             credentials: 'include',
           },
@@ -40,18 +43,24 @@ const OrdersPage = () => {
 
         const data = await res.json();
         console.log('✅ 서버 응답 확인', data);
-        const transformed: Order[] = data.map((item: any) => ({
-  id: item.id,
-  date: item.resolvedAt?.slice(0, 10) ?? '-',         // ✅ 구매승인일
-  requestDate: item.requestedAt?.slice(0, 10) ?? '-', // ✅ 구매요청일
-  requester: item.requesterName || '-',               // ✅ 요청인
-  handler: item.resolverName || '-',                  // ✅ 담당자
-  price: item.totalAmount?.toLocaleString() || '0',
-  items: item.orderRequestItems?.map((it: any) => ({
-    name: it.product?.name || '상품 없음',
-    quantity: it.quantity || 0,
-  })) || [],
-}));
+
+        const approvedOnly = data.filter((item: any) => item.status === 'APPROVED');
+
+
+        const transformed: Order[] = approvedOnly.map((item: any) => ({
+          id: item.id,
+          date: item.resolvedAt?.slice(0, 10) ?? '-',
+          requestDate: item.requestedAt?.slice(0, 10) ?? '-',
+          requester: item.requesterName || '-',
+          handler: item.resolverName || '-',
+          price: item.totalAmount?.toLocaleString() || '0',
+          status: item.status,
+          items: item.orderRequestItems?.map((it: any) => ({
+            name: it.product?.name || '상품 없음',
+            quantity: it.quantity || 0,
+          })) || [],
+        }));
+        
 
         setOrders(transformed);
       } catch (err) {
@@ -93,6 +102,8 @@ const OrdersPage = () => {
           </DropdownMenu>
         </div>
         <HistoryTable orders={orders} />
+
+        <Pagenation currentPage={currentPage} totalPage={totalPage} />
       </div>
     </div>
   );

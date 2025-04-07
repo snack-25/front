@@ -7,6 +7,7 @@ import DropdownMenu, {
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
 import MyRequestTable from './components/MyRequestTable';
+import Pagenation from '@/components/ui/Pagination';
 
 interface OrderItem {
   id: string;
@@ -30,20 +31,31 @@ const MyRequestPage = () => {
   const [sortOption, setSortOption] = useState('최신순');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
     const fetchMyOrders = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true`, {
-          credentials: 'include',
-        });
+        const sortQuery =
+          sortOption === '높은금액순'
+            ? 'highPrice'
+            : sortOption === '낮은금액순'
+            ? 'lowPrice'
+            : 'latest';
+  
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true&page=${currentPage}&pageSize=10&sort=${sortQuery}`,
+          {
+            credentials: 'include',
+          },
+        );
         const data = await res.json();
-
+  
         if (!Array.isArray(data)) return;
-
+  
         const transformed: Order[] = data.map((item: any) => ({
           id: item.id,
-          date: item.createdAt?.slice(0, 10) || '-',
+          date: item.requestedAt?.slice(0, 10) || '-',
           price: item.totalAmount,
           status: item.status,
           items: (item.orderRequestItems || []).map((i: any) => ({
@@ -55,15 +67,15 @@ const MyRequestPage = () => {
             quantity: i.quantity ?? 0,
           })),
         }));
-
+  
         setOrders(transformed);
       } catch (err) {
         console.error('내 주문 목록 불러오기 실패:', err);
       }
     };
-
+  
     fetchMyOrders();
-  }, []);
+  }, [sortOption, currentPage]);
 
   const sortedOrders = [...orders].sort((a, b) => {
     if (sortOption === '낮은금액순') return a.price - b.price;
@@ -96,10 +108,10 @@ const MyRequestPage = () => {
       </div>
 
       <div className='space-y-6'>
-        <div className='flex justify-end'>
+        <div className='flex justify-end relative overflow-visible'>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className='w-[136px] h-[50px] btn text-gray-500 text-left pl-[14px] border-2 bg-gray-50 rounded-sm'>
+              <button className='w-[136px] h-[50px] btn text-gray-500 text-left pl-[14px] border-2 bg-gray-50 rounded-sm '>
                 {sortOption}
               </button>
             </DropdownMenuTrigger>
@@ -117,7 +129,11 @@ const MyRequestPage = () => {
           </DropdownMenu>
         </div>
 
-        <MyRequestTable  />
+        <MyRequestTable  
+           orders={paginatedOrders}
+           onCancel={handleCancel}/>
+
+        <Pagenation currentPage={currentPage} totalPage={totalPage} />
 
         {totalPages > 1 && (
           <div className='flex justify-center mt-6 gap-2'>
