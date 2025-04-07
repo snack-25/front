@@ -55,6 +55,7 @@ const OrderDetailPage = () => {
           },
         );
         const data = await res.json();
+        console.log('상세 주문 데이터:', data);
 
         const transformed: OrderDetail = {
           id: data.id,
@@ -95,6 +96,47 @@ const OrderDetailPage = () => {
     0,
   );
 
+  const handleAddToCart = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const cartId = user.cartId;
+  
+      if (!cartId) {
+        alert('장바구니 정보가 없습니다.');
+        return;
+      }
+  
+      const itemsToAdd = order?.items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })) || [];
+  
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/items`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: itemsToAdd }),
+      });
+  
+      if (!res.ok) throw new Error('장바구니 추가 실패');
+  
+      alert('장바구니에 담았습니다!');
+    } catch (err) {
+      console.error('장바구니 추가 에러:', err);
+      alert('장바구니 추가에 실패했습니다.');
+    }
+  };
+
+  const totalItemCost = order.items.reduce(
+  (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+  0
+);
+
+// 배송비는 총합에서 상품 금액을 뺀 값, 음수 방지용
+const shippingFee = Math.max(0, (order.totalAmount || 0) - totalItemCost);
+
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
       <div className='w-2/3 pr-8'>
@@ -121,7 +163,7 @@ const OrderDetailPage = () => {
                     <p className='text-sm font-semibold'>수량: {item.quantity}개</p>
                   </div>
                 </div>
-                <div className='flex flex-col items-end gap-1'>
+                <div className='flex flex-col items-end gap-1'>                
                   <p>{item.price.toLocaleString()}원</p>
                   <p className='text-lg font-semibold'>
                     {(item.price * item.quantity).toLocaleString()}원
@@ -131,9 +173,15 @@ const OrderDetailPage = () => {
             ))}
           </div>
 
-          <div className='flex justify-end mt-6 text-xl font-bold text-[#E67E22]'>
+          {/* 배송비 표기 */}
+          <div className='flex justify-end mt-4 text-base text-gray-500'>
+          배송비: {shippingFee.toLocaleString()}원
+          </div>
+
+          <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
             <span className='text-black'>총 {order.items.length}건</span>
-            <span className='ml-2'>{totalCost.toLocaleString()}원</span>
+            <span className='ml-2'>{order.totalAmount.toLocaleString()} 원</span>
+            <span className='ml-2 text-sm text-gray-500 font-normal'>배송비포함</span>
           </div>
 
           <div className='mt-6 flex justify-center gap-4'>
@@ -144,7 +192,7 @@ const OrderDetailPage = () => {
               목록 보기
             </button>
             <button
-              onClick={() => alert('장바구니 기능은 아직 미구현입니다.')}
+              onClick={handleAddToCart}
               className='flex-1 h-[54px] rounded-lg bg-orange-400 text-white font-bold transition-transform duration-200 hover:bg-orange-500 hover:scale-105'
             >
               장바구니에 다시 담기
