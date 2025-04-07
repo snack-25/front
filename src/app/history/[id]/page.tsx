@@ -42,7 +42,7 @@ const OrderDetailPage = () => {
         
 
         const data = await res.json();
-        console.log('상세 주문 데이터:', data);
+        console.log('상세 주문 데이터', data);
 
         const transformed: OrderDetail = {
           id: data.requestId ?? id,
