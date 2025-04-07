@@ -160,7 +160,7 @@ export default function CartsPage() {
       try {
         await createOrder(selectedItems);
         alert('주문이 완료되었습니다.');
-        router.push('/my-request');
+        router.push('/history');
       } catch (error) {
         console.error('주문 실패:', error);
         alert('주문에 실패했습니다.');

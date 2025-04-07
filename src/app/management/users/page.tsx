@@ -43,8 +43,6 @@ export default function UserManagementPage() {
 
   return (
     <div className='bg-[#FFFBF6] min-h-screen'>
-      <ManagementTabMenu />
-
       <div className='px-[120px] pt-4 max-lt:px-6'>
         {/* 테이블 너비 기준에 맞춰 제목 & 버튼 정렬 */}
         <div className='w-[1680px] mx-auto'>

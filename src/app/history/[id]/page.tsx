@@ -19,6 +19,7 @@ interface OrderDetail {
   handler: string;
   requestDate: string;
   message?: string;
+  totalAmount: number;
   approvalMessage?: string;
 }
 
@@ -52,6 +53,7 @@ const OrderDetailPage = () => {
           handler: data.resolverName ?? '-',
           message: data.items?.[0]?.requestMessage ?? '',
           approvalMessage: data.resolveMessage ?? '',
+          totalAmount: data.totalAmount ?? 0,
           items: (data.items || []).map((item: any) => ({
             id: item.id ?? '',
             name: item.productName ?? '상품 없음',
@@ -70,16 +72,24 @@ const OrderDetailPage = () => {
     fetchOrderDetail();
   }, [id]);
 
+  const totalItemCost = order?.items.reduce(
+    (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+    0
+  );
+  
+  // 배송비는 총합에서 상품 금액을 뺀 값, 음수 방지용
+  const shippingFee = Math.max(0, (order?.totalAmount || 0) - (totalItemCost || 0));
+
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
       {/* 왼쪽 구매 품목 리스트 */}
       <div className='w-2/3 pr-8'>
         <h1 className='text-3xl font-bold'>구매 내역 상세</h1>
 
-        <div className='mt-6 bg-white rounded-md p-6 border-2'>
+        <div className='mt-6 bg-none rounded-md p-6 '>
           <h2 className='text-xl font-bold mb-4'>구매 품목</h2>
 
-          <div className='border rounded-md max-h-[400px] overflow-y-auto'>
+          <div className='border rounded-md max-h-[400px] overflow-y-auto bg-white'>
             {order?.items.map((item, index) => (
               <div
                 key={index}
@@ -109,16 +119,15 @@ const OrderDetailPage = () => {
             ))}
           </div>
 
-          {/* 총 금액 */}
-          <div className='flex justify-end mt-6 text-xl font-bold text-[#E67E22]'>
+          {/* 배송비 표기 */}
+          <div className='flex justify-end mt-4 text-base text-gray-500'>
+          배송비: {shippingFee.toLocaleString()}원
+          </div>
+
+          <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
             <span className='text-black'>총 {order?.items.length}건</span>
-            <span className='ml-2'>
-              {' '}
-              {order?.items
-                .reduce((acc, item) => acc + item.price * item.quantity, 0)
-                .toLocaleString()}
-              원
-            </span>
+            <span className='ml-2'>{order?.totalAmount.toLocaleString()} 원</span>
+            <span className='ml-2 text-sm text-gray-500 font-normal'>배송비포함</span>
           </div>
         </div>
       </div>

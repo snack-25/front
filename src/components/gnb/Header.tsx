@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
@@ -33,7 +33,7 @@ const NavItem = ({ href, currentPath, children }: navItemProps) => {
 
 export default function Header() {
   const { user, isAuth, isHydrated, logout } = useAuthStore();
-
+  const router = useRouter();
   const pathname: string = usePathname();
   const isAuthPage: boolean =
     pathname === '/auth/login' || pathname === '/auth/signUp';
@@ -139,7 +139,10 @@ export default function Header() {
               <Button
                 className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
                 font='tb:text-[1.4vw]'
-                onClick={logout}
+                onClick={async () => {
+                  await logout();
+                  router.push('/');
+                }}
               >
                 Logout
               </Button>
