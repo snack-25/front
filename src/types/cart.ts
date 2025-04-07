@@ -44,17 +44,15 @@ export interface CartSummaryProps {
 export interface CreateOrderRequestItem {
   productId: string;
   quantity: number;
+  requestMessage?: string;
   productName?: string;
   price?: number;
   imageUrl?: string | null;
   categoryId?: string;
 }
+
 export interface CreateOrderRequestPayload {
-  items: {
-    productId: string;
-    quantity: number;
-  }[];
-  requestMessage: string;
+  items: CreateOrderRequestItem[];
   requesterId?: string;
   companyId?: string;
   status?: 'PENDING' | 'APPROVED' | 'REJECTED';
