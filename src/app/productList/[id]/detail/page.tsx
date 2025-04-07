@@ -3,7 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import EmptyImage from '@/components/productList/EmptyImage';
 import Loading from '@/components/productList/Loading';
@@ -91,18 +91,30 @@ export default function ProductDetail() {
 
   const handleAddToCart = async () => {
     if (!user?.cartId) {
-      alert('로그인 후 이용해주세요.');
+      showCustomToast({
+        label: '로그인 후 이용해주세요.',
+        variant: 'error',
+      });
       return;
     }
 
     try {
       await addCartItem(user.cartId, productId as string, quantity);
-      alert('장바구니에 추가되었습니다!');
+      showCustomToast({
+        label: '장바구니에 추가되었습니다!',
+        variant: 'success',
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
-        alert(error.message);
+        showCustomToast({
+          label: error.message,
+          variant: 'error',
+        });
       } else {
-        alert('장바구니 추가에 실패했습니다.');
+        showCustomToast({
+          label: '장바구니 추가에 실패했습니다.',
+          variant: 'error',
+        });
       }
     }
   };
