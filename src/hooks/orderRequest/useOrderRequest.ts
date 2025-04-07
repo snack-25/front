@@ -5,6 +5,7 @@ import {
   CreateOrderRequestItem,
   CreateOrderRequestPayload,
 } from '@/types/cart';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export function useOrderRequest() {
   const router = useRouter();
@@ -12,7 +13,10 @@ export function useOrderRequest() {
 
   const submitOrderRequest = async (items: CreateOrderRequestItem[]) => {
     if (!user) {
-      alert('로그인이 필요합니다.');
+      showCustomToast({
+        label: '로그인이 필요합니다.',
+        variant: 'error',
+      });
       return false;
     }
 
@@ -25,12 +29,18 @@ export function useOrderRequest() {
 
     try {
       await createOrderRequest(payload);
-      alert('주문 요청이 제출되었습니다.');
+      showCustomToast({
+        label: '구매를 요청하였습니다.',
+        variant: 'success',
+      });
       router.push('/my-request');
       return true;
     } catch (error) {
-      console.error('주문 요청 실패:', error);
-      alert('주문 요청에 실패했습니다.');
+      console.error('구매 요청 실패:', error);
+      showCustomToast({
+        label: '구매 요청에 실패했습니다.',
+        variant: 'error',
+      });
       return false;
     }
   };
