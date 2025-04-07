@@ -153,15 +153,13 @@ export default function CartItem({
         shippingFee={deliveryFee}
         onClose={() => setShowModal(false)}
         onConfirm={async (message) => {
-          const success = await submitOrderRequest(
-            [
-              {
-                productId,
-                quantity: localQuantity,
-              },
-            ],
-            message,
-          );
+          const success = await submitOrderRequest([
+            {
+              productId,
+              quantity: localQuantity,
+              requestMessage: message,
+            },
+          ]);
           if (success) {
             setShowModal(false);
           }
