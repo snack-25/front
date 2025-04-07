@@ -10,21 +10,14 @@ export function useOrderRequest() {
   const router = useRouter();
   const { user } = useAuthStore();
 
-  const submitOrderRequest = async (
-    items: CreateOrderRequestItem[],
-    message: string,
-  ) => {
+  const submitOrderRequest = async (items: CreateOrderRequestItem[]) => {
     if (!user) {
       alert('로그인이 필요합니다.');
       return false;
     }
 
     const payload: CreateOrderRequestPayload = {
-      requestMessage: message,
-      items: items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-      })),
+      items,
       requesterId: String(user.id),
       companyId: String(user.companyId),
       status: 'PENDING',
@@ -33,7 +26,7 @@ export function useOrderRequest() {
     try {
       await createOrderRequest(payload);
       alert('주문 요청이 제출되었습니다.');
-      router.push('/history');
+      router.push('/my-request');
       return true;
     } catch (error) {
       console.error('주문 요청 실패:', error);

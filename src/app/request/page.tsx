@@ -26,6 +26,7 @@ interface Order {
   requester: string;
   price: number;
   items: OrderItem[];
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   budgetLeft: number;
 }
 
@@ -65,10 +66,11 @@ const PurchaseRequestPage = () => {
 
         const transformed: Order[] = fetchedData.map((item: any) => ({
           id: item.id,
-          date: item.createdAt ? item.createdAt.slice(0, 10) : '-', // 오류나서 임시로 처리
-          requester: item.requester?.name || '-',
+          date: item.requestedAt ? item.requestedAt.slice(0, 10) : '-', // 요청일
+          requester: item.requesterName || '-',
           price: item.totalAmount,
           budgetLeft: item.budgetLeft ?? 0,
+          status: item.status,
           items: (item.orderRequestItems || []).map((i: any) => {
             console.log('✅ 주문 아이템 확인:', JSON.stringify(i, null, 2));
             return {
@@ -92,13 +94,20 @@ const PurchaseRequestPage = () => {
   }, [sortOption]);
 
   const handleApprove = async (id: string, message: string) => {
+    const token = localStorage.getItem('token');
+    console.log('보내는 주문 ID:', id);
+    
     try {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ adminNotes: message }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include', // ✅ 요거 꼭 필요
+          body: JSON.stringify({ resolveMessage: message }),
         },
       );
       setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -108,13 +117,18 @@ const PurchaseRequestPage = () => {
   };
 
   const handleReject = async (id: string) => {
+    const token = localStorage.getItem('token');
     try {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/reject`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ adminNotes: '사유 부족으로 반려합니다.' }),
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ resolveMessage: '사유 부족으로 반려합니다.' }),
         },
       );
       setOrders((prev) => prev.filter((o) => o.id !== id));

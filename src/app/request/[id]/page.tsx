@@ -73,6 +73,7 @@ const OrderDetailPage = () => {
 
         const data = await res.json();
         console.log('✅ 상세 응답 전체:', data);
+        
 
         const transformed: OrderDetail = {
           id: data.requestId,
@@ -80,7 +81,7 @@ const OrderDetailPage = () => {
           requestDate: data.requestedAt?.slice(0, 10) ?? '-',
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
-          message: data.requestMessage ?? '',
+          message: data.items?.[0]?.requestMessage ?? '',
           status: data.status,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
@@ -106,6 +107,14 @@ const OrderDetailPage = () => {
   useEffect(() => {
     const fetchBudget = async () => {
       try {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const companyId = user.companyId;
+  
+        if (!companyId) {
+          console.warn('❗ companyId 없음');
+          return;
+        }
+  
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/budgets/inquiry`,
           {
@@ -114,35 +123,35 @@ const OrderDetailPage = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({}),
+            body: JSON.stringify({ companyId }),
           },
         );
-
+  
         if (!res.ok) {
           throw new Error('예산 조회 실패');
         }
-
+  
         const data = await res.json();
-
+        console.log('✅ 예산 데이터:', data);
+  
         setBudget({
-          monthlyLimit: data.monthlyLimit ?? 0,
-          remaining: data.remaining ?? 0,
+          monthlyLimit: data.data.monthlyLimit ?? 0,
+          remaining: data.data.currentAmount ?? 0,
         });
       } catch (err) {
         console.error('예산 불러오기 에러:', err);
       }
     };
-
+  
     fetchBudget();
   }, []);
-
   const handleApprove = async () => {
     if (!order) {
       return;
     }
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${order.id}/accept`,
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`,
         {
           method: 'POST',
           credentials: 'include',
@@ -168,7 +177,7 @@ const OrderDetailPage = () => {
     }
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${order.id}/reject`,
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/reject`,
         {
           method: 'POST',
           credentials: 'include',

@@ -55,21 +55,44 @@ export default function ProductList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IFetchData | null>(null);
+  const { getParents, getSub } = useCategory();
 
   useEffect(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    let isChanged: boolean = false;
-    if (!sort) {
-      newParams.set('sort', DEFAULT_SORT);
-      isChanged = true;
-    }
-    if (!page) {
-      newParams.set('page', '1');
-      isChanged = true;
-    }
-    if (isChanged) {
-      router.replace(`?${newParams.toString()}`);
-    }
+    const initParams = async () => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      let isChanged = false;
+
+      if (!searchParams.get('parentId')) {
+        const parents = await getParents();
+        const firstParentId = parents?.[0]?.id;
+        if (firstParentId) {
+          newParams.set('parentId', firstParentId);
+          isChanged = true;
+
+          const sub = await getSub(firstParentId);
+          const firstSubId = sub?.[0]?.id;
+          if (firstSubId) {
+            newParams.set('categoryId', firstSubId);
+          }
+        }
+      }
+
+      if (!searchParams.get('sort')) {
+        newParams.set('sort', DEFAULT_SORT);
+        isChanged = true;
+      }
+
+      if (!searchParams.get('page')) {
+        newParams.set('page', '1');
+        isChanged = true;
+      }
+
+      if (isChanged) {
+        router.replace(`?${newParams.toString()}`);
+      }
+    };
+
+    initParams();
   }, []);
 
   useEffect(() => {
