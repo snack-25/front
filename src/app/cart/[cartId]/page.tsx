@@ -18,6 +18,7 @@ import CartSummary from '@/components/cartItems/cartSummary';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
 import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -98,7 +99,10 @@ export default function CartsPage() {
 
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
-      alert('삭제할 항목을 선택해주세요.');
+      showCustomToast({
+        label: '삭제할 항목을 선택해주세요.',
+        variant: 'error',
+      });
       return;
     }
 
@@ -108,7 +112,10 @@ export default function CartsPage() {
       fetchCart();
     } catch (error) {
       console.error(error);
-      alert('삭제에 실패했습니다.');
+      showCustomToast({
+        label: '삭제에 실패했습니다.',
+        variant: 'error',
+      });
     }
   };
 
@@ -119,7 +126,10 @@ export default function CartsPage() {
       fetchCart();
     } catch (error) {
       console.error(error);
-      alert('삭제에 실패했습니다.');
+      showCustomToast({
+        label: '삭제에 실패했습니다.',
+        variant: 'error',
+      });
     }
   };
 
@@ -135,13 +145,19 @@ export default function CartsPage() {
       fetchCart();
     } catch (error) {
       console.error(error);
-      alert('전체 삭제에 실패했습니다.');
+      showCustomToast({
+        label: '전체 삭제에 실패했습니다.',
+        variant: 'error',
+      });
     }
   };
 
   const handleOrder = async () => {
     if (selectedIds.length === 0 || !cartData) {
-      alert('주문할 상품을 선택해주세요.');
+      showCustomToast({
+        label: '주문할 상품을 선택해주세요.',
+        variant: 'error',
+      });
       return;
     }
 
@@ -159,11 +175,17 @@ export default function CartsPage() {
     if (user?.role === 'SUPERADMIN' || user?.role === 'ADMIN') {
       try {
         await createOrder(selectedItems);
-        alert('주문이 완료되었습니다.');
+        showCustomToast({
+          label: '주문이 완료되었습니다.',
+          variant: 'success',
+        });
         router.push('/history');
       } catch (error) {
         console.error('주문 실패:', error);
-        alert('주문에 실패했습니다.');
+        showCustomToast({
+          label: '주문에 실패했습니다.',
+          variant: 'error',
+        });
       }
     } else {
       setPendingItems(selectedItems);

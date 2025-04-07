@@ -10,6 +10,7 @@ import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '../ui/modal/OrderRequestModal';
 import { CartItemProps } from '@/types/cart';
 import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function CartItem({
   id,
@@ -37,7 +38,6 @@ export default function CartItem({
   const handleInstantBuy = async () => {
     if (user?.role === 'USER') {
       setShowModal(true);
-
       return;
     }
 
@@ -48,11 +48,20 @@ export default function CartItem({
           quantity: localQuantity,
         },
       ]);
-      alert('주문이 완료되었습니다!');
+
+      showCustomToast({
+        label: '주문이 완료되었습니다!',
+        variant: 'success',
+      });
+
       router.push('/history');
     } catch (error) {
       console.error('주문 실패:', error);
-      alert('주문에 실패했습니다.');
+
+      showCustomToast({
+        label: '주문에 실패했습니다.',
+        variant: 'error',
+      });
     }
   };
 
@@ -64,7 +73,13 @@ export default function CartItem({
             onQuantityChange();
           }
         })
-        .catch((err) => console.error('PATCH 실패:', err));
+        .catch((err) => {
+          console.error('PATCH 실패:', err);
+          showCustomToast({
+            label: '수량 변경에 실패했습니다.',
+            variant: 'error',
+          });
+        });
     }
   }, [debouncedQuantity, cartId, id, quantity, onQuantityChange]);
 
