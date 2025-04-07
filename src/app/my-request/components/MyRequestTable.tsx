@@ -28,6 +28,19 @@ interface Props {
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '상태', '비고'];
 
+const getStatusInfo = (status: string) => {
+  switch (status) {
+    case 'PENDING':
+      return { label: '승인 대기', color: 'text-black-100' };
+    case 'APPROVED':
+      return { label: '승인 완료', color: 'text-gray-300' };
+    case 'REJECTED':
+      return { label: '구매 반려', color: 'text-gray-300' };
+    default:
+      return  { label: '알수없음', color: 'text-gray-300' };
+  } 
+};
+
 const MyRequestTable = ( ) => {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -69,7 +82,7 @@ const MyRequestTable = ( ) => {
 
   const handleCancel = async (id: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -102,12 +115,32 @@ const MyRequestTable = ( ) => {
               className='flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6'
               onClick={() => router.push(`/my-request/${order.id}`)}
             >
-              <span className='flex-1 text-center'>{order.date}</span>
+              <span className='flex-1 text-center text-black-100'>{order.date}</span>
               <span className='flex-1 text-center'>
-                {order.items[0]?.name ?? '상품 없음'} 외 {order.items.length - 1}건
+                  {order.items && order.items.length > 0
+                    ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
+                    : '상품 없음'}
+                  <br />
+                  <span className='text-sm text-gray-500'>
+                    총 수량:{' '}
+                    {order.items
+                      ? order.items.reduce(
+                          (sum, item) => sum + (item.quantity || 0),
+                          0,
+                        )
+                      : 0}
+                    개
+                </span>
               </span>
-              <span className='flex-1 text-center'>{order.price.toLocaleString()}원</span>
-              <span className='flex-1 text-center'>{order.status}</span>
+              <span className='flex-1 text-center text-black-100'>{order.price.toLocaleString()}원</span>
+              {(() => {
+              const statusInfo = getStatusInfo(order.status);
+              return (
+              <span className={`flex-1 text-center ${statusInfo.color}`}>
+              {statusInfo.label}
+              </span>
+              );
+            })()}
               <div
                 className='flex-1 flex justify-center'
                 onClick={(e) => e.stopPropagation()}
@@ -115,7 +148,7 @@ const MyRequestTable = ( ) => {
                 {order.status === 'PENDING' && (
                   <button
                     onClick={() => handleCancel(order.id)}
-                    className='bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
+                    className='bg-none text-orange-400 font-bold border-2 border-orange-400 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
                   >
                     요청 취소
                   </button>
