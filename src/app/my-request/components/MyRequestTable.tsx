@@ -28,6 +28,7 @@ interface Props {
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '상태', '비고'];
 
+
 const getStatusInfo = (status: string) => {
   switch (status) {
     case 'PENDING':
@@ -40,6 +41,7 @@ const getStatusInfo = (status: string) => {
       return  { label: '알수없음', color: 'text-gray-300' };
   } 
 };
+
 
 const MyRequestTable = ( ) => {
   const router = useRouter();
@@ -82,7 +84,9 @@ const MyRequestTable = ( ) => {
 
   const handleCancel = async (id: string) => {
     try {
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
+
         method: 'DELETE',
         credentials: 'include',
       });
@@ -117,6 +121,7 @@ const MyRequestTable = ( ) => {
             >
               <span className='flex-1 text-center text-black-100'>{order.date}</span>
               <span className='flex-1 text-center'>
+
                   {order.items && order.items.length > 0
                     ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
                     : '상품 없음'}
@@ -141,6 +146,7 @@ const MyRequestTable = ( ) => {
               </span>
               );
             })()}
+
               <div
                 className='flex-1 flex justify-center'
                 onClick={(e) => e.stopPropagation()}
@@ -148,7 +154,9 @@ const MyRequestTable = ( ) => {
                 {order.status === 'PENDING' && (
                   <button
                     onClick={() => handleCancel(order.id)}
+
                     className='bg-none text-orange-400 font-bold border-2 border-orange-400 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
+
                   >
                     요청 취소
                   </button>
