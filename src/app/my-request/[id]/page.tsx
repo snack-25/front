@@ -25,6 +25,19 @@ interface OrderDetail {
   resultMessage?: string;
 }
 
+const getStatusLabel = (status: string) => {
+  switch (status) {
+    case 'PENDING':
+      return '승인 대기';
+    case 'APPROVED':
+      return '승인 완료';
+    case 'REJECTED':
+      return '승인 반려';
+    default:
+      return status;
+  }
+};
+
 const OrderDetailPage = () => {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
@@ -46,7 +59,7 @@ const OrderDetailPage = () => {
           id: data.id,
           createdAt: data.requestedAt?.slice(0, 10),
           requester: data.requesterName,
-          requestMessage: data.requestMessage,
+          requestMessage: data.items[0].requestMessage,
           status: data.status,
           totalAmount: data.totalAmount,
           items: Array.isArray(data.items)
@@ -223,7 +236,7 @@ const OrderDetailPage = () => {
             <div>
               <label className='block font-semibold text-black-400 text-xl'>상태</label>
               <input
-                value={order.status}
+                value={getStatusLabel(order.status)}
                 readOnly
                 className='mt-1 w-full rounded-md border-2 px-4 py-3 text-gray-500'
               />
