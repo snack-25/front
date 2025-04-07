@@ -90,7 +90,6 @@ export default function OrderRequestModal({
                 </div>
               </div>
 
-              {/* 하단 줄: 수량 / 총금액 */}
               <div className='flex justify-between mt-4'>
                 <div className='text-[16px] text-[#1F1F1F] font-semibold'>
                   수량: {item.quantity}개
@@ -130,7 +129,7 @@ export default function OrderRequestModal({
             id='message-description'
             className='text-xs text-gray-500 mt-1 text-right'
           >
-            {message.length}/500자
+            {message.length} / 500자
           </div>
           <div className='flex justify-between'>
             <button

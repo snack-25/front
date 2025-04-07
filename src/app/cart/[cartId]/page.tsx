@@ -252,7 +252,12 @@ export default function CartsPage() {
           shippingFee={cartData.shippingFee}
           onClose={() => setShowModal(false)}
           onConfirm={async (message) => {
-            const success = await submitOrderRequest(pendingItems, message);
+            const itemsWithMessage = pendingItems.map((item) => ({
+              ...item,
+              requestMessage: message,
+            }));
+
+            const success = await submitOrderRequest(itemsWithMessage);
             if (success) {
               setShowModal(false);
             }

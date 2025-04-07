@@ -9,6 +9,7 @@ import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 
 interface IError {
   isError: boolean;
