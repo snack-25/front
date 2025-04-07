@@ -89,7 +89,7 @@ export default function ProductFormModal({
         formData.append('imageUrl', '');
       }
 
-      const res = await fetch(`${API_BASE_URL}/api/products`, {
+      const res = await fetch(`${API_BASE_URL}/products`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
