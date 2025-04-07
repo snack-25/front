@@ -129,7 +129,7 @@ export default function OrderRequestModal({
             id='message-description'
             className='text-xs text-gray-500 mt-1 text-right'
           >
-            {message.length}/500자
+            {message.length} / 500자
           </div>
           <div className='flex justify-between'>
             <button
