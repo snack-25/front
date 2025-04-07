@@ -50,7 +50,7 @@ const OrderDetailPage = () => {
           requestDate: data.requestedAt?.slice(0, 10) ?? '-', // ✅ 요청일
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
-          message: data.requestMessage ?? '',
+          message: data.items?.[0]?.requestMessage ?? '',
           approvalMessage: data.resolveMessage ?? '',
           items: (data.items || []).map((item: any) => ({
             id: item.id ?? '',

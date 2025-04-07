@@ -25,6 +25,19 @@ interface OrderDetail {
   resultMessage?: string;
 }
 
+const getStatusLabel = (status: string) => {
+  switch (status) {
+    case 'PENDING':
+      return '승인 대기';
+    case 'APPROVED':
+      return '승인 완료';
+    case 'REJECTED':
+      return '승인 반려';
+    default:
+      return status;
+  }
+};
+
 const OrderDetailPage = () => {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
@@ -40,27 +53,32 @@ const OrderDetailPage = () => {
           },
         );
         const data = await res.json();
+        console.log('상세 주문 데이터:', data);
 
         const transformed: OrderDetail = {
           id: data.id,
-          createdAt: data.createdAt?.slice(0, 10),
+          createdAt: data.requestedAt?.slice(0, 10),
           requester: data.requesterName,
-          requestMessage: data.requestMessage,
+          requestMessage: data.items[0].requestMessage,
           status: data.status,
           totalAmount: data.totalAmount,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
                 id: item.product?.id ?? '',
-                name: item.product?.name ?? '상품 없음',
-                imageUrl: item.product?.imageUrl ?? '/images/default.png',
-                category: item.product?.categoryName ?? '',
+
+                name: item.productName ?? '상품 없음',
+                imageUrl: item.imageUrl ?? '/images/default.png',
+                category: item.categoryName ?? '',
+
                 price: item.price ?? 0,
                 quantity: item.quantity ?? 0,
               }))
             : [],
-          approvedAt: data.approvedAt?.slice(0, 10),
-          approver: data.approverName,
-          resultMessage: data.resultMessage,
+
+          approvedAt: data.resolvedAt?.slice(0, 10),
+          approver: data.resolverName,
+          resultMessage: data.resolverMessage,
+
         };
         setOrder(transformed);
       } catch (err) {
@@ -80,15 +98,48 @@ const OrderDetailPage = () => {
     0,
   );
 
-  return (
-    <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
-      <div className='w-2/3 pr-8'>
-        <h1 className='text-3xl font-bold'>구매 요청 상세</h1>
 
-        <div className='mt-6 bg-white rounded-md p-6 border-2'>
+  const handleAddToCart = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const cartId = user.cartId;
+
+      if (!cartId) {
+        alert('장바구니 정보가 없습니다.');
+        return;
+      }
+
+      const itemsToAdd = order?.items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })) || [];
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/items`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: itemsToAdd }),
+      });
+
+      if (!res.ok) throw new Error('장바구니 추가 실패');
+
+      alert('장바구니에 담았습니다!');
+    } catch (err) {
+      console.error('장바구니 추가 에러:', err);
+      alert('장바구니 추가에 실패했습니다.');
+    }
+  };
+
+
+
+
+        <div className='mt-6 bg-none rounded-md p-6'>
           <h2 className='text-xl font-bold mb-4'>요청 품목</h2>
 
-          <div className='border rounded-md max-h-[400px] overflow-y-auto'>
+          <div className='border-2 rounded-md max-h-[400px] overflow-y-auto bg-white'>
+
             {order.items.map((item, index) => (
               <div
                 key={index}
@@ -124,16 +175,20 @@ const OrderDetailPage = () => {
           <div className='mt-6 flex justify-center gap-4'>
             <button
               onClick={() => router.push('/my-request')}
-              className='flex-1 h-[54px] rounded bg-[#FFF1E8] text-orange-400 font-bold'
+
+              className='flex-1 h-[54px] rounded-lg bg-[#FFF1E8] text-orange-400 font-bold transition-transform duration-200 hover:bg-[#FFE0D4] hover:scale-105'
+
             >
               목록 보기
             </button>
             <button
-              onClick={() => alert('장바구니 기능은 아직 미구현입니다.')}
-              className='flex-1 h-[54px] rounded bg-orange-400 text-white font-bold'
+
+              onClick={handleAddToCart}
+              className='flex-1 h-[54px] rounded-lg bg-orange-400 text-white font-bold transition-transform duration-200 hover:bg-orange-500 hover:scale-105'
             >
               장바구니에 다시 담기
             </button>
+
           </div>
         </div>
       </div>
@@ -189,7 +244,9 @@ const OrderDetailPage = () => {
             <div>
               <label className='block font-semibold text-black-400 text-xl'>상태</label>
               <input
-                value={order.status}
+
+                value={getStatusLabel(order.status)}
+
                 readOnly
                 className='mt-1 w-full rounded-md border-2 px-4 py-3 text-gray-500'
               />
