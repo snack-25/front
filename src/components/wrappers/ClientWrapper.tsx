@@ -15,11 +15,15 @@ export default function ClientWrapper({ children }: IProps) {
 
   useEffect(() => {
     if (isHydrated && !isAuth) {
-      router.push('/notAuth');
+      router.replace('/notAuth');
     }
   }, [isAuth, isHydrated]);
 
   if (!isHydrated) {
+    return null;
+  }
+
+  if (!isAuth) {
     return null;
   }
 

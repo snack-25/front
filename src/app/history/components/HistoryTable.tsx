@@ -59,7 +59,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
                 className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
                 onClick={() => router.push(`/history/${order.id}`)}
               >
-                <span className='flex-1 text-center'>{order.date}</span>
+                <span className='flex-1 text-center text-black-100'>{order.date}</span>
                 <span className='flex-1 text-center'>
                   {order.items && order.items.length > 0
                     ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
@@ -77,10 +77,10 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
                   </span>
                 </span>
 
-                <span className='flex-1 text-center'>{order.price}원</span>
-                <span className='flex-1 text-center'>{order.requester}</span>
-                <span className='flex-1 text-center'>{order.handler}</span>
-                <span className='flex-1 text-center'>{order.requestDate}</span>
+                <span className='flex-1 text-center text-black-100'>{order.price}원</span>
+                <span className='flex-1 text-center text-black-100'>{order.requester}</span>
+                <span className='flex-1 text-center text-black-100'>{order.handler}</span>
+                <span className='flex-1 text-center text-black-100'>{order.requestDate}</span>
               </div>
             );
           })}

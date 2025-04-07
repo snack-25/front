@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import React from 'react';
 
 interface OrderItem {
   id: string;
@@ -28,7 +28,6 @@ interface Props {
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '상태', '비고'];
 
-
 const getStatusInfo = (status: string) => {
   switch (status) {
     case 'PENDING':
@@ -38,66 +37,12 @@ const getStatusInfo = (status: string) => {
     case 'REJECTED':
       return { label: '구매 반려', color: 'text-gray-300' };
     default:
-      return  { label: '알수없음', color: 'text-gray-300' };
-  } 
+      return { label: '알 수 없음', color: 'text-gray-300' };
+  }
 };
 
-
-const MyRequestTable = ( ) => {
+const MyRequestTable = ({ orders, onCancel }: Props) => {
   const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    const fetchMyOrders = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true`, {
-          credentials: 'include',
-        });
-
-        const data = await res.json();
-        console.log('✅ 내 주문 목록:', data);
-
-        // API 응답 구조에 따라 변환
-        const transformed: Order[] = data.map((order: any) => ({
-          id: order.id,
-          date: order.requestedAt?.slice(0, 10) || '-',
-          price: order.totalAmount ?? 0,
-          status: order.status ?? 'PENDING',
-          items: (order.orderRequestItems || []).map((item: any) => ({
-            id: item.product?.id ?? '',
-            name: item.product?.name ?? '상품 없음',
-            imageUrl: item.product?.imageUrl ?? '/images/default.png',
-            category: item.product?.category?.name ?? '기타',
-            price: item.price ?? 0,
-            quantity: item.quantity ?? 0,
-          })),
-        }));
-
-        setOrders(transformed);
-      } catch (err) {
-        console.error('❌ 주문 목록 불러오기 실패:', err);
-      }
-    };
-
-    fetchMyOrders();
-  }, []);
-
-  const handleCancel = async (id: string) => {
-    try {
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, {
-
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!res.ok) throw new Error('삭제 실패');
-
-      setOrders((prev) => prev.filter((order) => order.id !== id));
-    } catch (err) {
-      console.error('❌ 요청 취소 실패:', err);
-    }
-  };
 
   return (
     <div className='w-full'>
@@ -121,42 +66,29 @@ const MyRequestTable = ( ) => {
             >
               <span className='flex-1 text-center text-black-100'>{order.date}</span>
               <span className='flex-1 text-center'>
-
-                  {order.items && order.items.length > 0
-                    ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
-                    : '상품 없음'}
-                  <br />
-                  <span className='text-sm text-gray-500'>
-                    총 수량:{' '}
-                    {order.items
-                      ? order.items.reduce(
-                          (sum, item) => sum + (item.quantity || 0),
-                          0,
-                        )
-                      : 0}
-                    개
+                {order.items && order.items.length > 0
+                  ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
+                  : '상품 없음'}
+                <br />
+                <span className='text-sm text-gray-500'>
+                  총 수량:{' '}
+                  {order.items.reduce((sum, item) => sum + (item.quantity || 0), 0)}개
                 </span>
               </span>
-              <span className='flex-1 text-center text-black-100'>{order.price.toLocaleString()}원</span>
-              {(() => {
-              const statusInfo = getStatusInfo(order.status);
-              return (
-              <span className={`flex-1 text-center ${statusInfo.color}`}>
-              {statusInfo.label}
+              <span className='flex-1 text-center text-black-100'>
+                {order.price.toLocaleString()}원
               </span>
-              );
-            })()}
-
+              <span className={`flex-1 text-center ${getStatusInfo(order.status).color}`}>
+                {getStatusInfo(order.status).label}
+              </span>
               <div
                 className='flex-1 flex justify-center'
                 onClick={(e) => e.stopPropagation()}
               >
                 {order.status === 'PENDING' && (
                   <button
-                    onClick={() => handleCancel(order.id)}
-
+                    onClick={() => onCancel(order.id)}
                     className='bg-none text-orange-400 font-bold border-2 border-orange-400 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
-
                   >
                     요청 취소
                   </button>
