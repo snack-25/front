@@ -28,7 +28,6 @@ export function useOrder() {
       router.push(`/order/${res.id}`);
       return true;
     } catch (error) {
-      console.error('🛒 주문 실패:', error);
       showCustomToast({
         label: '주문에 실패했습니다.',
         variant: 'error',
