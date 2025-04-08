@@ -130,7 +130,7 @@ export default function Profile() {
           ...prev,
           validatePassword: {
             isError: true,
-            msg: '비밀번호가 일치하지 않습니다.',
+            msg: '비밀번호가 일치하지 않습니다',
           },
         }));
       } else {
@@ -184,7 +184,7 @@ export default function Profile() {
     if (isPasswordComplete) {
       if (passwords.password !== passwords.validatePassword) {
         showCustomToast({
-          label: '비밀번호가 일치하지 않습니다.',
+          label: '비밀번호가 일치하지 않습니다',
           variant: 'error',
           onClick: () => {},
         });
@@ -218,7 +218,7 @@ export default function Profile() {
           throw new Error(res.message || '프로필 변경 실패');
         }
         showCustomToast({
-          label: res.message || '프로필 변경 성공!',
+          label: res.message || '프로필 변경 성공',
           variant: 'success',
           onClick: () => {},
         });
@@ -230,7 +230,7 @@ export default function Profile() {
       })
       .catch((err) => {
         showCustomToast({
-          label: err.message || '프로필 변경 실패!',
+          label: err.message || '프로필 변경 실패',
           variant: 'error',
           onClick: () => {},
         });
