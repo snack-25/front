@@ -60,6 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       rounded,
       font,
       width,
+      variant,
       asChild = false,
       ...props
     },
@@ -72,6 +73,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           buttonVariants({
             filled: filled ?? undefined,
             outlined: outlined ?? undefined,
+            variant,
           }),
           font,
           height,
