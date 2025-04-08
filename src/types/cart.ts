@@ -141,11 +141,6 @@ export interface OrderDetailResponse {
 export interface CreateOrderItem {
   productId: string;
   quantity: number;
-}
-
-export interface CreateOrderItem {
-  productId: string;
-  quantity: number;
   price?: number;
   productName?: string;
 }

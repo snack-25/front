@@ -187,7 +187,7 @@ export async function getOrderRequestDetail(
     throw new Error('주문 요청 상세 정보를 불러오는 데 실패했습니다.');
   }
 
-  const data = res.json();
+  const data = await res.json();
   return data;
 }
 
