@@ -13,7 +13,6 @@ interface OrderItem {
   category: string;
   price: number;
   quantity: number;
-  prodcutId: string;
   productId: string;
 }
 
