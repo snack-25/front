@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -8,7 +9,6 @@ import { Input } from '@/components/ui/Input';
 import BaseFormModal from '@/components/ui/modal/BaseFormModal';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/constants';
 
 interface ProductFormModalProps {
@@ -89,7 +89,7 @@ export default function ProductFormModal({
         formData.append('imageUrl', '');
       }
 
-      const res = await fetch(`${API_BASE_URL}/api/products`, {
+      const res = await fetch(`${API_BASE_URL}/products`, {
         method: 'POST',
         body: formData,
         credentials: 'include',

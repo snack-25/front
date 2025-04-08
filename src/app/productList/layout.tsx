@@ -1,4 +1,5 @@
 import TabMenu from '@/components/gnb/TabMenu';
+import ClientWrapper from '@/components/wrappers/ClientWrapper';
 
 interface IProps {
   children: React.ReactNode;
@@ -7,8 +8,10 @@ interface IProps {
 export default function ProductListLayout({ children }: IProps) {
   return (
     <>
-      <TabMenu />
-      <main>{children}</main>
+      <ClientWrapper>
+        <TabMenu />
+        <main>{children}</main>
+      </ClientWrapper>
     </>
   );
 }

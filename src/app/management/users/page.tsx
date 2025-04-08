@@ -152,7 +152,7 @@ export default function UserManagementPage() {
               />
             </div>
             <Button
-              className='bg-primary-400 text-white font-semibold px-6 py-3 rounded-xl'
+              className='bg-primary-400 text-white font-semibold px-6 py-3 rounded-xl cursor-pointer'
               onClick={() => setInviteModalOpen(true)}
             >
               회원 초대하기
@@ -275,7 +275,7 @@ export default function UserManagementPage() {
               name: data.name,
               email: data.email,
               role: data.role,
-              companyId: user.companyId,
+              companyId: company.companyId,
               inviterId: String(user.id),
             });
 

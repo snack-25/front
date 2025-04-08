@@ -1,8 +1,8 @@
 'use client';
-import { motion } from 'framer-motion';
 import { notFound, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -11,15 +11,13 @@ import EmptyImage from '@/components/productList/EmptyImage';
 import FloatingButton from '@/components/productList/FloatingButton';
 import Loading from '@/components/productList/Loading';
 import MoreButton from '@/components/productList/MoreButton';
-import ProductnotAuth from '@/components/productList/ProductNotAuth';
 import ProductFormModal from '@/components/ui/modal/ProductFormModal';
 import { SortDropDown } from '@/components/ui/SortDropDown';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
 import useCategory from '@/hooks/product/useCategory';
 import { useFetchProducts } from '@/hooks/product/useFetchProduct';
 import { DEFAULT_SORT } from '@/lib/constants';
 
-import { useAuthStore } from '../api/auth/useAuthStore';
+import { useAuthStore } from '../auth/useAuthStore';
 
 export type Tsort =
   | 'createdAt:asc'
@@ -43,12 +41,13 @@ interface IFetchData {
 }
 
 export default function ProductList() {
-  const { user, isAuth } = useAuthStore();
+  const { user } = useAuthStore();
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const { fetchProducts } = useFetchProducts();
   const { subName } = useCategory(); // 카테고리 한글값 가져오기
+  const scrollRef = useRef<number>(0);
 
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
@@ -57,28 +56,48 @@ export default function ProductList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [products, setProducts] = useState<IFetchData | null>(null);
+  const { getParents, getSub } = useCategory();
 
   useEffect(() => {
-    if (!isAuth) {
-      return;
-    }
-    const newParams = new URLSearchParams(searchParams.toString());
-    let isChanged: boolean = false;
-    if (!sort) {
-      newParams.set('sort', DEFAULT_SORT);
-      isChanged = true;
-    }
-    if (!page) {
-      newParams.set('page', '1');
-      isChanged = true;
-    }
-    if (isChanged) {
-      router.replace(`?${newParams.toString()}`);
-    }
+    const initParams = async () => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      let isChanged = false;
+
+      if (!searchParams.get('parentId')) {
+        const parents = await getParents();
+        const firstParentId = parents?.[0]?.id;
+        if (firstParentId) {
+          newParams.set('parentId', firstParentId);
+          isChanged = true;
+
+          const sub = await getSub(firstParentId);
+          const firstSubId = sub?.[0]?.id;
+          if (firstSubId) {
+            newParams.set('categoryId', firstSubId);
+          }
+        }
+      }
+
+      if (!searchParams.get('sort')) {
+        newParams.set('sort', DEFAULT_SORT);
+        isChanged = true;
+      }
+
+      if (!searchParams.get('page')) {
+        newParams.set('page', '1');
+        isChanged = true;
+      }
+
+      if (isChanged) {
+        router.replace(`?${newParams.toString()}`);
+      }
+    };
+
+    initParams();
   }, []);
 
   useEffect(() => {
-    if (!categoryId || !sort || !isAuth) {
+    if (!categoryId || !sort) {
       return;
     }
 
@@ -92,12 +111,22 @@ export default function ProductList() {
 
         const { items, hasNextPage, hasPrevPage } = data;
 
+        if (scrollRef.current) {
+          window.scrollTo({ top: scrollRef.current });
+        }
+
         setProducts((prev) => {
-          if (page === 1) {
+          if (page === 1 || !prev) {
             return { items, hasNextPage, hasPrevPage };
           }
+
+          const prevIds = new Set(prev.items.map((item) => item.id));
+          const filteredItems = items.filter(
+            (item: { id: string }) => !prevIds.has(item.id),
+          );
+
           return {
-            items: prev ? [...prev.items, ...data.items] : items,
+            items: [...prev.items, ...filteredItems],
             hasNextPage,
             hasPrevPage,
           };
@@ -112,6 +141,8 @@ export default function ProductList() {
   }, [page, categoryId, sort, fetchProducts]);
 
   const handleMoreButton = () => {
+    scrollRef.current = window.scrollY;
+
     const newParams = new URLSearchParams(searchParams.toString());
     const newPage = String(page + 1);
     newParams.set('page', newPage);

@@ -13,9 +13,11 @@ import {
 } from '@/components/ui/Dropdown-Menu';
 
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 
 export function HeaderMenu() {
   const [open, setOpen] = React.useState<boolean>(false);
+  const { logout } = useAuthStore();
 
   const handleClose = () => {
     setOpen(false);
@@ -58,7 +60,7 @@ export function HeaderMenu() {
         <DropdownMenuSeparator />
         <div className='flex flex-col gap-8 text-xl font-medium px-4'>
           <DropdownMenuItem asChild>
-            <Link href='/'>상품 리스트</Link>
+            <Link href='/productList'>상품 리스트</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href='/request'>구매 요청 내역</Link>
@@ -70,13 +72,18 @@ export function HeaderMenu() {
             <Link href='/history'>구매 내역 확인</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/'>상품 등록 내역</Link>
+            <Link href='/productEntry'>상품 등록 내역</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/'>관리</Link>
+            <Link href='/management/users'>관리</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <button className='text-left'>로그아웃</button>
+            <button
+              onClick={logout}
+              className='text-left'
+            >
+              로그아웃
+            </button>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

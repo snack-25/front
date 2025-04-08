@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
@@ -32,10 +32,15 @@ const NavItem = ({ href, currentPath, children }: navItemProps) => {
 };
 
 export default function Header() {
-  const { user, isAuth, logout } = useAuthStore();
+  const { user, isAuth, isHydrated, logout } = useAuthStore();
+  const router = useRouter();
   const pathname: string = usePathname();
   const isAuthPage: boolean =
     pathname === '/auth/login' || pathname === '/auth/signUp';
+
+  if (!isHydrated) {
+    return null;
+  }
 
   return (
     <>
@@ -55,6 +60,7 @@ export default function Header() {
                   height={32}
                   alt='gnb snack logo'
                   className='max-tb:w-20 max-tb:h-[54px]'
+                  priority
                 />
               </Link>
             </div>
@@ -63,12 +69,6 @@ export default function Header() {
               <Link
                 href={{
                   pathname: '/productList',
-                  query: {
-                    parentId: 'cyxofxsgl8j37gs5ljr68xh1',
-                    categoryId: 'jvfkhtspnr4gvmtcue6xtjxf',
-                    sort: 'createdAt:desc',
-                    page: '1',
-                  },
                 }}
                 className={cn(
                   hoverStyle,
@@ -79,7 +79,7 @@ export default function Header() {
               </Link>
               {user.role === 'USER' && (
                 <NavItem
-                  href='/history'
+                  href='/my-request'
                   currentPath={pathname}
                 >
                   구매 요청 내역
@@ -92,6 +92,12 @@ export default function Header() {
                     currentPath={pathname}
                   >
                     구매 요청 관리
+                  </NavItem>
+                  <NavItem
+                    href='/my-request'
+                    currentPath={pathname}
+                  >
+                    구매 요청 내역
                   </NavItem>
                   <NavItem
                     href='/history'
@@ -119,7 +125,7 @@ export default function Header() {
 
             <div className='flex items-center gap-12 ml-auto max-tb:hidden'>
               <NavItem
-                href='/tmp'
+                href={`/cart/${user.cartId}`}
                 currentPath={pathname}
               >
                 Cart
@@ -133,7 +139,10 @@ export default function Header() {
               <Button
                 className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
                 font='tb:text-[1.4vw]'
-                onClick={logout}
+                onClick={async () => {
+                  await logout();
+                  router.push('/');
+                }}
               >
                 Logout
               </Button>

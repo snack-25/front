@@ -3,10 +3,15 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+interface OrderItem {
+  name: string;
+  quantity: number;
+}
+
 interface Order {
   id: string;
   date: string;
-  product: string;
+  items: OrderItem[];
   price: string;
   requester: string;
   handler: string;
@@ -17,27 +22,6 @@ interface HistoryTableProps {
   orders?: Order[];
 }
 
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    date: '2025-03-20',
-    product: '노트북',
-    price: '1,500,000',
-    requester: '홍길동',
-    handler: '김철수',
-    requestDate: '2025-03-18',
-  },
-  {
-    id: '2',
-    date: '2025-03-19',
-    product: '모니터',
-    price: '300,000',
-    requester: '이영희',
-    handler: '박영수',
-    requestDate: '2025-03-17',
-  },
-];
-
 const headers = [
   '구매승인일',
   '상품정보',
@@ -47,7 +31,7 @@ const headers = [
   '구매요청일',
 ];
 
-const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => {
+const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
   const router = useRouter();
 
   return (
@@ -67,20 +51,39 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = mockOrders }) => {
           </div>
 
           {/* 내용 */}
-          {orders.map((order) => (
-            <div
-              key={order.id}
-              className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
-              onClick={() => router.push(`/history/${order.id}`)}
-            >
-              <span className='flex-1 text-center'>{order.date}</span>
-              <span className='flex-1 text-center'>{order.product}</span>
-              <span className='flex-1 text-center'>{order.price}원</span>
-              <span className='flex-1 text-center'>{order.requester}</span>
-              <span className='flex-1 text-center'>{order.handler}</span>
-              <span className='flex-1 text-center'>{order.requestDate}</span>
-            </div>
-          ))}
+          {orders.map((order) => {
+            console.log('📦 주문 하나 확인:', order);
+            return (
+              <div
+                key={order.id}
+                className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
+                onClick={() => router.push(`/history/${order.id}`)}
+              >
+                <span className='flex-1 text-center text-black-100'>{order.date}</span>
+                <span className='flex-1 text-center'>
+                  {order.items && order.items.length > 0
+                    ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
+                    : '상품 없음'}
+                  <br />
+                  <span className='text-sm text-gray-500'>
+                    총 수량:{' '}
+                    {order.items
+                      ? order.items.reduce(
+                          (sum, item) => sum + (item.quantity || 0),
+                          0,
+                        )
+                      : 0}
+                    개
+                  </span>
+                </span>
+
+                <span className='flex-1 text-center text-black-100'>{order.price}원</span>
+                <span className='flex-1 text-center text-black-100'>{order.requester}</span>
+                <span className='flex-1 text-center text-black-100'>{order.handler}</span>
+                <span className='flex-1 text-center text-black-100'>{order.requestDate}</span>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className='flex flex-col items-center justify-center py-10'>

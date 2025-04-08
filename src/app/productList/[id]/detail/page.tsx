@@ -1,10 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useParams, useSearchParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
-
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import EmptyImage from '@/components/productList/EmptyImage';
 import Loading from '@/components/productList/Loading';
 import ProductMenu from '@/components/productList/ProductMenu';
@@ -16,6 +16,7 @@ import useCategory from '@/hooks/product/useCategory';
 import { useDetail } from '@/hooks/product/useDetail';
 
 import { IProducts } from '../../ProductList';
+import { addCartItem } from '@/lib/api/cart';
 
 interface IFormData {
   id: string;
@@ -37,6 +38,8 @@ export default function ProductDetail() {
   const { user } = useAuthStore();
 
   const { id } = useParams();
+  const { id: productId } = useParams();
+
   const searchParams = useSearchParams();
   const mainCategory = searchParams.get('parentId') as string;
   const subCategory = searchParams.get('categoryId') as string;
@@ -49,6 +52,7 @@ export default function ProductDetail() {
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [formData, setformData] = useState<IFormData | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
 
   const handleEditOpen = () => setIsEditOpen((prev) => !prev);
   const handleDeleteOpen = () => setIsDeleteOpen((prev) => !prev);
@@ -84,6 +88,36 @@ export default function ProductDetail() {
   }
 
   const { name, price, categoryId, imageUrl } = detail;
+
+  const handleAddToCart = async () => {
+    if (!user?.cartId) {
+      showCustomToast({
+        label: '로그인 후 이용해주세요.',
+        variant: 'error',
+      });
+      return;
+    }
+
+    try {
+      await addCartItem(user.cartId, productId as string, quantity);
+      showCustomToast({
+        label: '장바구니에 추가되었습니다!',
+        variant: 'success',
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showCustomToast({
+          label: error.message,
+          variant: 'error',
+        });
+      } else {
+        showCustomToast({
+          label: '장바구니 추가에 실패했습니다.',
+          variant: 'error',
+        });
+      }
+    }
+  };
 
   return (
     <div className='relative flex flex-col my-12 w-full lt:px-[120px] max-lt:px-6'>
@@ -162,9 +196,14 @@ export default function ProductDetail() {
           </div>
 
           <div className='flex w-full gap-6'>
-            <NumberInput className='lt:w-[200px] max-lt:w-[118px]' />
+            <NumberInput
+              value={quantity}
+              onChange={setQuantity}
+              className='lt:w-[200px] max-lt:w-[118px]'
+            />
             <Button
               variant='outline'
+              onClick={handleAddToCart}
               className='border-1 bg-primary-400 text-white w-full cursor-pointer transition-opacity duration-300 hover:opacity-80'
             >
               장바구니 담기

@@ -1,15 +1,15 @@
 'use client';
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Form from 'next/form';
-
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import Link from 'next/link';
+import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 
 interface IError {
   isError: boolean;
@@ -30,7 +30,7 @@ const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Login() {
   const router = useRouter();
-  const { isAuth, login } = useAuthStore();
+  const { login } = useAuthStore();
 
   const [form, setForm] = useState<initFormType>(initForm);
   const [emailError, setEmailError] = useState<IError>(initError);
@@ -65,28 +65,22 @@ export default function Login() {
     }
 
     const result = await login(form);
-    if (result) {
+
+    if (result.status === 200) {
       showCustomToast({
         label: '로그인 성공했습니다.',
         variant: 'success',
-        onClick: () => {},
       });
       router.replace('/');
     } else {
+      console.log('에러result', result);
       showCustomToast({
-        label: '로그인 실패했습니다.',
+        label: result.message, // 백엔드에서 온 오류 메시지 그대로 사용
         variant: 'error',
         onClick: () => {},
       });
     }
-    // console.log('result', result);
   };
-
-  useEffect(() => {
-    if (isAuth) {
-      // router.replace('/');
-    }
-  }, [isAuth]);
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;
 
@@ -101,7 +95,7 @@ export default function Login() {
       </div>
       <Form
         action={handleSubmit}
-        className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'
+        className='flex flex-col gap-[16px] mt-[20px] tb:gap-[36px]'
       >
         <div className='flex flex-col gap-[4px]'>
           <Input
@@ -156,12 +150,12 @@ export default function Login() {
 
         <Button
           className='mt-[16px] tb:mt-[40px] cursor-pointer w-full'
-          filled='orange'
+          filled={isFormValid ? 'orange' : 'gray'}
           type='button'
           onClick={handleSubmit}
           disabled={!isFormValid}
         >
-          시작하기
+          로그인
         </Button>
         <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
           <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import DropdownMenu, {
@@ -10,6 +10,7 @@ import DropdownMenu, {
 } from '@/components/ui/Dropdown-Menu';
 
 import OrderTable from './components/OrderTable'; // ✅ 테이블 컴포넌트
+import Pagination from '@/components/ui/Pagination'; // ✅ 페이지네이션 컴포넌트
 
 interface OrderItem {
   id: string;
@@ -26,6 +27,7 @@ interface Order {
   requester: string;
   price: number;
   items: OrderItem[];
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   budgetLeft: number;
 }
 
@@ -33,6 +35,8 @@ const PurchaseRequestPage = () => {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [sortOption, setSortOption] = useState('최신순');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -40,13 +44,13 @@ const PurchaseRequestPage = () => {
         sortOption === '높은금액순'
           ? 'highPrice'
           : sortOption === '낮은금액순'
-          ? 'lowPrice'
-          : 'latest';
+            ? 'lowPrice'
+            : 'latest';
 
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=1&pageSize=10&sort=${sortQuery}`,
-          { credentials: 'include' }
+          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=${currentPage}&pageSize=10&sort=${sortQuery}`,
+          { credentials: 'include' },
         );
 
         if (!res.ok) {
@@ -56,6 +60,7 @@ const PurchaseRequestPage = () => {
         }
 
         const fetchedData = await res.json();
+        console.log('✅ 서버 응답 결과', fetchedData);
 
         if (!Array.isArray(fetchedData)) {
           console.error('응답이 배열이 아님:', fetchedData);
@@ -64,10 +69,11 @@ const PurchaseRequestPage = () => {
 
         const transformed: Order[] = fetchedData.map((item: any) => ({
           id: item.id,
-          date: item.createdAt.slice(0, 10),
-          requester: item.requester?.name || '-',
+          date: item.requestedAt ? item.requestedAt.slice(0, 10) : '-', // 요청일
+          requester: item.requesterName || '-',
           price: item.totalAmount,
           budgetLeft: item.budgetLeft ?? 0,
+          status: item.status,
           items: (item.orderRequestItems || []).map((i: any) => {
             console.log('✅ 주문 아이템 확인:', JSON.stringify(i, null, 2));
             return {
@@ -91,12 +97,22 @@ const PurchaseRequestPage = () => {
   }, [sortOption]);
 
   const handleApprove = async (id: string, message: string) => {
+    const token = localStorage.getItem('token');
+    console.log('보내는 주문 ID:', id);
+    
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminNotes: message }),
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include', // ✅ 요거 꼭 필요
+          body: JSON.stringify({ resolveMessage: message }),
+        },
+      );
       setOrders((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
       console.error('승인 실패:', err);
@@ -104,12 +120,20 @@ const PurchaseRequestPage = () => {
   };
 
   const handleReject = async (id: string) => {
+    const token = localStorage.getItem('token');
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/reject`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminNotes: '사유 부족으로 반려합니다.' }),
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/reject`,
+        {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ resolveMessage: '사유 부족으로 반려합니다.' }),
+        },
+      );
       setOrders((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
       console.error('반려 실패:', err);
@@ -117,20 +141,20 @@ const PurchaseRequestPage = () => {
   };
 
   return (
-    <div className="w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen">
-      <div className="w-full h-[114px] flex justify-between items-center">
-        <h1 className="text-[42px] font-bold">구매 요청 관리</h1>
+    <div className='w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen'>
+      <div className='w-full h-[114px] flex justify-between items-center'>
+        <h1 className='text-[42px] font-bold'>구매 요청 관리</h1>
       </div>
 
-      <div className="space-y-6">
-        <div className="flex justify-end">
+      <div className='space-y-6'>
+        <div className='flex justify-end'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-[136px] h-[50px] btn text-gray-500 text-left pl-[14px] border-2 bg-gray-50 rounded-sm">
+              <button className='w-[136px] h-[50px] btn text-gray-500 text-left pl-[14px] border-2 bg-gray-50 rounded-sm'>
                 {sortOption}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="text-gray-500">
+            <DropdownMenuContent className='text-gray-500'>
               <DropdownMenuItem onClick={() => setSortOption('최신순')}>
                 최신순
               </DropdownMenuItem>
@@ -149,6 +173,10 @@ const PurchaseRequestPage = () => {
           onApprove={handleApprove}
           onReject={handleReject}
         />
+
+        <Pagination currentPage={currentPage} totalPage={totalPage} />
+
+
       </div>
     </div>
   );

@@ -1,12 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
 import { IProducts } from '@/app/productList/ProductList';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
 import { Category } from '@/components/gnb/TabMenu';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function useCategory() {
   const searchParams = useSearchParams();
@@ -15,10 +15,13 @@ export default function useCategory() {
 
   const [mainName, setMainName] = useState<string>('');
   const [subName, setSubName] = useState<string>('');
-  const { isAuth } = useAuthStore();
+  const { isAuth, isHydrated } = useAuthStore();
 
   const getParents = async (): Promise<Category[]> => {
     try {
+      if (!isHydrated || !isAuth) {
+        return [];
+      }
       const parents: Category[] = await fetchApi('/categories/parents', {
         method: 'GET',
       });
@@ -30,9 +33,6 @@ export default function useCategory() {
       if (process.env.NODE_ENV === 'development') {
         console.log('상위 카테고리 패칭 실패:', err);
       }
-      if (!isAuth) {
-        return [];
-      }
       showCustomToast({ label: '상위 패칭 실패', variant: 'error' });
       return [];
     }
@@ -41,6 +41,9 @@ export default function useCategory() {
   const getSub = async (parentId: string): Promise<Category[]> => {
     //하위 카테고리 목록 패칭 함수
     try {
+      if (!isHydrated || !isAuth) {
+        return [];
+      }
       const sub: Category[] = await fetchApi(
         `/categories/parents/${parentId}`,
         { method: 'GET' },
@@ -58,11 +61,9 @@ export default function useCategory() {
   };
 
   useEffect(() => {
-    if (!isAuth) {
-      showCustomToast({ label: '인증에 실패하였습니다', variant: 'error' });
+    if (!isHydrated || !isAuth) {
       return;
     }
-
     let isMounted = true;
 
     const fetchName = async () => {

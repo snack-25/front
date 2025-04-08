@@ -1,13 +1,14 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-import { invitationCodeApi, invitationSignupApi } from '@/app/api/auth/api';
+import { invitationCodeApi, invitationSignupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
+import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
+import Image from 'next/image';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface InvitedUser {
   email: string;
@@ -86,7 +87,10 @@ export function InvitationUser() {
 
   const handleSubmit = () => {
     if (Object.values(form).some((value) => !value.trim())) {
-      alert('모든 항목을 입력해주세요!');
+      showCustomToast({
+        label: '모든 항목을 입력해주세요',
+        variant: 'error',
+      });
       return;
     }
 
@@ -100,8 +104,8 @@ export function InvitationUser() {
         }
         setInvitedUser((prev) => ({
           ...prev,
-          role: res.data.role,
-          company: res.data.company, // 회사 이름도 함께 업데이트
+          role: res.data?.role,
+          company: res.data?.company, // 회사 이름도 함께 업데이트
         }));
         setIsModalOpen(true);
       })
@@ -109,7 +113,6 @@ export function InvitationUser() {
         console.error(err);
         alert('실패다');
       });
-    console.log('invitedUser', invitedUser);
   };
 
   useEffect(() => {
@@ -173,7 +176,7 @@ export function InvitationUser() {
   );
 
   return (
-    <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
+    <div className='flex flex-col mt-[20px] gap-[16px] tb:gap-[36px]'>
       <div className='pr-[10px]'>
         <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
           안녕하세요, {invitedUser.name}님!
@@ -198,12 +201,23 @@ export function InvitationUser() {
       )}
       <Button
         className='mt-[16px] tb:mt-[40px]'
-        filled='orange'
+        filled={isFormValid ? 'orange' : 'gray'}
         onClick={handleSubmit}
         disabled={!isFormValid}
       >
         시작하기
       </Button>
+      <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
+        <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>
+          이미 계정이 있으신가요?
+        </span>
+        <Link
+          href='/auth/signup'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+        >
+          로그인
+        </Link>
+      </div>
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}

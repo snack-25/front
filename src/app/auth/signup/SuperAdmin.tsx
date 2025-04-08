@@ -1,14 +1,16 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { signupApi } from '@/app/api/auth/api';
+import { useAuthStore } from '@/app/auth/useAuthStore';
+import { signupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Modal from '@/components/ui/modal/Modal';
 import { emailRegex } from '@/lib/constants';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import Image from 'next/image';
+import Link from 'next/link';
+import Modal from '@/components/ui/modal/Modal';
 
 interface IError {
   isError: boolean;
@@ -38,6 +40,7 @@ const initForm = {
   validatePassword: '',
   company: '',
   bizno: '',
+  role: 'SUPERADMIN',
 };
 
 const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
@@ -54,8 +57,6 @@ export function SuperAdmin() {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [role, setRole] = useState<string>('');
 
   // 사업자 번호 포맷팅 함수 (숫자만 남기고 000-00-00000 형식)
   const formatBizno = (value: string): string => {
@@ -76,22 +77,39 @@ export function SuperAdmin() {
     const { name, value, placeholder } = e.target;
     let newError: IError = initError;
 
-    if (value === '') {
+    // 빈 값 체크
+    if (value.trim() === '') {
       const match = placeholder.match(/^(.*?(?:을|를))/);
       const fieldLabel = match ? match[0] : placeholder;
       newError = { isError: true, msg: `${fieldLabel} 입력해주세요` };
+    } else if (name === 'name') {
+      // 이름 필드: 숫자나 특수문자가 포함된 경우 에러 처리
+      // 정규표현식은 영어, 한글, 공백만 허용합니다.
+      if (/[^a-zA-Z가-힣\s]/.test(value.trim())) {
+        newError = {
+          isError: true,
+          msg: '이름에는 숫자나 특수문자를 포함할 수 없습니다',
+        };
+      }
     } else if (name === 'password' || name === 'validatePassword') {
       const newPasswords = { ...passwords, [name]: value };
       setPasswords(newPasswords);
+
+      // 비밀번호 확인 필드 처리: 두 값이 다르면 에러 설정
       if (
-        (name === 'password' &&
-          newPasswords.validatePassword &&
-          value !== newPasswords.validatePassword) ||
-        (name === 'validatePassword' &&
-          newPasswords.password &&
-          value !== newPasswords.password)
+        name === 'validatePassword' &&
+        newPasswords.password &&
+        value !== newPasswords.password
       ) {
-        newError = { isError: true, msg: '비밀번호를 다시 한 번 확인해주세요' };
+        newError = { isError: true, msg: '비밀번호가 일치하지 않습니다' };
+      }
+    }
+
+    // 사업자 번호 길이 체크 (하이픈 제거 후 10자리여야 함)
+    if (name === 'bizno' && value.trim() !== '') {
+      const cleanBizno = value.replace(/-/g, '');
+      if (cleanBizno.length !== 10) {
+        newError = { isError: true, msg: '사업자 번호는 10자리여야 합니다' };
       }
     }
 
@@ -100,6 +118,7 @@ export function SuperAdmin() {
       [name]: newError.isError ? newError : initError,
     }));
 
+    // 이메일 검증 처리
     if (name === 'email') {
       setEmailError(
         emailRegex.test(value)
@@ -130,25 +149,80 @@ export function SuperAdmin() {
   // API 전송 전, 사업자 번호에서 '-' 제거
   const getCleanBizno = (bizno: string) => bizno.replace(/-/g, '');
 
-  const handleSubmit = () => {
-    // form 객체 내 하나라도 비어있는 값이 있으면 알림 표시 후 중단
+  const handleSubmit = async () => {
+    // 모든 필드에 값이 입력되었는지 체크
     if (Object.values(form).some((value) => !value.trim())) {
       alert('모든 항목을 입력해주세요!');
       return;
     }
 
-    const formData = { ...form, bizno: getCleanBizno(form.bizno) };
-    signupApi(formData)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('회원가입 실패'); // 예외를 던져서 .catch()로 보냄
-        }
-        setIsModalOpen(true);
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('실패다');
+    // 이름에 숫자나 특수문자가 포함되어 있는지 체크 (영어, 한글, 공백만 허용)
+    if (/[^a-zA-Z가-힣\s]/.test(form.name.trim())) {
+      showCustomToast({
+        label: '이름에는 숫자나 특수문자를 포함할 수 없습니다',
+        variant: 'error',
+        onClick: () => {},
       });
+      return;
+    }
+
+    // 이메일 유효성 검사
+    if (emailError.isError || !emailRegex.test(form.email)) {
+      showCustomToast({
+        label: '유효한 이메일을 입력하세요',
+        variant: 'error',
+        onClick: () => {},
+      });
+      return;
+    }
+
+    // 비밀번호와 비밀번호 확인 값이 일치하는지 확인
+    if (form.password !== form.validatePassword) {
+      showCustomToast({
+        label: '비밀번호가 일치하지 않습니다',
+        variant: 'error',
+        onClick: () => {},
+      });
+      return;
+    }
+
+    // 사업자 번호 하이픈 제거 후 10자리인지 확인
+    const cleanBizno = getCleanBizno(form.bizno);
+    if (cleanBizno.length !== 10) {
+      showCustomToast({
+        label: '사업자 번호는 하이픈을 제외하고 10자리여야 합니다',
+        variant: 'error',
+        onClick: () => {},
+      });
+      return;
+    }
+
+    const formData = { ...form, bizno: cleanBizno };
+
+    try {
+      const result = await signupApi(formData);
+
+      if (!result) {
+        throw new Error('회원가입 실패');
+      }
+
+      if (result.status === 201) {
+        setIsModalOpen(true);
+      } else {
+        const errorMessage = result?.data.message || '회원가입 실패';
+        showCustomToast({
+          label: errorMessage,
+          variant: 'error',
+          onClick: () => {},
+        });
+      }
+    } catch (error) {
+      showCustomToast({
+        label: '회원가입 중 오류가 발생했습니다',
+        variant: 'error',
+        onClick: () => {},
+      });
+    }
   };
 
   const renderError = (field: string) => {
@@ -225,7 +299,7 @@ export function SuperAdmin() {
   );
 
   return (
-    <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
+    <div className='flex flex-col mt-[20px] gap-[16px]  tb:gap-[36px]'>
       <div className='pr-[10px]'>
         <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
           기업 담당자 회원가입
@@ -271,12 +345,23 @@ export function SuperAdmin() {
 
       <Button
         className='mt-[16px] tb:mt-[40px]'
-        filled='orange'
+        filled={isFormValid ? 'orange' : 'gray'}
         onClick={handleSubmit}
         disabled={!isFormValid}
       >
         시작하기
       </Button>
+      <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
+        <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>
+          이미 계정이 있으신가요?
+        </span>
+        <Link
+          href='/auth/signup'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+        >
+          로그인
+        </Link>
+      </div>
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -299,7 +384,7 @@ export function SuperAdmin() {
             <div className='flex items-center gap-[15px]'>
               <span className=''>회사명: {form.company}</span>
               <div>|</div>
-              <span className=''>직급: {role}</span>
+              <span className=''>직급: {form.role}</span>
             </div>
           </div>
         </div>

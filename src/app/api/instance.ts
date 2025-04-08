@@ -2,7 +2,8 @@ export async function fetchApi(
   url: string,
   options: RequestInit = {},
 ): Promise<any> {
-  const baseUrl = 'http://localhost:4000/api';
+  // 환경변수에서 API_URL을 가져오거나, 기본값을 사용
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const fullUrl = `${baseUrl}${url}`;
 
   try {
@@ -16,12 +17,7 @@ export async function fetchApi(
     });
 
     const data = await res.json();
-
-    if (!res.ok) {
-      console.error('❌ [API 응답 에러]', fullUrl, data);
-      throw new Error(data.message || 'API 요청 실패');
-    }
-
+    console.log('data', data);
     return data;
   } catch (err) {
     console.error('❌ [API 호출 실패]', fullUrl, err);

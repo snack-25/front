@@ -1,7 +1,10 @@
 export interface Order {
   id: string;
   date: string;
-  product: string;
+  items: {
+    name: string;
+    quantity: number;
+  }[];
   price: string;
   requester: string;
   handler: string;

@@ -2,8 +2,7 @@ import { useRouter } from 'next/navigation';
 
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACK_URL || 'http://localhost:4000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function useProductDelete() {
   const router = useRouter();
@@ -12,6 +11,7 @@ export default function useProductDelete() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (!response.ok) {

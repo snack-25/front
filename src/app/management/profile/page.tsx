@@ -1,12 +1,13 @@
 'use client';
 
+import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
-import { useState, useEffect } from 'react';
+import { updatePasswordApi } from '@/app/auth/api';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { useMemo } from 'react';
-import { updatePasswordApi } from '@/app/api/auth/api';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useRouter } from 'next/navigation';
 
 interface IError {
   isError: boolean;
@@ -32,62 +33,53 @@ const initForm = {
   validatePassword: '',
 };
 
+const validatePasswordFunc = (password: string): string => {
+  if (password.length < 8) {
+    throw new Error('비밀번호는 최소 8자 이상이어야 합니다.');
+  }
+  if (password.length > 128) {
+    throw new Error('비밀번호는 최대 128자 이하여야 합니다.');
+  }
+  const PASSWORD_REGEX =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`]).{8,128}$/;
+  if (!PASSWORD_REGEX.test(password)) {
+    throw new Error(
+      '비밀번호는 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.',
+    );
+  }
+  return '사용 가능한 비밀번호입니다.';
+};
+
 const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export default function Profile() {
-  const { isAuth, user, company } = useAuthStore();
+  const router = useRouter();
+  const { isAuth, edit, user, company } = useAuthStore();
 
   const [form, setForm] = useState(initForm);
   const [errors, setErrors] = useState<Record<string, IError>>(initErrors);
-
   const [passwords, setPasswords] = useState<IPasswords>(initForm);
   const [passwordVisibility, setPasswordVisibility] = useState({
     password: false,
     validatePassword: false,
   });
 
-  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, placeholder } = e.target;
-    let newError: IError = initError;
+  // safeCompany: 회사 정보가 null일 경우 대비
+  const safeCompany = useMemo(() => company ?? { companyName: '' }, [company]);
+  // safeUser: 사용자 정보 (읽기 전용)
+  const safeUser = useMemo(
+    () => user ?? { role: '', name: '', email: '' },
+    [user],
+  );
 
-    if (value === '') {
-      const match = placeholder.match(/^(.*?(?:을|를))/);
-      const fieldLabel = match ? match[0] : placeholder;
-      newError = { isError: true, msg: `${fieldLabel} 입력해주세요` };
-    } else if (name === 'password' || name === 'validatePassword') {
-      const newPasswords = { ...passwords, [name]: value };
-      setPasswords(newPasswords);
-      if (
-        (name === 'password' &&
-          newPasswords.validatePassword &&
-          value !== newPasswords.validatePassword) ||
-        (name === 'validatePassword' &&
-          newPasswords.password &&
-          value !== newPasswords.password)
-      ) {
-        newError = { isError: true, msg: '비밀번호를 다시 한 번 확인해주세요' };
-      }
+  // 회사명이 변경되었을 때 기본값 채우기
+  useEffect(() => {
+    if (safeCompany.companyName) {
+      setForm((prev) => ({ ...prev, company: safeCompany.companyName }));
     }
+  }, [safeCompany.companyName]);
 
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: newError,
-    }));
-  };
-
-  // 공통 onChange 핸들러 (사업자 번호는 별도 처리)
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const toggleVisibility = (field: 'password' | 'validatePassword') => {
-    setPasswordVisibility((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
-
+  // 에러 메시지는 아래 함수에서 렌더링 (하단 텍스트)
   const renderError = (field: string) => {
     return (
       errors[field]?.isError && (
@@ -96,50 +88,171 @@ export default function Profile() {
     );
   };
 
+  // 토글: 비밀번호 보이기/숨기기
+  const toggleVisibility = (field: 'password' | 'validatePassword') => {
+    setPasswordVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
+  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, placeholder } = e.target;
+    // 값이 비어 있다면 에러 처리
+    if (value.trim() === '') {
+      const match = placeholder.match(/^(.*?(?:을|를))/);
+      const fieldLabel = match ? match[0] : placeholder;
+      setErrors((prev) => ({
+        ...prev,
+        [name]: {
+          isError: true,
+          msg: `${fieldLabel} 입력해주세요`,
+        },
+      }));
+      return;
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: { isError: false, msg: '' },
+      }));
+    }
+
+    // 비밀번호 관련 업데이트는 passwords 상태에 저장
+    if (name === 'password' || name === 'validatePassword') {
+      setPasswords((prev) => ({ ...prev, [name]: value }));
+      // 두 필드가 모두 입력되어 있으면 일치여부 체크
+      if (
+        passwords.password &&
+        passwords.validatePassword &&
+        passwords.password !== passwords.validatePassword
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          validatePassword: {
+            isError: true,
+            msg: '비밀번호가 일치하지 않습니다',
+          },
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          validatePassword: { isError: false, msg: '' },
+        }));
+      }
+    }
+  };
+
+  // 공통 onChange 핸들러: 비밀번호 입력은 passwords에, 그 외는 form에
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === 'password' || name === 'validatePassword') {
+      setPasswords((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
   const handleSubmit = () => {
-    // 필수 값 검증 (비밀번호가 비어있으면 중단)
-    if (!form.password.trim()) {
-      alert('비밀번호를 입력해주세요!');
+    const companyChanged =
+      form.company.trim() !== safeCompany.companyName.trim();
+    const isPasswordProvided =
+      !!passwords.password || !!passwords.validatePassword;
+    const isPasswordComplete =
+      !!passwords.password && !!passwords.validatePassword;
+
+    // 변경 사항이 없으면
+    if (!companyChanged && !isPasswordProvided) {
+      showCustomToast({
+        label: '변경 사항이 없습니다',
+        variant: 'error',
+        onClick: () => {},
+      });
       return;
     }
 
-    // 보낼 데이터 결정 (기업명 변경 여부 확인)
-    const requestBody: { password: string; company?: string } = {
-      password: form.password, // 비밀번호는 항상 포함
-    };
-
-    if (form.company !== safeCompany.name) {
-      requestBody.company = form.company; // 기업명이 변경된 경우에만 포함
+    // 만약 비밀번호를 업데이트하려는 경우, 두 필드 모두 입력되어야 함.
+    if (isPasswordProvided && !isPasswordComplete) {
+      showCustomToast({
+        label: '비밀번호와 비밀번호 확인을 모두 입력해주세요',
+        variant: 'error',
+        onClick: () => {},
+      });
+      return;
     }
 
-    // 변경할 내용이 없으면 API 요청하지 않음
-    if (!requestBody.company && !requestBody.password) {
-      alert('변경된 사항이 없습니다.');
-      return;
+    // 비밀번호가 입력된 경우, 두 필드가 일치하는지 확인 및 유효성 검사
+    if (isPasswordComplete) {
+      if (passwords.password !== passwords.validatePassword) {
+        showCustomToast({
+          label: '비밀번호가 일치하지 않습니다',
+          variant: 'error',
+          onClick: () => {},
+        });
+        return;
+      }
+      try {
+        validatePasswordFunc(passwords.password);
+      } catch (err: any) {
+        showCustomToast({
+          label: err.message || '비밀번호 조건 오류',
+          variant: 'error',
+          onClick: () => {},
+        });
+        return;
+      }
+    }
+
+    const requestBody: { password?: string; company?: string } = {};
+    // 비밀번호 업데이트가 있을 때만 추가
+    if (isPasswordComplete) {
+      requestBody.password = passwords.password;
+    }
+    // 회사명이 변경되었으면 추가
+    if (companyChanged) {
+      requestBody.company = form.company.trim();
     }
 
     updatePasswordApi(requestBody)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error('비밀번호 변경 실패');
+        if (res.statusCode && res.statusCode !== 200) {
+          throw new Error(res.message || '프로필 변경 실패');
         }
-        console.log('성공res', res);
-        alert('비밀번호 변경 성공!');
+        showCustomToast({
+          label: res.message || '프로필 변경 성공',
+          variant: 'success',
+          onClick: () => {},
+        });
+        // 초기화: 회사명은 safeCompany 값으로, 비밀번호 필드는 빈 값으로.
+        setForm({ ...initForm, company: safeCompany.companyName });
+        setPasswords(initForm);
+        edit(res.data.company.name);
+        router.replace('?');
       })
       .catch((err) => {
-        console.error(err);
-        alert('비밀번호 변경 실패!');
+        showCustomToast({
+          label: err.message || '프로필 변경 실패',
+          variant: 'error',
+          onClick: () => {},
+        });
       });
-
-    console.log('보낸 데이터:', requestBody);
   };
+
+  // 버튼 활성화 조건: 회사명이 변경되었거나, 비밀번호 관련 필드가 모두 채워졌으면 활성화
+  const isCompanyChanged =
+    form.company.trim() !== safeCompany.companyName.trim();
+  const isPasswordProvided =
+    !!passwords.password || !!passwords.validatePassword;
+  const isPasswordComplete =
+    !!passwords.password && !!passwords.validatePassword;
+  const isFormValid =
+    isCompanyChanged || (isPasswordProvided && isPasswordComplete);
 
   const renderInputField = (
     title: string,
     name: string,
     value: string,
     disabled: boolean = false,
-    placeholder?: string, // 선택적 속성으로 변경
+    placeholder?: string,
   ) => (
     <div className='flex flex-col gap-[4px]'>
       <Input
@@ -149,7 +262,7 @@ export default function Profile() {
         onChange={handleChange}
         onBlur={handleBlur}
         disabled={disabled}
-        {...(placeholder ? { placeholder } : {})} // placeholder가 있을 때만 추가
+        {...(placeholder ? { placeholder } : {})}
       />
       {renderError(name)}
     </div>
@@ -190,26 +303,9 @@ export default function Profile() {
     </div>
   );
 
-  // company가 변경될 때만 safeCompany를 다시 계산
-  const safeCompany = useMemo(() => company ?? { name: '' }, [company]);
-  // user가 변경될 때만 safeUser를 다시 계산
-  const safeUser = useMemo(
-    () => user ?? { role: '', name: '', email: '' },
-    [user],
-  );
-
-  // company 값이 바뀌면 form.company도 업데이트하도록 설정
-  useEffect(() => {
-    setForm((prev) => ({ ...prev, company: safeCompany.name }));
-  }, [safeCompany.name]);
-
-  const isFormValid = Object.values(form).every(
-    (value) => (value ?? '').length > 0,
-  );
-
   return (
     <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
-      <div className='flex flex-col gap-[16px] mt-[40px] tb:mt-[80px] tb:gap-[36px]'>
+      <div className='flex flex-col gap-[16px] mt-[20px] tb:gap-[36px]'>
         <div className='pr-[10px]'>
           <h2 className='text-[24px] tb:text-[32px] font-semibold tb:mb-[12px]'>
             내 프로필
@@ -229,23 +325,23 @@ export default function Profile() {
           '비밀번호',
           'password',
           '비밀번호를 입력해주세요',
-          form.password,
+          passwords.password,
           passwordVisibility.password,
         )}
         {renderPasswordField(
           '비밀번호 확인',
           'validatePassword',
           '비밀번호를 다시 한 번 입력해주세요',
-          form.validatePassword,
+          passwords.validatePassword,
           passwordVisibility.validatePassword,
         )}
         <Button
           className='mt-[16px] tb:mt-[40px]'
-          filled='orange'
+          filled={isFormValid ? 'orange' : 'gray'}
           onClick={handleSubmit}
           disabled={!isFormValid}
         >
-          시작하기
+          변경하기
         </Button>
       </div>
     </div>
