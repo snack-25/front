@@ -1,3 +1,4 @@
+import { Category } from '@/components/gnb/TabMenu';
 import { API_BASE_URL } from '@/lib/constants';
 import {
   CartItem,
@@ -5,6 +6,8 @@ import {
   CreateOrderRequestPayload,
   DeleteCartItemsResponse,
   GetCartSummaryResponse,
+  OrderDetailResponse,
+  OrderRequestDetail,
 } from '@/types/cart';
 
 export async function getCartItems(cartId: string): Promise<CartResponse> {
@@ -103,7 +106,7 @@ export async function updateCartItemQuantity(
 
 export async function createOrder(
   items: { productId: string; quantity: number }[],
-): Promise<{ message: string }> {
+): Promise<{ id: string }> {
   const res = await fetch(`${API_BASE_URL}/orders`, {
     method: 'POST',
     headers: {
@@ -118,7 +121,8 @@ export async function createOrder(
     throw new Error(errorData.message || `주문 실패 (HTTP ${res.status})`);
   }
 
-  return res.json();
+  const data = await res.json();
+  return data;
 }
 
 export async function createOrderRequest(data: CreateOrderRequestPayload) {
@@ -153,6 +157,55 @@ export async function getSelectedCartSummary(
 
   if (!res.ok) {
     throw new Error('선택된 상품 요약 정보 조회 실패');
+  }
+
+  return res.json();
+}
+
+export async function getAllCategories(): Promise<Category[]> {
+  const res = await fetch(`${API_BASE_URL}/categories/all`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    throw new Error('카테고리 전체 조회에 실패했습니다.');
+  }
+
+  return res.json();
+}
+
+export async function getOrderRequestDetail(
+  orderRequestId: string,
+): Promise<OrderRequestDetail> {
+  const res = await fetch(`${API_BASE_URL}/order-requests/${orderRequestId}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    throw new Error('주문 요청 상세 정보를 불러오는 데 실패했습니다.');
+  }
+
+  const data = res.json();
+  return data;
+}
+
+interface GetOrderDetailResponse {
+  order: OrderDetailResponse;
+  totalItems: number;
+}
+
+export async function getOrderDetail(
+  orderId: string,
+): Promise<OrderDetailResponse> {
+  const res = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    throw new Error('주문 상세 정보를 불러오는 데 실패했습니다.');
   }
 
   return res.json();
