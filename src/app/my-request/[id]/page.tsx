@@ -13,7 +13,6 @@ interface OrderItem {
   category: string;
   price: number;
   quantity: number;
-  prodcutId: string;
   productId: string;
 }
 
@@ -108,7 +107,7 @@ const OrderDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      const cartId = (store.user as any)?.user?.cartId;
+      const cartId = user?.cartId;
   
       if (!cartId) {
         alert('장바구니 정보가 없습니다.');
