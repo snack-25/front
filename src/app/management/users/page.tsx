@@ -19,8 +19,8 @@ type User = {
 
 const mockUsers = [
   { id: 1, name: '김스낵', email: 'snack1@codeit.com', role: 'admin' },
-  { id: 2, name: '박초코', email: 'choco@codeit.com', role: 'basicUser' },
-  { id: 3, name: '이감자', email: 'potato@codeit.com', role: 'basicUser' },
+  { id: 2, name: '박초코', email: 'choco@codeit.com', role: 'user' },
+  { id: 3, name: '이감자', email: 'potato@codeit.com', role: 'user' },
   { id: 4, name: '최관리자', email: 'super@codeit.com', role: 'admin' },
 ];
 
@@ -29,7 +29,7 @@ const getProfileImage = (role: string) =>
     ? '/icon/flat/profile-admin-md.svg'
     : '/icon/flat/profile-md.svg';
 
-const RoleChip = ({ role }: { role: 'admin' | 'basicUser' }) => {
+const RoleChip = ({ role }: { role: 'admin' | 'user' }) => {
   const isAdmin = role === 'admin';
   return (
     <span
@@ -181,7 +181,7 @@ export default function UserManagementPage() {
                   {/* 오른쪽 그룹 */}
                   <div className='w-[480px] flex gap-0 ml-auto'>
                     <div className='w-[120px] flex justify-center items-center'>
-                      <RoleChip role={user.role as 'admin' | 'basicUser'} />
+                      <RoleChip role={user.role as 'admin' | 'user'} />
                     </div>
                     <div className='w-[360px] flex justify-center items-center gap-2'>
                       <Button className='bg-gray-200 text-gray-600 rounded-md px-3 py-1 text-sm cursor-pointer' onClick={() => setIsUnsubscribeModalOpen(true)}>
