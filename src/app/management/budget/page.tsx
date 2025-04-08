@@ -22,29 +22,21 @@ export default function Budget() {
     year: new Date().getFullYear(), // 현재 연도로 기본값 설정
     month: new Date().getMonth() + 1, // 현재 월로 기본값 설정
   });
-
+  const [errors, setErrors] = useState({
+    currentAmount: '',
+    initialAmount: '',
+  });
   const [load, setLoad] = useState(false);
   const router = useRouter();
 
-  // 로딩 상태 설정
-  useEffect(() => {
-    setLoad(true);
-  }, []);
-
   // 서버에서 예산 정보를 받아와 form 상태 업데이트 (초기 로딩)
   useEffect(() => {
-    console.log('company', company);
-    console.log('user', user);
-    // console.log('dlrj', user.data.campany);
-    if (!load) {
+    if (!company || !company.companyId) {
+      console.log('회사 정보가 아직 없습니다');
       return;
     }
 
     const fetchBudgetInfo = async () => {
-      if (!company || !company.companyId) {
-        console.error('회사 ID가 없습니다.');
-        return;
-      }
       try {
         const response = await getBudgetApi({ companyId: company.companyId });
 
@@ -52,7 +44,7 @@ export default function Budget() {
           const { currentAmount, initialAmount, year, month } = response.data;
 
           if (!year || !month) {
-            console.error('올바른 연도와 월이 없습니다.', response);
+            console.error('올바른 연도와 월이 없습니다', response);
             return;
           }
 
@@ -71,14 +63,13 @@ export default function Budget() {
             month,
           });
         }
-        // console.log('response', response);
       } catch (error) {
         console.error('예산 정보 조회 실패', error);
       }
     };
 
     fetchBudgetInfo();
-  }, [company, load]);
+  }, [company?.companyId]);
 
   // 로그인/권한 체크
   useEffect(() => {
@@ -93,12 +84,22 @@ export default function Budget() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const rawValue = value.replace(/,/g, '');
-    if (!/^\d*$/.test(rawValue)) {
+
+    if (!/^\d*$/.test(rawValue)) return;
+
+    const numericValue = Number(rawValue);
+    if (numericValue > 500000000) {
+      showCustomToast({
+        label: '금액은 5억을 초과할 수 없습니다',
+        variant: 'error',
+      });
       return;
     }
-    const formattedValue = rawValue
-      ? Number(rawValue).toLocaleString('en-US')
+
+    const formattedValue = numericValue
+      ? numericValue.toLocaleString('en-US')
       : '';
+
     setForm((prev) => ({
       ...prev,
       [name]: {
@@ -109,6 +110,11 @@ export default function Budget() {
           (prev[name as 'currentAmount' | 'initialAmount'] as AmountField)
             .default,
       },
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: '',
     }));
   };
 
@@ -137,7 +143,7 @@ export default function Budget() {
     }
 
     if (!form.currentAmount.modified && !form.initialAmount.modified) {
-      showCustomToast({ label: '기존 예산과 동일합니다.', variant: 'error' });
+      showCustomToast({ label: '기존 예산과 동일합니다', variant: 'error' });
       return;
     }
 
@@ -150,9 +156,9 @@ export default function Budget() {
         month: form.month,
       };
 
-      console.log('전송할 데이터:', sendData);
-
       await updateBudgetApi(sendData);
+
+      showCustomToast({ label: '예산이 변경되었습니다', variant: 'success' });
 
       setForm((prev) => ({
         ...prev,
@@ -167,10 +173,7 @@ export default function Budget() {
           modified: false,
         },
       }));
-
-      showCustomToast({ label: '예산이 변경되었습니다.', variant: 'success' });
     } catch (error) {
-      console.error('예산 변경 실패한거야 이거:', error);
       const errorMessage = (error as any).message || '예산 변경 실패';
       showCustomToast({ label: errorMessage, variant: 'error' });
     }

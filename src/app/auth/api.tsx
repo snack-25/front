@@ -94,8 +94,6 @@ export async function invitationSignupApi(params: {
   password: string;
 }) {
   const { password, token } = params;
-  console.log('params', params);
-  console.log('token', token);
   try {
     const res = await fetch(
       process.env.NEXT_PUBLIC_API_URL + `/auth/signup/invite/${token}`,
@@ -143,14 +141,14 @@ export async function updateBudgetApi(body: budgetProps) {
       },
     );
     const data = await res.json();
-    console.log('예산변경 ', data);
     if (!res.ok) {
-      return { status: res.status, message: data.message || '예산 변경 실패' };
+      throw new Error(data.message || '예산 변경 실패');
     }
+
     return data;
   } catch (err) {
     console.error('에러 객체', err);
-    return { status: 500, message: '서버 오류 발생' };
+    throw err;
   }
 }
 

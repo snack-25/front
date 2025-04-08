@@ -65,7 +65,6 @@ export default function Login() {
     }
 
     const result = await login(form);
-    console.log('result', result);
 
     if (result.status === 200) {
       showCustomToast({
