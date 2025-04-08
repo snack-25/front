@@ -25,7 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='ko'>
-      <body className={`${pretendard.variable} antialiased bg-background-400`}>
+      <body
+        className={`${pretendard.variable} antialiased bg-background-400 w-full`}
+      >
         <Header />
         {children}
         <Toaster
