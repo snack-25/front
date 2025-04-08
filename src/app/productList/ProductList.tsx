@@ -1,6 +1,6 @@
 'use client';
 import { notFound, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -47,6 +47,7 @@ export default function ProductList() {
   const searchParams = useSearchParams();
   const { fetchProducts } = useFetchProducts();
   const { subName } = useCategory(); // 카테고리 한글값 가져오기
+  const scrollRef = useRef<number>(0);
 
   const categoryId = searchParams.get('categoryId');
   const sort: Tsort = searchParams.get('sort') as Tsort;
@@ -110,12 +111,22 @@ export default function ProductList() {
 
         const { items, hasNextPage, hasPrevPage } = data;
 
+        if (scrollRef.current) {
+          window.scrollTo({ top: scrollRef.current });
+        }
+
         setProducts((prev) => {
-          if (page === 1) {
+          if (page === 1 || !prev) {
             return { items, hasNextPage, hasPrevPage };
           }
+
+          const prevIds = new Set(prev.items.map((item) => item.id));
+          const filteredItems = items.filter(
+            (item: { id: string }) => !prevIds.has(item.id),
+          );
+
           return {
-            items: prev ? [...prev.items, ...data.items] : items,
+            items: [...prev.items, ...filteredItems],
             hasNextPage,
             hasPrevPage,
           };
@@ -130,6 +141,8 @@ export default function ProductList() {
   }, [page, categoryId, sort, fetchProducts]);
 
   const handleMoreButton = () => {
+    scrollRef.current = window.scrollY;
+
     const newParams = new URLSearchParams(searchParams.toString());
     const newPage = String(page + 1);
     newParams.set('page', newPage);
