@@ -1,6 +1,7 @@
 // src/app/api/users/api.ts
 
 import { fetchApi } from '@/app/api/instance';
+import { PaginatedUserResponse } from '@/types/user';
 
 interface InviteUserParams {
   name: string;
@@ -17,4 +18,35 @@ export async function inviteUserApi(data: InviteUserParams) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+}
+
+// 회원 목록 조회 API 호출 함수
+export async function getUserListApi({
+  page = 1,
+  limit = 10,
+  search,
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}): Promise<PaginatedUserResponse> {
+  const queryParams = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+
+  if (search) {
+    queryParams.append('search', search);
+  }
+
+  const url = `/users?${queryParams.toString()}`;
+
+  try {
+    const response = await fetchApi(url, { method: 'GET' });
+
+    return response as PaginatedUserResponse;
+  } catch (error) {
+    console.error('❌ 회원 목록 조회 실패:', error);
+    throw new Error('회원 목록 조회 실패');
+  }
 }
