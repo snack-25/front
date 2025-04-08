@@ -71,17 +71,19 @@ export default function OrderRequestCompletePage() {
       <p className='text-[24px] font-bold text-[#1F1F1F] mb-4 mt-[70px] mr-[500px]'>
         상품정보
       </p>
-      <div className='w-full max-w-xl bg-[#FBF8F4] border-t border-b border-[#F1ECE7] rounded-[16px] px-6 py-6 mb-6'>
+      <div className='w-full max-w-xl bg-[#FBF8F4] border-y-2 border-[#E6E6E6] rounded-[16px] px-6 py-6 mb-6'>
         {data.items.length > 0 && (
           <div className='flex flex-col gap-4'>
             <div className='w-[500px] flex items-center gap-4'>
-              <Image
-                src={firstItem.imageUrl || '/img/card/item-coke-zero.png'}
-                alt='상품 이미지'
-                width={60}
-                height={60}
-                className='rounded-md border'
-              />
+              <div className='w-[120px] h-[120px] flex justify-center items-center border border-[#E6E6E6] rounded-[16px]'>
+                <Image
+                  src={firstItem.imageUrl || '/img/card/item-coke-zero.png'}
+                  alt='상품 이미지'
+                  width={47}
+                  height={81}
+                  className='rounded-md border'
+                />
+              </div>
               <div className='ml-3'>
                 <p className='text-sm font-medium text-[#1F1F1F]'>
                   {data.items.length > 1
@@ -106,12 +108,12 @@ export default function OrderRequestCompletePage() {
         )}
       </div>
 
-      <div className='w-full max-w-xl bg-[#FBF8F4] border-t border-b border-[#F1ECE7] rounded-[16px] p-6 mb-6'>
+      <div className='w-full max-w-xl bg-[#FBF8F4] border-t border-y-2 border-[#E6E6E6] rounded-[16px] p-6 mb-6'>
         <p className='text-sm font-semibold text-[#1F1F1F] mb-2'>요청 메시지</p>
         <textarea
           readOnly
           value={firstItem?.requestMessage || '요청 메시지가 없습니다.'}
-          className='w-full h-[100px] p-3 rounded-[16px] border border-[#F1ECE7] text-[#999999] text-[18px] leading-[26px] font-normal resize-none bg-[#FBF8F4]'
+          className='w-full h-[100px] p-3 rounded-[16px] border-2 border-[#F1ECE7] text-[#999999] text-[18px] leading-[26px] font-normal resize-none bg-[#FBF8F4]'
         />
       </div>
 
