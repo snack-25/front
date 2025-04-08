@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-import { useAuthStore } from '@/app/auth/useAuthStore';
 import { inviteUserApi } from '@/app/api/users/api';
-import ManagementTabMenu from '@/components/gnb/ManagementTabMenu';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
+import Modal from '@/components/ui/modal/Modal';
 
 const mockUsers = [
   { id: 1, name: '김스낵', email: 'snack1@codeit.com', role: 'admin' },
@@ -39,13 +39,49 @@ const RoleChip = ({ role }: { role: 'admin' | 'basicUser' }) => {
 
 export default function UserManagementPage() {
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+  const [isUnsubscribeModalOpen, setIsUnsubscribeModalOpen] = useState(false);
   const { user, company } = useAuthStore();
+
+  // 실제 최고관리자의 companyId 가지고 온다.
+  // 그 이후 companyId에 속한 모든 사용자 정보를 가지고 온다.
+  // 그 이후 사용자 정보를 테이블에 렌더링한다.
+  console.log('company', company);
+  console.log('user', user);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    if (!company || !company.companyId) {
+      console.error('회사 ID가 없습니다.');
+      return;
+    }
+
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/users/of-company', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          // body: JSON.stringify(body),
+          credentials: 'include',
+        });
+        console.log('res', res);
+        // setUsers(res.data);
+      } catch (error) {
+        console.error('사용자 목록 가져오기 실패:', error);
+        alert('사용자 목록을 가져오는데 실패했습니다.');
+      }
+    };
+
+    fetchUsers();
+  }, [company]);
+
+  console.log('users', users);
+
 
   return (
     <div className='bg-[#FFFBF6] min-h-screen'>
       <div className='px-[120px] pt-4 max-lt:px-6'>
         {/* 테이블 너비 기준에 맞춰 제목 & 버튼 정렬 */}
-        <div className='w-[1680px] mx-auto'>
+        <div className='w-full max-w-[1680px] mx-auto'>
           {/* 제목 */}
           <h1 className='text-[24px] font-bold text-[#1F1F1F] mt-2 mb-6'>
             회원 관리
@@ -67,7 +103,7 @@ export default function UserManagementPage() {
               />
             </div>
             <Button
-              className='bg-primary-400 text-white font-semibold px-6 py-3 rounded-xl'
+              className='bg-primary-400 text-white font-semibold px-6 py-3 rounded-xl cursor-pointer'
               onClick={() => setInviteModalOpen(true)}
             >
               회원 초대하기
@@ -142,10 +178,10 @@ export default function UserManagementPage() {
                       <RoleChip role={user.role as 'admin' | 'basicUser'} />
                     </div>
                     <div className='w-[360px] flex justify-center items-center gap-2'>
-                      <Button className='bg-gray-200 text-gray-600 rounded-md px-3 py-1 text-sm'>
+                      <Button className='bg-gray-200 text-gray-600 rounded-md px-3 py-1 text-sm cursor-pointer' onClick={() => setIsUnsubscribeModalOpen(true)}>
                         계정 탈퇴
                       </Button>
-                      <Button className='bg-primary-400 text-white rounded-md px-3 py-1 text-sm'>
+                      <Button className='bg-primary-400 text-white rounded-md px-3 py-1 text-sm cursor-pointer'>
                         권한 변경
                       </Button>
                     </div>
@@ -190,8 +226,14 @@ export default function UserManagementPage() {
               return;
             }
 
-            if (!user.companyId) {
-              console.error('❌ user.companyId가 존재하지 않습니다.', user);
+            if (!company) {
+              console.error('❌ company가 존재하지 않습니다.', company);
+              alert('소속된 회사 정보가 없습니다.');
+              return;
+            }
+
+            if (!company.companyId) {
+              console.error('❌ company.companyId가 존재하지 않습니다.', company.companyId);
               alert('소속된 회사 정보가 없습니다.');
               return;
             }
@@ -200,7 +242,7 @@ export default function UserManagementPage() {
               name: data.name,
               email: data.email,
               role: data.role,
-              companyId: user.companyId,
+              companyId: company.companyId,
               inviterId: String(user.id),
             });
 
@@ -208,7 +250,7 @@ export default function UserManagementPage() {
               name: data.name,
               email: data.email,
               role: data.role,
-              companyId: user.companyId,
+              companyId: company.companyId,
               inviterId: String(user.id),
             });
             console.log('✅ 초대 완료:', response);
@@ -220,6 +262,17 @@ export default function UserManagementPage() {
             setInviteModalOpen(false);
           }
         }}
+      />
+
+      <Modal
+        open={isUnsubscribeModalOpen}
+        onClose={() => setIsUnsubscribeModalOpen(false)}
+        title='계정 탈퇴'
+        description={`${user?.name}님의 계정을 탈퇴시킬까요?`}
+        confirmText='탈퇴시키기'
+        cancelText='더 생각해볼게요'
+        imageSrc='/img/modal/important-md.svg'
+        onConfirm={() => setIsUnsubscribeModalOpen(false)}
       />
     </div>
   );
