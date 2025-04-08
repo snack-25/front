@@ -108,7 +108,7 @@ const OrderDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      const cartId = (store.user as any)?.user?.cartId;
+      const cartId = user?.cartId;
   
       if (!cartId) {
         alert('장바구니 정보가 없습니다.');
