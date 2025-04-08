@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { CartSummaryProps } from '@/types/cart';
 import { useAuthStore } from '@/app/auth/useAuthStore';
+import { Button } from '../ui/Button';
 
 export default function CartSummary({
   cartData,
@@ -69,18 +70,25 @@ export default function CartSummary({
       </div>
 
       <div>
-        <button
-          className='w-full bg-orange-500 text-white py-3 rounded-lg font-bold mb-2 cursor-pointer'
-          onClick={onOrder}
-        >
-          {user?.role === 'USER' ? '구매 요청' : '구매하기'}
-        </button>
-        <button
-          onClick={handleContinueShopping}
-          className='w-full border border-orange-500 text-orange-500 py-3 rounded-lg font-bold cursor-pointer'
-        >
-          계속 쇼핑하기
-        </button>
+        <div>
+          <Button
+            filled='orange'
+            width='100%'
+            onClick={onOrder}
+            className='mb-2 cursor-pointer'
+          >
+            {user?.role === 'USER' ? '구매 요청' : '구매하기'}
+          </Button>
+
+          <Button
+            outlined='orange'
+            width='100%'
+            onClick={handleContinueShopping}
+            className='cursor-pointer'
+          >
+            계속 쇼핑하기
+          </Button>
+        </div>
       </div>
     </div>
   );
