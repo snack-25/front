@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
+import { useAuthStore } from '@/app/auth/useAuthStore';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface OrderItem {
   id: string;
@@ -11,6 +13,8 @@ interface OrderItem {
   category: string;
   price: number;
   quantity: number;
+  prodcutId: string;
+  productId: string;
 }
 
 interface OrderDetail {
@@ -44,6 +48,12 @@ const OrderDetailPage = () => {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<OrderDetail | null>(null);
+  const { user } = useAuthStore(); // zustand에서 user 정보 가져옴
+  const store = useAuthStore();
+  console.log("✅ useAuthStore 전체 상태:", store);
+  console.log("✅ store.user:", store.user);
+  console.log("✅ store.user?.cartId:", store.user?.cartId);
+
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -66,7 +76,7 @@ const OrderDetailPage = () => {
           totalAmount: data.totalAmount,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
-                id: item.product?.id ?? '',
+                id: item.productId ?? '',
                 name: item.productName ?? '상품 없음',
                 imageUrl: item.imageUrl ?? '/images/default.png',
                 category: item.categoryName ?? '',
@@ -98,36 +108,46 @@ const OrderDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const cartId = user.cartId;
+      const cartId = (store.user as any)?.user?.cartId;
   
       if (!cartId) {
         alert('장바구니 정보가 없습니다.');
         return;
       }
   
-      const itemsToAdd = order?.items.map(item => ({
-        productId: item.id,
-        quantity: item.quantity,
-      })) || [];
+      for (const [i, item] of order.items.entries()) {
+        const rawQty = Number(item.quantity);
+        const quantity = Number.isFinite(rawQty) && rawQty > 0 ? rawQty : 1;
   
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/items`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items: itemsToAdd }),
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/items`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productId: item.id, // ✅ 여기가 핵심!
+            quantity,
+          }),
+        });
+  
+        if (!res.ok) throw new Error(`상품 ${item.name} 장바구니 추가 실패`);
+        console.log(`✅ [${i}] ${item.name} 장바구니 담기 성공`);
+      }
+  
+      showCustomToast({
+        label: '🛒 모든 상품을 장바구니에 담았습니다!',
+        variant: 'success',
       });
-  
-      if (!res.ok) throw new Error('장바구니 추가 실패');
-  
-      alert('장바구니에 담았습니다!');
     } catch (err) {
       console.error('장바구니 추가 에러:', err);
-      alert('장바구니 추가에 실패했습니다.');
+      showCustomToast({
+        label: '❌ 장바구니 담기 실패',
+        variant: 'error',
+      });
     }
   };
+  
 
   const totalItemCost = order.items.reduce(
   (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
