@@ -48,8 +48,6 @@ export default function Budget() {
       try {
         const response = await getBudgetApi({ companyId: company.companyId });
 
-        console.log('response', response);
-
         if (response) {
           const { currentAmount, initialAmount, year, month } = response.data;
 
@@ -73,7 +71,7 @@ export default function Budget() {
             month,
           });
         }
-        console.log('response', response);
+        // console.log('response', response);
       } catch (error) {
         console.error('예산 정보 조회 실패', error);
       }
@@ -170,9 +168,11 @@ export default function Budget() {
         },
       }));
 
-      showCustomToast({ label: '예산이 변경되었습니다.' });
+      showCustomToast({ label: '예산이 변경되었습니다.', variant: 'success' });
     } catch (error) {
-      console.error('Submit failed:', error);
+      console.error('예산 변경 실패한거야 이거:', error);
+      const errorMessage = (error as any).message || '예산 변경 실패';
+      showCustomToast({ label: errorMessage, variant: 'error' });
     }
   };
 

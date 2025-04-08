@@ -143,15 +143,20 @@ export async function updateBudgetApi(body: budgetProps) {
       },
     );
     const data = await res.json();
+    console.log('예산변경 ', data);
+    if (!res.ok) {
+      return { status: res.status, message: data.message || '예산 변경 실패' };
+    }
     return data;
   } catch (err) {
-    return { msg: '예산 변경이 실패하였습니다' };
+    console.error('에러 객체', err);
+    return { status: 500, message: '서버 오류 발생' };
   }
 }
 
 export async function updatePasswordApi(body: {
   company?: string;
-  password: string;
+  password?: string;
 }) {
   try {
     const res = await fetch(
