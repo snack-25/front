@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import React from 'react';
 
 interface OrderItem {
   id: string;
@@ -24,6 +24,9 @@ interface Order {
 interface Props {
   orders: Order[];
   onCancel: (id: string) => void;
+  sortOption: string;
+  setSortOption: React.Dispatch<React.SetStateAction<string>>;
+  setCancelTarget: React.Dispatch<React.SetStateAction<Order | null>>;
 }
 
 const headers = ['구매요청일', '상품정보', '주문 금액', '상태', '비고'];
@@ -41,7 +44,13 @@ const getStatusInfo = (status: string) => {
   }
 };
 
-const MyRequestTable = ({ orders, onCancel }: Props) => {
+const MyRequestTable = ({
+  orders,
+  onCancel,
+  sortOption,
+  setSortOption,
+  setCancelTarget,
+}: Props) => {
   const router = useRouter();
 
   return (
@@ -87,7 +96,10 @@ const MyRequestTable = ({ orders, onCancel }: Props) => {
               >
                 {order.status === 'PENDING' && (
                   <button
-                    onClick={() => onCancel(order.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCancelTarget(order);
+                    }}
                     className='bg-none text-orange-400 font-bold border-2 border-orange-400 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
                   >
                     요청 취소
