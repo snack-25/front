@@ -10,6 +10,13 @@ import { Input } from '@/components/ui/Input';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import Modal from '@/components/ui/modal/Modal';
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};
+
 const mockUsers = [
   { id: 1, name: '김스낵', email: 'snack1@codeit.com', role: 'admin' },
   { id: 2, name: '박초코', email: 'choco@codeit.com', role: 'basicUser' },
@@ -45,9 +52,9 @@ export default function UserManagementPage() {
   // 실제 최고관리자의 companyId 가지고 온다.
   // 그 이후 companyId에 속한 모든 사용자 정보를 가지고 온다.
   // 그 이후 사용자 정보를 테이블에 렌더링한다.
-  console.log('company', company);
-  console.log('user', user);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
+  // 계정 권한 변경/탈퇴 모달에서 선택한 사용자 id
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!company || !company.companyId) {
@@ -60,11 +67,13 @@ export default function UserManagementPage() {
         const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/users/of-company', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
-          // body: JSON.stringify(body),
           credentials: 'include',
         });
-        console.log('res', res);
-        // setUsers(res.data);
+        if (!res.ok) {
+          throw new Error('사용자 목록 가져오기 실패');
+        }
+        const data = await res.json();
+        setUsers(data);
       } catch (error) {
         console.error('사용자 목록 가져오기 실패:', error);
         alert('사용자 목록을 가져오는데 실패했습니다.');
@@ -73,9 +82,6 @@ export default function UserManagementPage() {
 
     fetchUsers();
   }, [company]);
-
-  console.log('users', users);
-
 
   return (
     <div className='bg-[#FFFBF6] min-h-screen'>
@@ -272,7 +278,23 @@ export default function UserManagementPage() {
         confirmText='탈퇴시키기'
         cancelText='더 생각해볼게요'
         imageSrc='/img/modal/important-md.svg'
-        onConfirm={() => setIsUnsubscribeModalOpen(false)}
+        onConfirm={async () => {
+          try {
+            // 선택된 사용자 ID가 필요합니다 - 현재 구현에서는 이 정보가 없습니다
+            // const selectedUserId = ...;
+            // 실제 탈퇴 API 호출
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${selectedUserId}`, {
+              method: 'DELETE',
+              credentials: 'include',
+            });
+            alert('계정이 성공적으로 탈퇴되었습니다.');
+          } catch (error) {
+            console.error('계정 탈퇴 실패:', error);
+            alert('계정 탈퇴에 실패했습니다.');
+          } finally {
+            setIsUnsubscribeModalOpen(false);
+          }
+        }}
       />
     </div>
   );
