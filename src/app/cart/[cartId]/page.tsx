@@ -174,30 +174,34 @@ export default function CartsPage() {
     return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
 
   return (
-    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px] mt-auto'>
+    <div className='min-h-screen bg-[#FBF8F4] px-4 lg:px-[120px] pt-[40px] pb-[80px] mt-auto'>
       <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
-      <div className='flex gap-6'>
-        <div className='w-[1254px] h-[850px] bg-[#FBF8F4] border border-[#FFFDF9] flex flex-col'>
-          <div className='flex w-full h-[80px] border-b border-[#C4C4C4] items-center px-6 font-semibold text-sm bg-[#FFFDF9]'>
+
+      <div className='w-full flex flex-col lg:flex-row gap-6 lg:min-w-[1254px]'>
+        <div className='w-full lg:w-[1254px] bg-[#FBF8F4] border border-[#FFFDF9] flex flex-col'>
+          <div className='flex w-full h-[80px] border-b border-[#C4C4C4] items-center px-4 lg:px-6 font-semibold text-sm bg-[#FFFDF9]'>
             <input
               type='checkbox'
-              className='mr-4'
+              className='mr-2 lg:mr-4'
               checked={selectAll}
               onChange={handleSelectAll}
             />
-            <div className='flex flex-row justify-between'>
-              <div className='w-[594px] text-center'>상품정보</div>
-              <div className='flex flex-row'>
-                <div className='w-[200px] text-center'>수량</div>
-                <div className='w-[200px] text-center'>주문 금액</div>
-                <div className='w-[200px] text-center'>배송 정보</div>
+
+            <span className='lg:hidden text-sm text-[#1F1F1F]'>전체선택</span>
+
+            <div className='hidden lg:flex flex-row justify-between w-full text-center'>
+              <div className='w-[594px]'>상품정보</div>
+              <div className='flex flex-row justify-between flex-1'>
+                <div className='w-[200px]'>수량</div>
+                <div className='w-[200px]'>주문 금액</div>
+                <div className='w-[200px]'>배송 정보</div>
               </div>
             </div>
           </div>
 
-          <div className='h-[720px] overflow-y-auto'>
+          <div className='max-h-[720px] overflow-y-auto'>
             {cartData.items.map((item) => (
               <CartItem
                 key={item.id}
@@ -219,16 +223,16 @@ export default function CartsPage() {
             ))}
           </div>
 
-          <div className='flex justify-between px-6 py-4 bg-[#F9F6F1] text-sm text-gray-600 border-t'>
-            <div className='w-[310px] flex justify-between'>
+          <div className='flex justify-between px-4 lg:px-6 py-4 bg-[#F9F6F1] text-sm text-gray-600 border-t'>
+            <div className='w-full lg:w-[310px] flex justify-between gap-2'>
               <button
-                className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
+                className='w-1/2 h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F]'
                 onClick={handleDeleteAll}
               >
                 전체 상품 삭제
               </button>
               <button
-                className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
+                className='w-1/2 h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F]'
                 onClick={handleDelete}
               >
                 선택 상품 삭제
