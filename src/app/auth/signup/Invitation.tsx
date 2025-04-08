@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input_auth';
 import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
 import Image from 'next/image';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface InvitedUser {
   email: string;
@@ -86,7 +87,10 @@ export function InvitationUser() {
 
   const handleSubmit = () => {
     if (Object.values(form).some((value) => !value.trim())) {
-      alert('모든 항목을 입력해주세요!');
+      showCustomToast({
+        label: '모든 항목을 입력해주세요',
+        variant: 'error',
+      });
       return;
     }
 

@@ -32,7 +32,7 @@ export default function Budget() {
   // 서버에서 예산 정보를 받아와 form 상태 업데이트 (초기 로딩)
   useEffect(() => {
     if (!company || !company.companyId) {
-      console.log('회사 정보가 아직 없습니다.');
+      console.log('회사 정보가 아직 없습니다');
       return;
     }
 
@@ -44,7 +44,7 @@ export default function Budget() {
           const { currentAmount, initialAmount, year, month } = response.data;
 
           if (!year || !month) {
-            console.error('올바른 연도와 월이 없습니다.', response);
+            console.error('올바른 연도와 월이 없습니다', response);
             return;
           }
 
@@ -90,7 +90,7 @@ export default function Budget() {
     const numericValue = Number(rawValue);
     if (numericValue > 500000000) {
       showCustomToast({
-        label: '금액은 5억을 초과할 수 없습니다.',
+        label: '금액은 5억을 초과할 수 없습니다',
         variant: 'error',
       });
       return;
@@ -143,7 +143,7 @@ export default function Budget() {
     }
 
     if (!form.currentAmount.modified && !form.initialAmount.modified) {
-      showCustomToast({ label: '기존 예산과 동일합니다.', variant: 'error' });
+      showCustomToast({ label: '기존 예산과 동일합니다', variant: 'error' });
       return;
     }
 
@@ -158,7 +158,7 @@ export default function Budget() {
 
       await updateBudgetApi(sendData);
 
-      showCustomToast({ label: '예산이 변경되었습니다.', variant: 'success' });
+      showCustomToast({ label: '예산이 변경되었습니다', variant: 'success' });
 
       setForm((prev) => ({
         ...prev,
@@ -174,7 +174,6 @@ export default function Budget() {
         },
       }));
     } catch (error) {
-      console.error('예산 변경 실패한거야 이거:', error);
       const errorMessage = (error as any).message || '예산 변경 실패';
       showCustomToast({ label: errorMessage, variant: 'error' });
     }
