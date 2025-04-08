@@ -4,12 +4,13 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import NumberInput from '@/components/ui/NumberInput';
 import { useDebounce } from '@/hooks/cart/useDebounce';
-import { createOrder, updateCartItemQuantity } from '@/lib/api/cart';
-import { useParams, useRouter } from 'next/navigation';
+import { updateCartItemQuantity } from '@/lib/api/cart';
+import { useParams } from 'next/navigation';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '../ui/modal/OrderRequestModal';
 import { CartItemProps } from '@/types/cart';
 import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
+import { useOrder } from '@/hooks/order/useOrder';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function CartItem({
@@ -32,8 +33,8 @@ export default function CartItem({
   const debouncedQuantity = useDebounce(localQuantity, 800);
   const { cartId } = useParams() as { cartId: string };
   const { user } = useAuthStore();
-  const router = useRouter();
   const { submitOrderRequest } = useOrderRequest();
+  const { submitOrder } = useOrder();
 
   const handleInstantBuy = async () => {
     if (user?.role === 'USER') {
@@ -41,27 +42,15 @@ export default function CartItem({
       return;
     }
 
-    try {
-      await createOrder([
-        {
-          productId: productId,
-          quantity: localQuantity,
-        },
-      ]);
+    const success = await submitOrder([
+      {
+        productId,
+        quantity: localQuantity,
+      },
+    ]);
 
-      showCustomToast({
-        label: '주문이 완료되었습니다!',
-        variant: 'success',
-      });
-
-      router.push('/history');
-    } catch (error) {
-      console.error('주문 실패:', error);
-
-      showCustomToast({
-        label: '주문에 실패했습니다.',
-        variant: 'error',
-      });
+    if (success) {
+      setShowModal(false);
     }
   };
 
@@ -69,19 +58,16 @@ export default function CartItem({
     if (debouncedQuantity !== quantity) {
       updateCartItemQuantity(cartId, id, debouncedQuantity)
         .then(() => {
-          if (onQuantityChange) {
-            onQuantityChange();
-          }
+          onQuantityChange?.();
         })
         .catch((err) => {
-          console.error('PATCH 실패:', err);
           showCustomToast({
             label: '수량 변경에 실패했습니다.',
             variant: 'error',
           });
         });
     }
-  }, [debouncedQuantity, cartId, id, quantity, onQuantityChange]);
+  }, [debouncedQuantity]);
 
   return (
     <div className='flex justify-between w-[1250px] h-[208px] items-center border-b border-[#C4C4C4] px-6 bg-[#FFFDF9]'>
