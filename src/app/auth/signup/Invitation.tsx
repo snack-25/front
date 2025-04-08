@@ -109,7 +109,6 @@ export function InvitationUser() {
         console.error(err);
         alert('실패다');
       });
-    console.log('invitedUser', invitedUser);
   };
 
   useEffect(() => {

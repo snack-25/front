@@ -47,10 +47,6 @@ const errorFont = 'text-[#F63B20] tb:text-[14px] font-[500] mt-[2px]';
 
 export function SuperAdmin() {
   const router = useRouter();
-  const { user } = useAuthStore();
-  console.log('use', user);
-  console.log('use', user?.role);
-
   const [form, setForm] = useState(initForm);
   const [emailError, setEmailError] = useState<IError>(initError);
   const [passwords, setPasswords] = useState<IPasswords>(initForm);
@@ -205,12 +201,10 @@ export function SuperAdmin() {
 
     try {
       const result = await signupApi(formData);
-      console.log('회원가입 페이지 result', result);
 
       if (!result) {
         throw new Error('회원가입 실패');
       }
-      console.log('statecode', result.status);
 
       if (result.status === 201) {
         setIsModalOpen(true);
