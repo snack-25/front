@@ -137,7 +137,7 @@ export default function CartItem({
           {(price * localQuantity).toLocaleString()}원
         </div>
         <button
-          className='mt-2 bg-orange-400 text-white px-4 py-1 rounded cursor-pointer'
+          className='mt-2 bg-[#F97B22] text-white hover:bg-orange-500 px-4 py-1 rounded cursor-pointer font-semibold text-[16px]'
           onClick={handleInstantBuy}
         >
           {user?.role === 'USER' ? '즉시 요청' : '즉시 구매'}
