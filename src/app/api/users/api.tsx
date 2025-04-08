@@ -50,3 +50,23 @@ export async function getUserListApi({
     throw new Error('회원 목록 조회 실패');
   }
 }
+// ✅ 유저 권한 업데이트 API
+export async function updateUserRoleApi({
+  userId,
+  role,
+}: {
+  userId: string;
+  role: string;
+}) {
+  return await fetchApi(`/users/${userId}/role`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  });
+}
+// ✅ 유저 삭제 API
+export async function deleteUserApi(userId: string) {
+  return await fetchApi(`/users/${userId}`, {
+    method: 'DELETE',
+  });
+}
