@@ -79,7 +79,10 @@ export default function CartItem({
             checked={checked}
             onChange={onToggle}
           />
-          <button onClick={onDelete}>
+          <button
+            className='cursor-pointer'
+            onClick={onDelete}
+          >
             <Image
               src='/icon/flat/X.svg'
               alt='삭제'
