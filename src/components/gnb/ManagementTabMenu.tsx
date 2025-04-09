@@ -13,7 +13,7 @@ export default function ManagementTabMenu() {
   ];
 
   return (
-    <nav className='w-full border-b border-gray-200 px-[120px] max-lt:px-6 bg-white'>
+    <nav className='w-full border-b border-gray-200 px-[120px] max-lt:px-6 '>
       <ul className='flex gap-6 py-4 text-lg font-medium text-gray-500'>
         {tabs.map((tab) => (
           <li
