@@ -257,6 +257,7 @@ export function SuperAdmin() {
         onChange={handleChange}
         onBlur={handleBlur}
         value={value}
+        isModified={value.length > 0}
       />
       {renderError(name)}
     </div>
@@ -278,6 +279,7 @@ export function SuperAdmin() {
         onChange={handleChange}
         onBlur={handleBlur}
         value={value}
+        isModified={value.length > 0}
       >
         <Image
           src={
