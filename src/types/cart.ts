@@ -32,13 +32,9 @@ export interface DeleteCartItemsResponse {
 
 export interface CartSummaryProps {
   cartData: CartResponse;
-  summary: {
-    totalAmount: number;
-    shippingFee: number;
-    estimatedRemainingBudget: number;
-    originalBudget: number;
-  } | null;
+  summary: GetCartSummaryResponse | null;
   onOrder: () => void;
+  selectedIds: string[];
 }
 
 export interface CreateOrderRequestItem {
@@ -89,4 +85,62 @@ export interface GetCartSummaryResponse {
   shippingFee: number;
   estimatedRemainingBudget: number;
   originalBudget: number;
+}
+
+export interface OrderRequestDetail {
+  requesterId: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  requestedAt: string;
+  resolvedAt: string | null;
+  resolverMessage: string | null;
+  requesterName: string;
+  resolverName: string | null;
+  totalAmount: number;
+  items: {
+    productName: string;
+    categoryId: string | null;
+    categoryName: string;
+    imageUrl: string | null;
+    quantity: number;
+    price: number;
+    requestMessage: string | null;
+  }[];
+}
+
+export interface OrderDetailItem {
+  productId: string;
+  productName: string;
+  imageUrl: string | null;
+  price: number;
+  quantity: number;
+  categoryId: string | null;
+  categoryName: string | null;
+}
+
+export interface OrderDetailResponse {
+  id: string;
+  orderNumber: string;
+  status: 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+  totalAmount: number;
+  shippingMethod: string;
+  adminNotes: string | null;
+  notes: string | null;
+  companyId: string;
+  createdById: string;
+  updatedById: string;
+  requestedById: string;
+  createdAt: string;
+  updatedAt: string;
+  deliveredAt: string | null;
+  shippedAt: string | null;
+  trackingNumber: string | null;
+
+  orderItems: OrderDetailItem[];
+}
+
+export interface CreateOrderItem {
+  productId: string;
+  quantity: number;
+  price?: number;
+  productName?: string;
 }

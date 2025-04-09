@@ -23,9 +23,9 @@ const SummaryCards = () => {
   useEffect(() => {
     const fetchBudgetSummary = async () => {
       try {
-        const userData = localStorage.getItem('user');
-        const parsed = userData ? JSON.parse(userData) : null;
-        const companyId = parsed?.companyId;
+        const authStorage = localStorage.getItem('auth-storage');
+        const parsed = authStorage ? JSON.parse(authStorage) : null;
+        const companyId = parsed?.state?.user?.companyId;
 
         if (!companyId) {
           console.warn('❗ 회사 정보가 없습니다.', parsed);
@@ -41,7 +41,7 @@ const SummaryCards = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ companyId }),
-          },
+          }
         );
 
         const result = await res.json();
@@ -77,70 +77,67 @@ const SummaryCards = () => {
 
   return (
     <motion.div
-      className='grid gap-6 grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))]'
+      className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        {/* 이번 달 지출액 */}
-        <Card className='relative z-10 w-full min-w-[280px] h-[210px]'>
-          <CardHeader>
-            <CardTitle className='text-[24px]'>이번 달 지출액</CardTitle>
-            <p className='text-gray-400'>
-              {summary.lastMonthSpending
-                ? summary.monthlySpending - summary.lastMonthSpending > 0
-                  ? `지난 달보다 ${(summary.monthlySpending - summary.lastMonthSpending).toLocaleString()}원 더 지출했어요`
-                  : `지난 달보다 ${(summary.lastMonthSpending - summary.monthlySpending).toLocaleString()}원 덜 지출했어요`
-                : '지난 달이랑 비교 할 데이터가 없어요!'}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p className='text-[32px] font-bold'>
-              {summary.monthlySpending?.toLocaleString() ?? '0'}원
-              
-            </p>
-          </CardContent>
-        </Card>
+      {/* 이번 달 지출액 */}
+      <Card className="w-full min-w-0 h-[210px]">
+        <CardHeader>
+          <CardTitle className="text-[24px]">이번 달 지출액</CardTitle>
+          <p className="text-gray-400">
+            {summary.lastMonthSpending
+              ? summary.monthlySpending - summary.lastMonthSpending > 0
+                ? `지난 달보다 ${(summary.monthlySpending - summary.lastMonthSpending).toLocaleString()}원 더 지출했어요`
+                : `지난 달보다 ${(summary.lastMonthSpending - summary.monthlySpending).toLocaleString()}원 덜 지출했어요`
+              : '지난 달이랑 비교 할 데이터가 없어요!'}
+          </p>
+        </CardHeader>
+        <CardContent>
+          <p className="text-[32px] font-bold">
+            {summary.monthlySpending?.toLocaleString() ?? '0'}원
+          </p>
+        </CardContent>
+      </Card>
 
-        {/* 이번 달 남은 예산 */}
-        <Card className='relative z-10 w-full min-w-[280px] h-[210px]'>
-          <CardHeader>
-            <CardTitle className='text-[24px]'>이번 달 남은 예산</CardTitle>
-            <p className='text-gray-400'>
-              {typeof summary.lastMonthSpending === 'number'
-                ? summary.lastMonthSpending - summary.monthlySpending > 0
-                  ? `지난 달보다 ${(summary.lastMonthSpending - summary.monthlySpending).toLocaleString()}원 더 남았어요`
-                  : `지난 달보다 ${(summary.monthlySpending - summary.lastMonthSpending).toLocaleString()}원 덜 남았어요`
-                : '지난 달이랑 비교 할 데이터가 없어요!'}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p className='text-[32px] font-bold'>
-              {summary.monthlyBudgetLeft?.toLocaleString() ?? '0'}원
-            </p>
-          </CardContent>
-        </Card>
+      {/* 이번 달 남은 예산 */}
+      <Card className="w-full min-w-0 h-[210px]">
+        <CardHeader>
+          <CardTitle className="text-[24px]">이번 달 남은 예산</CardTitle>
+          <p className="text-gray-400">
+            {typeof summary.lastMonthSpending === 'number'
+              ? summary.lastMonthSpending - summary.monthlySpending > 0
+                ? `지난 달보다 ${(summary.lastMonthSpending - summary.monthlySpending).toLocaleString()}원 더 남았어요`
+                : `지난 달보다 ${(summary.monthlySpending - summary.lastMonthSpending).toLocaleString()}원 덜 남았어요`
+              : '지난 달이랑 비교 할 데이터가 없어요!'}
+          </p>
+        </CardHeader>
+        <CardContent>
+          <p className="text-[32px] font-bold">
+            {summary.monthlyBudgetLeft?.toLocaleString() ?? '0'}원
+          </p>
+        </CardContent>
+      </Card>
 
-        {/* 올해 총 지출액 */}
-        <Card className='relative z-10 w-full min-w-[280px] h-[210px]'>
-          <CardHeader>
-            <CardTitle className='text-[24px]'>올해 총 지출액</CardTitle>
-            <p className='text-gray-400'>
-              {summary.lastYearSpending
-                ? summary.yearlySpending - summary.lastYearSpending > 0
-                  ? ` ${(summary.yearlySpending - summary.lastYearSpending).toLocaleString()}원 더 지출했어요`
-                  : ` ${(summary.lastYearSpending - summary.yearlySpending).toLocaleString()}원 덜 지출했어요`
-                : '작년이랑 비교 할 데이터가 없어요!'}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p className='text-[32px] font-bold'>
-              {summary.yearlySpending?.toLocaleString() ?? '0'}원
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* 올해 총 지출액 */}
+      <Card className="w-full min-w-0 h-[210px]">
+        <CardHeader>
+          <CardTitle className="text-[24px]">올해 총 지출액</CardTitle>
+          <p className="text-gray-400">
+            {summary.lastYearSpending
+              ? summary.yearlySpending - summary.lastYearSpending > 0
+                ? `${(summary.yearlySpending - summary.lastYearSpending).toLocaleString()}원 더 지출했어요`
+                : `${(summary.lastYearSpending - summary.yearlySpending).toLocaleString()}원 덜 지출했어요`
+              : '작년이랑 비교 할 데이터가 없어요!'}
+          </p>
+        </CardHeader>
+        <CardContent>
+          <p className="text-[32px] font-bold">
+            {summary.yearlySpending?.toLocaleString() ?? '0'}원
+          </p>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 };
