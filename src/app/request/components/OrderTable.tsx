@@ -143,51 +143,55 @@ const OrderTable: React.FC<OrderTableProps> = ({
               className='flex justify-between items-center min-h-[80px] border-b border-gray-200 cursor-pointer hover:bg-gray-50 px-6'
               onClick={() => router.push(`/request/${order.id}`)}
             >
-              <span className='flex-1 text-center text-black-100'>{order.date}</span>
+              <span className='flex-1 text-center text-black-100'>
+                {order.date}
+              </span>
               <span className='flex-1 text-center'>
-                  {order.items && order.items.length > 0
-                    ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
-                    : '상품 없음'}
-                  <br />
-                  <span className='text-sm text-gray-500'>
-                    총 수량:{' '}
-                    {order.items
-                      ? order.items.reduce(
-                          (sum, item) => sum + (item.quantity || 0),
-                          0,
-                        )
-                      : 0}
-                    개
-                  </span>
+                {order.items && order.items.length > 0
+                  ? `${order.items[0].name}${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}`
+                  : '상품 없음'}
+                <br />
+                <span className='text-sm text-gray-500'>
+                  총 수량:{' '}
+                  {order.items
+                    ? order.items.reduce(
+                        (sum, item) => sum + (item.quantity || 0),
+                        0,
+                      )
+                    : 0}
+                  개
+                </span>
               </span>
               <span className='flex-1 text-center text-black-100'>
                 {(order.price ?? 0).toLocaleString()}원
               </span>
-              <span className='flex-1 text-center text-black-100'>{order.requester}</span>
+              <span className='flex-1 text-center text-black-100'>
+                {order.requester}
+              </span>
               <div
                 className='flex-1 flex justify-center gap-2 pb-0.5'
                 onClick={(e) => e.stopPropagation()}
               >
-               <button
+                <button
                   onClick={() => onReject?.(order.id)}
                   className={`px-3 py-1 rounded w-[94px] h-[44px] font-medium ${
-                  order.status !== 'PENDING'
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    order.status !== 'PENDING'
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                   disabled={order.status !== 'PENDING'}
-                  >
+                >
                   반려
                 </button>
                 <button
                   onClick={() => handleOpenModal(order.id)}
                   className={`px-3 py-1 rounded w-[94px] h-[44px] font-medium ${
-                  order.status !== 'PENDING'
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-orange-400 text-white hover:bg-orange-600'
+                    order.status !== 'PENDING'
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-orange-400 text-white hover:bg-orange-600'
                   }`}
                   disabled={order.status !== 'PENDING'}
-                  >
+                >
                   승인
                 </button>
               </div>
@@ -207,81 +211,87 @@ const OrderTable: React.FC<OrderTableProps> = ({
       )}
 
       {/* ✅ 모바일/타블렛용 뷰 */}
-<div className="md:hidden space-y-4">
-  {orders.map((order) => (
-    <div
-      key={order.id}
-      className="w-full border-t  border-line-200 bg-none py-3 cursor-pointer"
-      onClick={() => router.push(`/request/${order.id}`)}
-    >
-      {/* 상단: 이미지 + 상품명/수량 + 버튼 */}
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex gap-4">
-          <img
-            src={order.items[0]?.imageUrl || '/images/default-product.png'}
-            alt="상품 이미지"
-            className="w-[50px] h-[50px] object-cover"
-          />
-          <div className="flex flex-col justify-center">
-            <p className="text-[15px] font-medium">
-              {order.items[0]?.name}
-              {order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}
-            </p>
-            <p className="text-sm text-gray-500">
-              총 수량: {order.items.reduce((sum, i) => sum + i.quantity, 0)}개
-            </p>
+      <div className='md:hidden space-y-4'>
+        {orders.map((order) => (
+          <div
+            key={order.id}
+            className='w-full border-t  border-line-200 bg-none py-3 cursor-pointer'
+            onClick={() => router.push(`/request/${order.id}`)}
+          >
+            {/* 상단: 이미지 + 상품명/수량 + 버튼 */}
+            <div className='flex justify-between items-start gap-4'>
+              <div className='flex gap-4'>
+                <img
+                  src={
+                    order.items[0]?.imageUrl || '/images/default-product.png'
+                  }
+                  alt='상품 이미지'
+                  className='w-[50px] h-[50px] object-cover'
+                />
+                <div className='flex flex-col justify-center'>
+                  <p className='text-[15px] font-medium'>
+                    {order.items[0]?.name}
+                    {order.items.length > 1
+                      ? ` 외 ${order.items.length - 1}건`
+                      : ''}
+                  </p>
+                  <p className='text-sm text-gray-500'>
+                    총 수량:{' '}
+                    {order.items.reduce((sum, i) => sum + i.quantity, 0)}개
+                  </p>
+                </div>
+              </div>
+
+              {/* 승인/반려 버튼 */}
+              <div
+                className='flex gap-2'
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => onReject?.(order.id)}
+                  className={`px-3 py-1 rounded w-[72px] h-[36px] text-sm font-medium ${
+                    order.status !== 'PENDING'
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  disabled={order.status !== 'PENDING'}
+                >
+                  반려
+                </button>
+                <button
+                  onClick={() => handleOpenModal(order.id)}
+                  className={`px-3 py-1 rounded w-[72px] h-[36px] text-sm font-medium ${
+                    order.status !== 'PENDING'
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-orange-400 text-white hover:bg-orange-500'
+                  }`}
+                  disabled={order.status !== 'PENDING'}
+                >
+                  승인
+                </button>
+              </div>
+            </div>
+
+            {/* 하단 정보: 주문금액 / 구매요청일 / 요청인 */}
+            <div className='mt-3 space-y-1 text-sm text-gray-600'>
+              <div className='flex justify-between font-semibold border-b pb-2'>
+                <p className='text-black-400'>주문 금액</p>
+                <p className='text-black-400'>
+                  {order.price.toLocaleString()}원
+                </p>
+              </div>
+              <div className='flex justify-between'>
+                <p className='text-gray-400'>구매요청일</p>
+                <p>{order.date || '-'}</p>
+              </div>
+              <div className='flex justify-between'>
+                <p className='text-gray-400'>요청인</p>
+                <p>{order.requester || '-'}</p>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* 승인/반려 버튼 */}
-        <div
-          className="flex gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={() => onReject?.(order.id)}
-            className={`px-3 py-1 rounded w-[72px] h-[36px] text-sm font-medium ${
-              order.status !== 'PENDING'
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-            disabled={order.status !== 'PENDING'}
-          >
-            반려
-          </button>
-          <button
-            onClick={() => handleOpenModal(order.id)}
-            className={`px-3 py-1 rounded w-[72px] h-[36px] text-sm font-medium ${
-              order.status !== 'PENDING'
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-orange-400 text-white hover:bg-orange-500'
-            }`}
-            disabled={order.status !== 'PENDING'}
-          >
-            승인
-          </button>
-        </div>
+        ))}
       </div>
-
-      {/* 하단 정보: 주문금액 / 구매요청일 / 요청인 */}
-      <div className="mt-3 space-y-1 text-sm text-gray-600">
-        <div className="flex justify-between font-semibold border-b pb-2">
-          <p className="text-black-400">주문 금액</p>
-          <p className="text-black-400">{order.price.toLocaleString()}원</p>
-        </div>
-        <div className="flex justify-between">
-          <p className="text-gray-400">구매요청일</p>
-          <p>{order.date || '-'}</p>
-        </div>
-        <div className="flex justify-between">
-          <p className="text-gray-400">요청인</p>
-          <p>{order.requester || '-'}</p>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
-
 
       {/* 승인 모달 */}
       {selectedOrder && (

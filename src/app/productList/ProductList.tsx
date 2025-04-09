@@ -1,8 +1,8 @@
 'use client';
+import { motion } from 'framer-motion';
 import { notFound, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 
 import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
