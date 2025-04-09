@@ -1,9 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import * as React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
-
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
-import { useAuthStore } from '@/app/auth/useAuthStore';
 
 export function HeaderMenu() {
   const [open, setOpen] = React.useState<boolean>(false);

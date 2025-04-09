@@ -74,7 +74,6 @@ const OrderDetailPage = () => {
 
         const data = await res.json();
         console.log('✅ 상세 응답 전체:', data);
-        
 
         const transformed: OrderDetail = {
           id: data.requestId,
@@ -83,7 +82,7 @@ const OrderDetailPage = () => {
           requester: data.requesterName ?? '-',
           handler: data.resolverName ?? '-',
           message: data.items?.[0]?.requestMessage ?? '',
-          totalAmount: data.totalAmount ,
+          totalAmount: data.totalAmount,
           status: data.status,
           items: Array.isArray(data.items)
             ? data.items.map((item: any) => ({
@@ -111,12 +110,12 @@ const OrderDetailPage = () => {
       try {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const companyId = user.companyId;
-  
+
         if (!companyId) {
           console.warn('❗ companyId 없음');
           return;
         }
-  
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/budgets/inquiry`,
           {
@@ -128,14 +127,14 @@ const OrderDetailPage = () => {
             body: JSON.stringify({ companyId }),
           },
         );
-  
+
         if (!res.ok) {
           throw new Error('예산 조회 실패');
         }
-  
+
         const data = await res.json();
         console.log('✅ 예산 데이터:', data);
-  
+
         setBudget({
           monthlyLimit: data.data.monthlyLimit ?? 0,
           remaining: data.data.currentAmount ?? 0,
@@ -144,7 +143,7 @@ const OrderDetailPage = () => {
         console.error('예산 불러오기 에러:', err);
       }
     };
-  
+
     fetchBudget();
   }, []);
   const handleApprove = async () => {
@@ -202,11 +201,12 @@ const OrderDetailPage = () => {
     }
   };
 
-  const totalItemCost = order?.items.reduce(
-    (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
-    0
-  ) || 0;
-  
+  const totalItemCost =
+    order?.items.reduce(
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+      0,
+    ) || 0;
+
   // 배송비는 총합에서 상품 금액을 뺀 값, 음수 방지용
   const shippingFee = Math.max(0, (order?.totalAmount || 0) - totalItemCost);
 
@@ -248,23 +248,20 @@ const OrderDetailPage = () => {
               </div>
             ))}
           </div>
-          </div>
- 
+        </div>
 
-          
-
-          
-
-          {/* 배송비 표기 */}
-          <div className='flex justify-end mt-4 text-base text-gray-500'>
+        {/* 배송비 표기 */}
+        <div className='flex justify-end mt-4 text-base text-gray-500'>
           배송비: {shippingFee.toLocaleString()}원
-          </div>
+        </div>
 
-          <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
-            <span className='text-black'>총 {order?.items.length}건</span>
-            <span className='ml-2'>{order?.totalAmount.toLocaleString()} 원</span>
-            <span className='ml-2 text-sm text-gray-500 font-normal'>배송비포함</span>
-          </div>
+        <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
+          <span className='text-black'>총 {order?.items.length}건</span>
+          <span className='ml-2'>{order?.totalAmount.toLocaleString()} 원</span>
+          <span className='ml-2 text-sm text-gray-500 font-normal'>
+            배송비포함
+          </span>
+        </div>
 
         {/* 하단 승인/반려 버튼 */}
         <div className='mt-6 flex justify-center gap-4'>

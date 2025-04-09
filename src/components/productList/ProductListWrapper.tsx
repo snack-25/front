@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+
 import ProductList from '@/app/productList/ProductList';
 
 export default function ProductListWrapper() {

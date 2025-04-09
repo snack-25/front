@@ -1,35 +1,65 @@
+'use client';
+
 import Image from 'next/image';
 
-import HeroImg from '@public/img/landing/landing-hero-md.svg';
-import LogoImg from '@public/img/landing/landing-title-md.svg';
-import CustomTooltip from '@/components/tooltip/CustomTooltip';
+import { MobileLoginBox } from '@/components/mobileLoginBox/MobileLoginBox';
 import { LANDING_CATCHPHRASE } from '@/lib/constants';
+import CustomTooltip from '@components/tooltip/CustomTooltip';
+import LogoImg from '@public/img/landing/landing-title-md.svg';
 
 export default function Home() {
   return (
-    <section className='grid bg-background scroll-pt-16 pt-16 min-h-[calc(100dvh-88px)]'>
-      <div className='container w-full flex flex-col max-w-[1920px] px-16 mx-auto'>
-        <div className='grid place-items-center'>
-          <div className='grid gap-y-12 place-items-center'>
+    <section
+      className='
+    grid
+    bg-background
+    tb:min-h-[calc(100vh-88px)]
+    h-[calc(100vh-54px)]
+    '
+    >
+      <div
+        className='container w-full flex flex-col max-w-[1920px] min-w-[375px] mx-auto items-center pt-11 tb:pt-19 lt:pt-15 mb:px-4
+      '
+      >
+        <div className='place-items-center grid'>
+          <div className='place-items-center gap-y-6 lt:px-28 lt:gap-y-12 grid'>
             <Image
-              className='min-w-[184px]'
-              width={504}
-              height={128}
+              className='min-w-[191px] max-w-[504px] w-1/2'
               src={LogoImg}
               alt='logo'
             />
-            <p className='self-start rounded-full py-4 px-8 bg-gray-50 text-[26px] font-bold text-center keep-all text-primary-400 border-4 border-primary-300 whitespace-nowrap hidden md:block'>
+            <p
+              className='self-start rounded-full lt:py-4 lt:px-8 px-3 py-2 bg-gray-50 font-bold text-center keep-all text-primary-400 border-4 border-primary-300 max-[744px]:hidden whitespace-nowrap mb-10 lg:text-[26px]
+            '
+            >
               흩어진 간식 구매처를 통합하고, 기수별 지출을 똑똑하게 관리하세요
             </p>
           </div>
         </div>
 
-        <div className='flex-1 bg-[url(/img/landing/landing-hero-md.svg)] bg-no-repeat bg-bottom bg-size-[90%]'>
-          <div className='grid grid-cols-2 w-full grid-rows-2 gap-[60px] pt-14'>
+        <MobileLoginBox />
+
+        <div
+          className='flex-1 w-full bg-[url(/img/landing/landing-hero-sm.svg)] max-tb:bg-[url(/img/landing/landing-hero-md.svg)] bg-bottom bg-no-repeat bg-contain max-tb:bg-size-[670px] lt:bg-size-[100vh]
+        '
+        >
+          <div className='tb:grid-cols-2 tb:grid-rows-2 lt:gap-12 tb:gap-7 pb-14 grid gap-2'>
             {LANDING_CATCHPHRASE.map((phrase) => (
               <div
                 key={phrase}
-                className='nth-[3]:justify-self-start last:justify-self-end'
+                className='
+                  nth-[1]:max-tb:mr-auto
+                  nth-[1]:tb:ml-auto
+                  nth-[2]:max-tb:row-start-3
+                  nth-[2]:max-tb:ml-auto
+                  nth-[2]:tb:mr-auto
+                  nth-[3]:max-tb:row-start-1
+                  nth-[3]:tb:mr-auto
+                  nth-[4]:max-tb:row-start-2
+                  nth-[4]:max-tb:mr-auto
+                  nth-[4]:tb:ml-auto
+                  nth-[4]:max-mb:pl-10
+                '
               >
                 <CustomTooltip content={phrase} />
               </div>

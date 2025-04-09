@@ -1,9 +1,9 @@
 'use client';
-import { ChevronRight } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useParams, useSearchParams } from 'next/navigation';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { ChevronRight } from 'lucide-react';
+
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import EmptyImage from '@/components/productList/EmptyImage';
 import Loading from '@/components/productList/Loading';
@@ -12,11 +12,12 @@ import { Button } from '@/components/ui/Button';
 import ProductDeleteModal from '@/components/ui/modal/ProductDeleteModal';
 import ProductEditModal from '@/components/ui/modal/ProductEditModal';
 import NumberInput from '@/components/ui/NumberInput';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 import useCategory from '@/hooks/product/useCategory';
 import { useDetail } from '@/hooks/product/useDetail';
+import { addCartItem } from '@/lib/api/cart';
 
 import { IProducts } from '../../ProductList';
-import { addCartItem } from '@/lib/api/cart';
 
 interface IFormData {
   id: string;
