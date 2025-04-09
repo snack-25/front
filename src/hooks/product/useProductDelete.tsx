@@ -9,7 +9,7 @@ export default function useProductDelete() {
 
   const deleteProduct = async (id: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
