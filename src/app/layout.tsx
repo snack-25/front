@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang='ko'>
       <body
-        className={`${pretendard.variable} antialiased bg-background-400 w-full`}
+        className={`${pretendard.variable} antialiased bg-background-400 w-full min-w-[375px]`}
       >
         <Header />
         {children}
