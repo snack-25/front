@@ -11,11 +11,9 @@ interface Props {
 }
 
 export default function OrderInfo({ order, categories }: Props) {
-  const firstItem = order.orderItems[0];
-  const totalQuantity = order.orderItems.reduce(
-    (sum, item) => sum + item.quantity,
-    0,
-  );
+  const firstItem = order.orderItems?.[0] || {};
+  const totalQuantity =
+    order.orderItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
   const category = getCategoryNamePair(categories, firstItem?.categoryId || '');
 
   return (

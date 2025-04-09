@@ -158,23 +158,17 @@ export interface CartHeaderProps {
   handleSelectAll: () => void;
 }
 
-export type CartContainerProps = {
-  cartData: CartResponse;
-  selectedIds: string[];
-  selectAll: boolean;
-  handleSelectAll: () => void;
-  toggleSelect: (itemId: string) => void;
-  handleDeleteItem: (itemId: string) => void;
-  handleDelete: () => void;
-  handleDeleteAll: () => void;
-  fetchCart: () => void;
-};
+export type CartContainerProps = CartItemListProps &
+  CartHeaderProps &
+  CartActionsProps & {
+    fetchCart: () => void;
+  };
 
 export interface CartActionsProps {
   handleDelete: () => void;
   handleDeleteAll: () => void;
 }
 
-export interface Props {
+export interface CartProps {
   cartId?: string;
 }

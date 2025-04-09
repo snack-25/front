@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Props } from '@/types/cart';
+import { CartProps } from '@/types/cart';
 
-export default function OrderRequestActions({ cartId }: Props) {
+export default function OrderRequestActions({ cartId }: CartProps) {
   const router = useRouter();
 
   return (

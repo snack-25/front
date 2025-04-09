@@ -14,6 +14,10 @@ export default function OrderRequestInfo({
   data,
   categories,
 }: OrderRequestProps) {
+  if (!data.items.length) {
+    return <p className='text-center p-4'>주문 상품 정보가 없습니다.</p>;
+  }
+
   const firstItem = data.items[0];
   const totalQuantity = data.items.reduce(
     (sum, item) => sum + item.quantity,
@@ -66,11 +70,29 @@ export default function OrderRequestInfo({
 
       <div className='w-full bg-[#FBF8F4] border-y-2 border-[#E6E6E6] p-6 mb-6'>
         <p className='text-sm font-semibold text-[#1F1F1F] mb-2'>요청 메시지</p>
-        <textarea
-          readOnly
-          value={firstItem?.requestMessage || '요청 메시지가 없습니다.'}
-          className='w-full h-[100px] p-3 rounded-[16px] border-2 border-[#F1ECE7] text-[#999999] text-[18px] leading-[26px] font-normal resize-none bg-[#FBF8F4]'
-        />
+        {data.items.length > 1 ? (
+          <div className='space-y-2'>
+            {data.items.map((item, index) => (
+              <div
+                key={index}
+                className='border-b pb-2 last:border-0'
+              >
+                <p className='text-xs font-medium'>{item.productName}</p>
+                <textarea
+                  readOnly
+                  value={item.requestMessage || '요청 메시지가 없습니다.'}
+                  className='w-full h-[60px] p-3 rounded-[16px] border-2 border-[#F1ECE7] text-[#999999] text-[16px] leading-[24px] font-normal resize-none bg-[#FBF8F4]'
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <textarea
+            readOnly
+            value={firstItem?.requestMessage || '요청 메시지가 없습니다.'}
+            className='w-full h-[100px] p-3 rounded-[16px] border-2 border-[#F1ECE7] text-[#999999] text-[18px] leading-[26px] font-normal resize-none bg-[#FBF8F4]'
+          />
+        )}
       </div>
     </>
   );

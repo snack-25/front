@@ -9,6 +9,7 @@ import {
   GetCartSummaryResponse,
   CreateOrderRequestItem,
 } from '@/types/cart';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export const useCart = (cartId: string) => {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -20,6 +21,15 @@ export const useCart = (cartId: string) => {
   const fetchCart = useCallback(async () => {
     const data = await getCartItems(cartId);
     setCartData(data);
+    try {
+      const data = await getCartItems(cartId);
+      setCartData(data);
+    } catch (e) {
+      showCustomToast({
+        label: '장바구니 데이터를 불러오지 못했습니다.',
+        variant: 'error',
+      });
+    }
   }, [cartId]);
 
   useEffect(() => {
@@ -40,8 +50,15 @@ export const useCart = (cartId: string) => {
           quantity: item.quantity,
         }));
 
-      const summary = await getSelectedCartSummary(cartId, selectedItems);
-      setSelectedSummary(summary);
+      try {
+        const summary = await getSelectedCartSummary(cartId, selectedItems);
+        setSelectedSummary(summary);
+      } catch (e) {
+        showCustomToast({
+          label: '요약 정보를 불러오지 못했습니다.',
+          variant: 'error',
+        });
+      }
     };
 
     fetchSummary();
@@ -71,22 +88,46 @@ export const useCart = (cartId: string) => {
   }, [selectedIds, cartData]);
 
   const handleDelete = async () => {
-    await deleteCartItems(cartId, selectedIds);
-    setSelectedIds([]);
-    fetchCart();
+    try {
+      await deleteCartItems(cartId, selectedIds);
+      setSelectedIds([]);
+      fetchCart();
+    } catch (e) {
+      console.error('선택 항목 삭제 실패:', e);
+      showCustomToast({
+        label: '선택 항목 삭제에 실패했습니다.',
+        variant: 'error',
+      });
+    }
   };
 
   const handleDeleteItem = async (itemId: string) => {
-    await deleteCartItems(cartId, [itemId]);
-    setSelectedIds((prev) => prev.filter((id) => id !== itemId));
-    fetchCart();
+    try {
+      await deleteCartItems(cartId, [itemId]);
+      setSelectedIds((prev) => prev.filter((id) => id !== itemId));
+      fetchCart();
+    } catch (e) {
+      console.error('항목 삭제 실패:', e);
+      showCustomToast({
+        label: '해당 항목 삭제에 실패했습니다.',
+        variant: 'error',
+      });
+    }
   };
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    await deleteCartItems(cartId, allIds);
-    setSelectedIds([]);
-    fetchCart();
+    try {
+      await deleteCartItems(cartId, allIds);
+      setSelectedIds([]);
+      fetchCart();
+    } catch (e) {
+      console.error('전체 삭제 실패:', e);
+      showCustomToast({
+        label: '전체 항목 삭제에 실패했습니다.',
+        variant: 'error',
+      });
+    }
   };
 
   return {
