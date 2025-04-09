@@ -1,4 +1,3 @@
-
 interface SignProps {
   name: string;
   email: string;

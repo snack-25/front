@@ -31,10 +31,14 @@ interface OrderDetail {
 
 const getStatusLabel = (status: string) => {
   switch (status) {
-    case 'PENDING': return '승인 대기';
-    case 'APPROVED': return '승인 완료';
-    case 'REJECTED': return '승인 반려';
-    default: return status;
+    case 'PENDING':
+      return '승인 대기';
+    case 'APPROVED':
+      return '승인 완료';
+    case 'REJECTED':
+      return '승인 반려';
+    default:
+      return status;
   }
 };
 
@@ -46,7 +50,10 @@ const OrderDetailPage = () => {
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`, { credentials: 'include' });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`,
+        { credentials: 'include' },
+      );
       const data = await res.json();
       const transformed: OrderDetail = {
         id: data.id,
@@ -74,7 +81,9 @@ const OrderDetailPage = () => {
 
   const handleAddToCart = async () => {
     const cartId = user?.cartId;
-    if (!cartId) {return alert('장바구니 정보가 없습니다.');}
+    if (!cartId) {
+      return alert('장바구니 정보가 없습니다.');
+    }
     for (const item of order!.items) {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/items`, {
         method: 'POST',
@@ -83,15 +92,24 @@ const OrderDetailPage = () => {
         body: JSON.stringify({ productId: item.id, quantity: item.quantity }),
       });
     }
-    showCustomToast({ label: '🛒 모든 상품을 장바구니에 담았습니다!', variant: 'success' });
+    showCustomToast({
+      label: '🛒 모든 상품을 장바구니에 담았습니다!',
+      variant: 'success',
+    });
   };
 
-  if (!order) {return <div className='text-center py-20'>불러오는 중...</div>;}
+  if (!order) {
+    return <div className='text-center py-20'>불러오는 중...</div>;
+  }
 
-  const shippingFee = Math.max(0, order.totalAmount - order.items.reduce((sum, i) => sum + i.price * i.quantity, 0));
+  const shippingFee = Math.max(
+    0,
+    order.totalAmount -
+      order.items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+  );
 
   return (
-    <div className="w-full min-h-screen bg-[#FBF8F4] px-4 lg:px-16 pt-10 pb-10">
+    <div className='w-full min-h-screen bg-[#FBF8F4] px-4 lg:px-16 pt-10 pb-10'>
       {/* 💻 데스크탑 전용 */}
       <div className='hidden lg:flex gap-8'>
         <div className='w-2/3'>
@@ -102,10 +120,16 @@ const OrderDetailPage = () => {
             <h2 className='text-xl font-bold mb-4'>요청 품목</h2>
             <div className='border rounded-md max-h-[400px] overflow-y-auto bg-white'>
               {order.items.map((item, index) => (
-                <div key={index} className='flex justify-between items-center p-4 border-b last:border-none'>
+                <div
+                  key={index}
+                  className='flex justify-between items-center p-4 border-b last:border-none'
+                >
                   <div className='flex gap-4'>
-
-                    <img src={item.imageUrl} alt="상품이미지" className='w-14 h-14 rounded-md' />
+                    <img
+                      src={item.imageUrl}
+                      alt='상품이미지'
+                      className='w-14 h-14 rounded-md'
+                    />
 
                     <div>
                       <p className='text-sm text-gray-500'>{item.category}</p>
@@ -115,20 +139,38 @@ const OrderDetailPage = () => {
                   </div>
                   <div className='text-right'>
                     <p>{item.price.toLocaleString()}원</p>
-                    <p className='font-semibold'>{(item.price * item.quantity).toLocaleString()}원</p>
+                    <p className='font-semibold'>
+                      {(item.price * item.quantity).toLocaleString()}원
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className='flex justify-end mt-2 text-gray-500'>배송비: {shippingFee.toLocaleString()}원</div>
+            <div className='flex justify-end mt-2 text-gray-500'>
+              배송비: {shippingFee.toLocaleString()}원
+            </div>
             <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
               <span className='text-black'>총 {order.items.length}건</span>
-              <span className='ml-2'>{order.totalAmount.toLocaleString()} 원</span>
-              <span className='ml-2 text-sm font-normal text-gray-500'>배송비포함</span>
+              <span className='ml-2'>
+                {order.totalAmount.toLocaleString()} 원
+              </span>
+              <span className='ml-2 text-sm font-normal text-gray-500'>
+                배송비포함
+              </span>
             </div>
             <div className='mt-6 flex justify-center gap-4'>
-              <button onClick={() => router.push('/my-request')} className='flex-1 h-[54px] bg-[#FFF1E8] text-orange-400 font-bold rounded-lg hover:bg-[#FFE0D4]'>목록 보기</button>
-              <button onClick={handleAddToCart} className='flex-1 h-[54px] bg-orange-400 text-white font-bold rounded-lg hover:bg-orange-500'>장바구니에 다시 담기</button>
+              <button
+                onClick={() => router.push('/my-request')}
+                className='flex-1 h-[54px] bg-[#FFF1E8] text-orange-400 font-bold rounded-lg hover:bg-[#FFE0D4]'
+              >
+                목록 보기
+              </button>
+              <button
+                onClick={handleAddToCart}
+                className='flex-1 h-[54px] bg-orange-400 text-white font-bold rounded-lg hover:bg-orange-500'
+              >
+                장바구니에 다시 담기
+              </button>
             </div>
           </div>
         </div>
@@ -139,20 +181,46 @@ const OrderDetailPage = () => {
             <h2 className='text-xl font-bold border-b'>요청 정보</h2>
             <p className='mt-2 text-gray-500'>{order.createdAt}</p>
             <label className='block mt-4 text-sm'>요청인</label>
-            <input readOnly value={order.requester} className='w-full border px-4 py-3 rounded-md' />
+            <input
+              readOnly
+              value={order.requester}
+              className='w-full border px-4 py-3 rounded-md'
+            />
             <label className='block mt-4 text-sm'>요청 메시지</label>
-            <textarea readOnly value={order.requestMessage || '요청 메시지가 없습니다.'} className='w-full border px-4 py-3 rounded-md resize-none' rows={3} />
+            <textarea
+              readOnly
+              value={order.requestMessage || '요청 메시지가 없습니다.'}
+              className='w-full border px-4 py-3 rounded-md resize-none'
+              rows={3}
+            />
           </div>
           <div>
             <h2 className='text-xl font-bold border-b'>승인 정보</h2>
             <label className='block mt-4 text-sm'>승인일</label>
-            <input readOnly value={order.approvedAt || '-'} className='w-full border px-4 py-3 rounded-md' />
+            <input
+              readOnly
+              value={order.approvedAt || '-'}
+              className='w-full border px-4 py-3 rounded-md'
+            />
             <label className='block mt-4 text-sm'>승인자</label>
-            <input readOnly value={order.approver || '-'} className='w-full border px-4 py-3 rounded-md' />
+            <input
+              readOnly
+              value={order.approver || '-'}
+              className='w-full border px-4 py-3 rounded-md'
+            />
             <label className='block mt-4 text-sm'>상태</label>
-            <input readOnly value={getStatusLabel(order.status)} className='w-full border px-4 py-3 rounded-md' />
+            <input
+              readOnly
+              value={getStatusLabel(order.status)}
+              className='w-full border px-4 py-3 rounded-md'
+            />
             <label className='block mt-4 text-sm'>응답 메시지</label>
-            <textarea readOnly value={order.resultMessage || ''} className='w-full border px-4 py-3 rounded-md resize-none' rows={3} />
+            <textarea
+              readOnly
+              value={order.resultMessage || ''}
+              className='w-full border px-4 py-3 rounded-md resize-none'
+              rows={3}
+            />
           </div>
         </div>
       </div>
@@ -164,22 +232,48 @@ const OrderDetailPage = () => {
           <h2 className='text-xl font-bold border-b'>요청 정보</h2>
           <p className='mt-2 text-gray-500'>{order.createdAt}</p>
           <label className='block mt-4 text-sm'>요청인</label>
-          <input readOnly value={order.requester} className='w-full border px-4 py-3 rounded-md' />
+          <input
+            readOnly
+            value={order.requester}
+            className='w-full border px-4 py-3 rounded-md'
+          />
           <label className='block mt-4 text-sm'>요청 메시지</label>
-          <textarea readOnly value={order.requestMessage || '요청 메시지가 없습니다.'} className='w-full border px-4 py-3 rounded-md resize-none' rows={3} />
+          <textarea
+            readOnly
+            value={order.requestMessage || '요청 메시지가 없습니다.'}
+            className='w-full border px-4 py-3 rounded-md resize-none'
+            rows={3}
+          />
         </div>
 
         {/* 승인 정보 */}
         <div>
           <h2 className='text-xl font-bold border-b'>승인 정보</h2>
           <label className='block mt-4 text-sm'>승인일</label>
-          <input readOnly value={order.approvedAt || '-'} className='w-full border px-4 py-3 rounded-md' />
+          <input
+            readOnly
+            value={order.approvedAt || '-'}
+            className='w-full border px-4 py-3 rounded-md'
+          />
           <label className='block mt-4 text-sm'>승인자</label>
-          <input readOnly value={order.approver || '-'} className='w-full border px-4 py-3 rounded-md' />
+          <input
+            readOnly
+            value={order.approver || '-'}
+            className='w-full border px-4 py-3 rounded-md'
+          />
           <label className='block mt-4 text-sm'>상태</label>
-          <input readOnly value={getStatusLabel(order.status)} className='w-full border px-4 py-3 rounded-md' />
+          <input
+            readOnly
+            value={getStatusLabel(order.status)}
+            className='w-full border px-4 py-3 rounded-md'
+          />
           <label className='block mt-4 text-sm'>응답 메시지</label>
-          <textarea readOnly value={order.resultMessage || ''} className='w-full border px-4 py-3 rounded-md resize-none' rows={3} />
+          <textarea
+            readOnly
+            value={order.resultMessage || ''}
+            className='w-full border px-4 py-3 rounded-md resize-none'
+            rows={3}
+          />
         </div>
 
         {/* 요청 품목 */}
@@ -187,9 +281,16 @@ const OrderDetailPage = () => {
           <h2 className='text-xl font-bold border-b'>요청 품목</h2>
           <div className='border rounded-md bg-white'>
             {order.items.map((item, index) => (
-              <div key={index} className='flex justify-between items-center p-4 border-b last:border-none'>
+              <div
+                key={index}
+                className='flex justify-between items-center p-4 border-b last:border-none'
+              >
                 <div className='flex gap-4'>
-                  <img src={item.imageUrl} alt="상품이미지" className='w-14 h-14 rounded-md' />
+                  <img
+                    src={item.imageUrl}
+                    alt='상품이미지'
+                    className='w-14 h-14 rounded-md'
+                  />
 
                   <div>
                     <p className='text-sm text-gray-500'>{item.category}</p>
@@ -199,21 +300,38 @@ const OrderDetailPage = () => {
                 </div>
                 <div className='text-right'>
                   <p>{item.price.toLocaleString()}원</p>
-                  <p className='font-semibold'>{(item.price * item.quantity).toLocaleString()}원</p>
+                  <p className='font-semibold'>
+                    {(item.price * item.quantity).toLocaleString()}원
+                  </p>
                 </div>
               </div>
             ))}
           </div>
-          <div className='text-right text-sm text-gray-500 mt-2'>배송비: {shippingFee.toLocaleString()}원</div>
+          <div className='text-right text-sm text-gray-500 mt-2'>
+            배송비: {shippingFee.toLocaleString()}원
+          </div>
           <div className='flex justify-end mt-3 font-bold text-[#E67E22]'>
-            총 {order.items.length}건 {order.totalAmount.toLocaleString()}원 <span className='text-sm text-gray-500 ml-2 font-normal'>배송비 포함</span>
+            총 {order.items.length}건 {order.totalAmount.toLocaleString()}원{' '}
+            <span className='text-sm text-gray-500 ml-2 font-normal'>
+              배송비 포함
+            </span>
           </div>
         </div>
 
         {/* 버튼 */}
         <div className='flex gap-4'>
-          <button onClick={() => router.push('/my-request')} className='flex-1 h-[48px] rounded-lg bg-[#FFF1E8] text-orange-400 font-bold hover:bg-[#FFE0D4]'>목록 보기</button>
-          <button onClick={handleAddToCart} className='flex-1 h-[48px] rounded-lg bg-orange-400 text-white font-bold hover:bg-orange-500'>장바구니 담기</button>
+          <button
+            onClick={() => router.push('/my-request')}
+            className='flex-1 h-[48px] rounded-lg bg-[#FFF1E8] text-orange-400 font-bold hover:bg-[#FFE0D4]'
+          >
+            목록 보기
+          </button>
+          <button
+            onClick={handleAddToCart}
+            className='flex-1 h-[48px] rounded-lg bg-orange-400 text-white font-bold hover:bg-orange-500'
+          >
+            장바구니 담기
+          </button>
         </div>
       </div>
     </div>

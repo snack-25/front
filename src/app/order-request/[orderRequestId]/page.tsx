@@ -49,8 +49,12 @@ export default function OrderRequestCompletePage() {
     fetchDetail();
   }, [orderRequestId]);
 
-  if (loading) {return <div className='text-center p-10'>로딩 중...</div>;}
-  if (!data) {return <div className='text-center p-10'>데이터 없음</div>;}
+  if (loading) {
+    return <div className='text-center p-10'>로딩 중...</div>;
+  }
+  if (!data) {
+    return <div className='text-center p-10'>데이터 없음</div>;
+  }
 
   const firstItem = data.items[0];
   const totalQuantity = data.items.reduce(

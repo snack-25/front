@@ -224,7 +224,9 @@ export default function CartItem({
           const success = await submitOrderRequest([
             { productId, quantity: localQuantity, requestMessage: message },
           ]);
-          if (success) {setShowModal(false);}
+          if (success) {
+            setShowModal(false);
+          }
         }}
       />
     </div>

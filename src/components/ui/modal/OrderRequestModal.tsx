@@ -33,7 +33,9 @@ export default function OrderRequestModal({
     fetchCategories();
   }, []);
 
-  if (!visible) {return null;}
+  if (!visible) {
+    return null;
+  }
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalProductAmount = items.reduce(

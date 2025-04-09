@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import DropdownMenu, {
   DropdownMenuContent,
@@ -44,8 +44,9 @@ const OrdersPage = () => {
         const data = await res.json();
         console.log('✅ 서버 응답 확인', data);
 
-        const approvedOnly = data.filter((item: any) => item.status === 'APPROVED');
-
+        const approvedOnly = data.filter(
+          (item: any) => item.status === 'APPROVED',
+        );
 
         const transformed: Order[] = approvedOnly.map((item: any) => ({
           id: item.id,
@@ -55,12 +56,12 @@ const OrdersPage = () => {
           handler: item.resolverName || '-',
           price: item.totalAmount?.toLocaleString() || '0',
           status: item.status,
-          items: item.orderRequestItems?.map((it: any) => ({
-            name: it.product?.name || '상품 없음',
-            quantity: it.quantity || 0,
-          })) || [],
+          items:
+            item.orderRequestItems?.map((it: any) => ({
+              name: it.product?.name || '상품 없음',
+              quantity: it.quantity || 0,
+            })) || [],
         }));
-        
 
         setOrders(transformed);
       } catch (err) {
@@ -103,7 +104,10 @@ const OrdersPage = () => {
         </div>
         <HistoryTable orders={orders} />
 
-        <Pagenation currentPage={currentPage} totalPage={totalPage} />
+        <Pagenation
+          currentPage={currentPage}
+          totalPage={totalPage}
+        />
       </div>
     </div>
   );

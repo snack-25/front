@@ -130,7 +130,9 @@ export default function CartsPage() {
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    if (allIds.length === 0) {return;}
+    if (allIds.length === 0) {
+      return;
+    }
 
     try {
       await deleteCartItems(cartId, allIds);
@@ -164,15 +166,18 @@ export default function CartsPage() {
 
     if (user?.role === 'SUPERADMIN' || user?.role === 'ADMIN') {
       const success = await submitOrder(selectedItems);
-      if (success) {fetchCart();}
+      if (success) {
+        fetchCart();
+      }
     } else {
       setPendingItems(selectedItems);
       setShowModal(true);
     }
   };
 
-  if (!cartData)
-    {return <div className='text-center py-20'>장바구니 불러오는 중...</div>;}
+  if (!cartData) {
+    return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
+  }
 
   return (
     <div className='min-h-screen bg-[#FBF8F4] px-4 lg:px-[120px] pt-[40px] pb-[80px] mt-auto'>

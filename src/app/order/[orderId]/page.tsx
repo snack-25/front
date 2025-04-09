@@ -43,11 +43,14 @@ export default function OrderDetailPage() {
     fetchData();
   }, [orderId]);
 
-  if (loading) {return <div className='text-center p-10'>로딩 중...</div>;}
-  if (!order)
-    {return (
+  if (loading) {
+    return <div className='text-center p-10'>로딩 중...</div>;
+  }
+  if (!order) {
+    return (
       <div className='text-center p-10'>주문 정보를 불러오지 못했습니다.</div>
-    );}
+    );
+  }
 
   const firstItem = order.orderItems?.[0];
   const totalQuantity =

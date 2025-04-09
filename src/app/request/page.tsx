@@ -99,7 +99,7 @@ const PurchaseRequestPage = () => {
   const handleApprove = async (id: string, message: string) => {
     const token = localStorage.getItem('token');
     console.log('보내는 주문 ID:', id);
-    
+
     try {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/accept`,
@@ -126,7 +126,7 @@ const PurchaseRequestPage = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}/reject`,
         {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
@@ -174,9 +174,10 @@ const PurchaseRequestPage = () => {
           onReject={handleReject}
         />
 
-        <Pagination currentPage={currentPage} totalPage={totalPage} />
-
-
+        <Pagination
+          currentPage={currentPage}
+          totalPage={totalPage}
+        />
       </div>
     </div>
   );

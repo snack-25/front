@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect,useState } from 'react';
-import { CheckIcon,ChevronDownIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { CheckIcon, ChevronDownIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Input } from '@/components/ui/Input';
@@ -28,7 +28,9 @@ export default function MemberRoleChangeModal({
   onConfirm,
   member,
 }: MemberRoleChangeModalProps) {
-  if (!member) {return null;}
+  if (!member) {
+    return null;
+  }
 
   const { handleSubmit } = useForm();
 
@@ -38,7 +40,9 @@ export default function MemberRoleChangeModal({
   // 🔁 초기값 세팅
   useEffect(() => {
     const initialRole = roleOptions.find((r) => r.value === member.role);
-    if (initialRole) {setSelectedRole(initialRole);}
+    if (initialRole) {
+      setSelectedRole(initialRole);
+    }
   }, [member]);
 
   // ✅ 버튼 비활성화 조건: 동일한 권한이면 비활성화
