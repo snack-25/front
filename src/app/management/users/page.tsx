@@ -159,8 +159,7 @@ export default function UserManagementPage() {
           <Button
             className='w-full max-w-[214px]'
             filled={'orange'}
-
-            //   onClick={() => setInviteModalOpen(true)}
+            onClick={() => setInviteModalOpen(true)}
           >
             회원 초대하기
           </Button>
