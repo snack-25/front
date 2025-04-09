@@ -82,7 +82,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         >
           {/* 왼쪽 아이콘 (검색 등) */}
           {iconPosition === 'left' && children && (
-            <div className='mr-2 flex-shrink-0'>{children}</div>
+            <div className='mr-2 flex-shrink-0 flex items-center'>
+              {children}
+            </div>
           )}
           <input
             type={type}
@@ -107,7 +109,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
           {/* 오른쪽 아이콘 (기본) */}
           {(!iconPosition || iconPosition === 'right') && children && (
-            <div className='ml-2 flex-shrink-0'>{children}</div>
+            <div className='ml-2 flex-shrink-0 flex items-center'>
+              {children}
+            </div>
           )}
         </div>
       </div>

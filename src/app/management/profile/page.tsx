@@ -38,7 +38,7 @@ const validatePasswordFunc = (password: string): string => {
     throw new Error('비밀번호는 최소 8자 이상이어야 합니다.');
   }
   if (password.length > 128) {
-    throw new Error('비밀번호는 최대 128자 이하여야 합니다.');
+    throw new Error('비밀번호는 최대 12자 이하여야 합니다.');
   }
   const PASSWORD_REGEX =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`]).{8,128}$/;
