@@ -81,18 +81,10 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
                 총 수량: {order.items.reduce((sum, i) => sum + i.quantity, 0)}개
               </span>
             </span>
-            <span className='flex-1 text-center text-black-100'>
-              {order.price}원
-            </span>
-            <span className='flex-1 text-center text-black-100'>
-              {order.requester}
-            </span>
-            <span className='flex-1 text-center text-black-100'>
-              {order.handler}
-            </span>
-            <span className='flex-1 text-center text-black-100'>
-              {order.requestDate}
-            </span>
+            <span className="flex-1 text-center text-black-100">{order.price}</span>
+            <span className="flex-1 text-center text-black-100">{order.requester}</span>
+            <span className="flex-1 text-center text-black-100">{order.handler}</span>
+            <span className="flex-1 text-center text-black-100">{order.requestDate}</span>
           </div>
         ))}
       </div>
@@ -118,45 +110,48 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
                   className='object-cover'
                 />
 
-                <div className='flex flex-col justify-center'>
-                  <p className='text-[15px] font-medium'>
-                    {order.items[0]?.name}
-                    {order.items.length > 1
-                      ? ` 외 ${order.items.length - 1}건`
-                      : ''}
-                  </p>
-                  <p className='text-sm text-gray-500'>
-                    총 수량:{' '}
-                    {order.items.reduce((sum, i) => sum + i.quantity, 0)}개
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* 하단: 라벨 - 값 좌우 정렬 */}
-            <div className='mt-6 space-y-2  text-gray-600'>
-              <div className='flex justify-between font-semibold border-b py-2 '>
-                <p className='text-black-400 '>주문 금액</p>
-                <p className='text-black-400 '>{order.price}원</p>
-              </div>
-              <div className='flex justify-between text-sm'>
-                <p className='text-gray-400'>구매승인일</p>
-                <p>{order.date || '-'}</p>
-              </div>
-              <div className='flex justify-between text-sm'>
-                <p className='text-gray-400 '>구매요청일</p>
-                <p>{order.requestDate || '-'}</p>
-              </div>
-              <div className='flex justify-between text-sm'>
-                <p className='text-gray-400'>요청인</p>
-                <p className='flex items-center gap-1'>{order.requester}</p>
-              </div>
-              <div className='flex justify-between text-sm'>
-                <p className='text-gray-400'>담당자</p>
-                <p>{order.handler || '-'}</p>
-              </div>
+            <div className="flex flex-col justify-center">
+              <p className="text-[15px] font-medium">
+                {order.items[0]?.name}
+                {order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}
+              </p>
+              <p className="text-sm text-gray-500">
+                총 수량: {order.items.reduce((sum, i) => sum + i.quantity, 0)}개
+              </p>
             </div>
           </div>
+          
+
+        </div>
+      
+        {/* 하단: 라벨 - 값 좌우 정렬 */}
+        <div className="mt-6 space-y-2  text-gray-600">
+          <div className="flex justify-between font-semibold border-b py-2 ">
+            <p className="text-black-400 ">주문 금액</p>
+            <p className="text-black-400 ">{order.price}</p>
+          </div>
+          <div className="flex justify-between text-sm">
+            <p className="text-gray-400">구매승인일</p>
+            <p>{order.date || '-'}</p>
+          </div>
+          <div className="flex justify-between text-sm">
+            <p className="text-gray-400 ">구매요청일</p>
+            <p>{order.requestDate || '-'}</p>
+          </div>
+          <div className="flex justify-between text-sm">
+            <p className="text-gray-400">요청인</p>
+            <p className="flex items-center gap-1">
+              {order.requester}
+            </p>
+          </div>
+          <div className="flex justify-between text-sm">
+            <p className="text-gray-400">담당자</p>
+            <p>{order.handler || '-'}</p>
+          </div>
+        </div>
+
+      </div>
+       
         ))}
       </div>
     </div>
