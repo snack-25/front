@@ -5,6 +5,7 @@ import { useAuthStore } from '@/app/auth/useAuthStore';
 import { createOrder } from '@/lib/api/cart';
 import { CreateOrderItem } from '@/types/cart';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { showToastWithAutoClose } from '@/lib/utils/useToastWithAutoClose';
 
 export function useOrder() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export function useOrder() {
 
     try {
       const res = await createOrder(items);
-      showCustomToast({
+      showToastWithAutoClose({
         label: '주문이 완료되었습니다!',
         variant: 'success',
       });
