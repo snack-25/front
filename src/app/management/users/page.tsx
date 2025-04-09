@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
+import React from 'react';
 
 type User = {
   id: string;
@@ -31,7 +32,7 @@ const RoleChip = ({ role }: { role: string }) => {
   const isAdmin = role === 'ADMIN' || role === 'SUPERADMIN';
   return (
     <span
-      className={`text-sm font-medium px-2 h-[36px] w-[51px] flex items-center justify-center rounded-full ${
+      className={`text-[20px] font-medium h-[36px] max-w-[74px] py-[8px] px-[10px] flex items-center justify-center rounded-full ${
         isAdmin
           ? 'bg-background-500 text-primary-400'
           : 'bg-background-300 text-gray-500'
@@ -136,7 +137,7 @@ export default function UserManagementPage() {
         </h1>
 
         {/* 🔍 검색창 + 초대 버튼 */}
-        <div className='border border-amber-300 w-full flex justify-end items-center gap-[24px] mb-6'>
+        <div className=' w-full flex justify-end items-center gap-[24px] mb-6'>
           <div className='flex flex-col gap-[4px] w-full max-w-[402px]'>
             <Input
               placeholder='이름으로 검색하세요'
@@ -207,60 +208,62 @@ export default function UserManagementPage() {
           </div>
 
           {/* 🧍 사용자 리스트 */}
-          <div className='border border-red-300  bg-[#FBF8F4] max-w-[1680px] w-full flex flex-col gap-4'>
+          <div className=' bg-[#FBF8F4]  max-w-[1680px] w-full flex flex-col gap-4'>
             {/* 테이블 바디 */}
-            <div className='flex flex-col gap-0'>
-              <div className='max-w-[1520px] w-full mx-auto'>
-                {users.map((user) => (
-                  <div
-                    key={user.id}
-                    className=' w-full justify-around flex h-[104px]  border-[#E6E6E6] items-center'
-                  >
-                    {/* 왼쪽 그룹 */}
-                    <div className=' w-full flex gap-0 text-[#6B6B6B]'>
-                      <div className='ml-[14px] tb:ml-[20px] tb:max-w-[320px] max-w-[180px] w-full flex justify-start items-center gap-2 text-[20px]'>
-                        <Image
-                          src={getProfileImage(user.role)}
-                          alt={`${user.role} 프로필`}
-                          width={48}
-                          height={48}
-                        />
-                        {user.name}
+            {users.map((user, key) => (
+              <React.Fragment key={user.id}>
+                <div className=' border-b border-b-[#E6E6E6] flex flex-col gap-0'>
+                  <div className='max-w-[1520px]  w-full mx-auto'>
+                    <div
+                      key={user.id}
+                      className=' w-full justify-around flex h-[104px]  border-[#E6E6E6] items-center'
+                    >
+                      {/* 왼쪽 그룹 */}
+                      <div className=' w-full flex gap-0 text-[#6B6B6B]'>
+                        <div className='ml-[14px] tb:ml-[20px] tb:max-w-[320px] max-w-[180px] w-full flex justify-start items-center gap-2 text-[20px]'>
+                          <Image
+                            src={getProfileImage(user.role)}
+                            alt={`${user.role} 프로필`}
+                            width={48}
+                            height={48}
+                          />
+                          {user.name}
+                        </div>
+                        <div className='max-w-[400px] flex justify-start items-center text-[20px] '>
+                          {user.email}
+                        </div>
                       </div>
-                      <div className='max-w-[400px] flex justify-start items-center text-[20px] '>
-                        {user.email}
-                      </div>
-                    </div>
 
-                    {/* 오른쪽 그룹 */}
-                    <div className='max-w-[524px] justify-between w-full flex '>
-                      <div className='max-w-[250px] w-full flex justify-center items-center'>
-                        <RoleChip role={user.role as 'admin' | 'user'} />
-                      </div>
-                      <div className='max-w-[250px] flex justify-center tb:text-[16px] items-center gap-2'>
-                        <Button
-                          filled='gray'
-                          className=' text-[#999999] px-[16px] py-[8px]'
-                          height='tb:h-[42px]'
-                          rounded='rounded-[8px]'
-                          // onClick={() => setIsUnsubscribeModalOpen(true)}
-                        >
-                          계정 탈퇴
-                        </Button>
-                        <Button
-                          filled='orange'
-                          height='tb:h-[42px]'
-                          rounded='rounded-[8px]'
-                          className='px-[16px] py-[8px]'
-                        >
-                          권한 변경
-                        </Button>
+                      {/* 오른쪽 그룹 */}
+                      <div className='max-w-[524px] justify-between w-full flex '>
+                        <div className='max-w-[250px] w-full flex justify-center items-center'>
+                          <RoleChip role={user.role as 'admin' | 'user'} />
+                        </div>
+                        <div className='max-w-[250px] flex justify-center tb:text-[16px] items-center gap-2'>
+                          <Button
+                            filled='gray'
+                            className=' text-[#999999] px-[16px] py-[8px]'
+                            height='tb:h-[42px]'
+                            rounded='rounded-[8px]'
+                            // onClick={() => setIsUnsubscribeModalOpen(true)}
+                          >
+                            계정 탈퇴
+                          </Button>
+                          <Button
+                            filled='orange'
+                            height='tb:h-[42px]'
+                            rounded='rounded-[8px]'
+                            className='px-[16px] py-[8px]'
+                          >
+                            권한 변경
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+              </React.Fragment>
+            ))}
           </div>
 
           {/* ◀️ 페이지네이션 */}
