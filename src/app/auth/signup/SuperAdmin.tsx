@@ -219,7 +219,8 @@ export function SuperAdmin() {
       }
     } catch (error) {
       showCustomToast({
-        label: '회원가입 중 오류가 발생했습니다',
+        label: '회원가입 처리 중 오류가 발생했습니다.',
+
         variant: 'error',
         onClick: () => {},
       });

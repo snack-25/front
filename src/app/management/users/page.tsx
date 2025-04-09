@@ -49,7 +49,7 @@ const RoleChip = ({ role }: { role: string }) => {
 
   return (
     <span
-      className={`inline-flex items-center justify-center text-sm font-medium px-3 py-1 rounded-full ${bgColor} ${textColor} whitespace-nowrap`}
+      className={`inline-flex items-center justify-center text-[20px] font-medium px-[8px] py-[4px] rounded-full ${bgColor} ${textColor} whitespace-nowrap`}
     >
       {' '}
       {label}

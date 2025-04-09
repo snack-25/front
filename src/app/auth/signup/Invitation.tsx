@@ -88,9 +88,9 @@ export function InvitationUser() {
   };
 
   const handleSubmit = async () => {
-    if (Object.values(form).some((value) => !value.trim())) {
+    if (!form.password.trim() || !form.validatePassword.trim()) {
       showCustomToast({
-        label: '모든 항목을 입력해주세요',
+        label: '비밀번호를 모두 입력해주세요',
         variant: 'error',
       });
       return;
@@ -102,53 +102,52 @@ export function InvitationUser() {
         password: form.password,
       });
 
-      console.log('회원가입 응답:', res);
-
-      if (res.msg === '회원가입 실패') {
-        throw new Error('회원가입 실패');
+      if (res.status === 200) {
+        setIsModalOpen(true);
+      } else {
+        const errorMessage = res?.data.message || '회원가입 실패';
+        showCustomToast({
+          label: errorMessage,
+          variant: 'error',
+        });
       }
-
-      // 초대 코드 API로 이미 정보를 받아왔으므로 다시 덮어쓰지 않고 모달을 오픈
-      setIsModalOpen(true);
     } catch (err) {
       console.error(err);
       showCustomToast({
-        label: '회원가입 처리 중 오류가 발생했습니다.',
+        label: '회원가입 처리 중 오류가 발생했습니다',
         variant: 'error',
       });
     }
   };
 
   useEffect(() => {
-    if (!tokenFromUrl) {
-      return;
-    }
+    if (!tokenFromUrl) return;
 
-    // 초대 코드 API 응답 시
     invitationCodeApi({ token: tokenFromUrl })
       .then((res) => {
-        console.log('초대 응답 데이터:', res); // 디버깅용 로그
         const data = res.data;
+        const { email, name, companyName, role } = data.data;
+
         if (data) {
-          // 초대 응답 데이터에서 회사명은 data.companyName 혹은 data.company.name 로 내려옴
           setInvitedUser({
-            email: data.email,
-            name: data.name,
-            company:
-              data.companyName || (data.company && data.company.name) || '',
-            role: data.role,
+            email: email,
+            name: name,
+            company: companyName || (data.company && data.company.name) || '',
+            role: role,
           });
-          setForm((prev) => ({ ...prev, email: data.email || '' }));
-        } else {
-          console.log('유효하지 않은 초대 토큰입니다.');
+
+          setForm({
+            email: email ?? '',
+            password: '',
+            validatePassword: '',
+          });
         }
       })
       .catch((err) => console.error(err.msg));
   }, [tokenFromUrl]);
 
-  const isFormValid = Object.values(form).every(
-    (value) => (value ?? '').length > 0,
-  );
+  const isFormValid =
+    form.password.trim().length > 0 && form.validatePassword.trim().length > 0;
 
   const renderPasswordField = (
     name: 'password' | 'validatePassword',
