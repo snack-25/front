@@ -15,6 +15,7 @@ import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
 import React from 'react';
+import { toast } from 'sonner';
 
 type User = {
   id: string;
@@ -332,8 +333,8 @@ export default function UserManagementPage() {
           onClose={() => setInviteModalOpen(false)}
           onConfirm={async (data) => {
             try {
-              console.log('✅ user:', user); // <- null or undefined 확인
-              console.log('✅ company:', user?.companyId); // company 정보 확인
+              // console.log('✅ user:', user); // <- null or undefined 확인
+              // console.log('✅ company:', user?.companyId); // company 정보 확인
               if (!user?.id || !user?.companyId) {
                 alert('로그인 또는 회사 정보가 누락되었습니다.');
                 return;
@@ -347,11 +348,19 @@ export default function UserManagementPage() {
                 inviterId: String(user.id),
               });
 
+              toast.success('회원 초대가 완료되었습니다!');
               console.log('✅ 초대 완료:', response);
-              alert('회원 초대가 완료되었습니다!');
-            } catch (error) {
+            } catch (error: any) {
               console.error('❌ 초대 실패:', error);
-              alert('회원 초대에 실패했습니다.');
+
+              const errorMessage =
+                error?.response?.data?.message ||
+                error?.message || // Error('...') 로 생성된 경우
+                '회원 초대에 실패했습니다.';
+
+              console.log('🐛 최종 에러 메시지:', errorMessage);
+
+              toast.error(errorMessage);
             } finally {
               setInviteModalOpen(false);
             }

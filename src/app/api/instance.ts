@@ -17,7 +17,25 @@ export async function fetchApi(
     });
 
     const data = await res.json();
-    console.log('data', data);
+
+    if (!res.ok) {
+      console.error('❗️서버 에러 응답 전체:', data);
+
+      const message = Array.isArray(data.message)
+        ? data.message[0]
+        : data.message ||
+          data.error || // NestJS의 기본 오류 구조
+          '서버 오류가 발생했습니다';
+
+      const error = new Error(message);
+      (error as any).response = {
+        data,
+        status: res.status,
+      };
+      throw error;
+    }
+
+    // console.log('data', data);
     return data;
   } catch (err) {
     console.error('❌ [API 호출 실패]', fullUrl, err);
