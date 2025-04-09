@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { getAllCategories, getOrderRequestDetail } from '@/lib/api/cart';
-import { OrderRequestDetail } from '@/types/cart';
-import { Category } from '@/components/gnb/TabMenu';
-import { getCategoryNamePair } from '@/lib/utils/getCategoryNamePair';
+import { useParams, useRouter } from 'next/navigation';
+
 import { useAuthStore } from '@/app/auth/useAuthStore';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { Category } from '@/components/gnb/TabMenu';
 import { Button } from '@/components/ui/Button';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { getAllCategories, getOrderRequestDetail } from '@/lib/api/cart';
+import { getCategoryNamePair } from '@/lib/utils/getCategoryNamePair';
+import { OrderRequestDetail } from '@/types/cart';
 
 export default function OrderRequestCompletePage() {
   const { orderRequestId } = useParams() as { orderRequestId: string };
@@ -48,8 +49,8 @@ export default function OrderRequestCompletePage() {
     fetchDetail();
   }, [orderRequestId]);
 
-  if (loading) return <div className='text-center p-10'>로딩 중...</div>;
-  if (!data) return <div className='text-center p-10'>데이터 없음</div>;
+  if (loading) {return <div className='text-center p-10'>로딩 중...</div>;}
+  if (!data) {return <div className='text-center p-10'>데이터 없음</div>;}
 
   const firstItem = data.items[0];
   const totalQuantity = data.items.reduce(

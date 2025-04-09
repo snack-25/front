@@ -1,18 +1,20 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import NumberInput from '@/components/ui/NumberInput';
-import { useDebounce } from '@/hooks/cart/useDebounce';
-import { updateCartItemQuantity } from '@/lib/api/cart';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
+
 import { useAuthStore } from '@/app/auth/useAuthStore';
-import OrderRequestModal from '../ui/modal/OrderRequestModal';
-import { CartItemProps } from '@/types/cart';
-import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
-import { useOrder } from '@/hooks/order/useOrder';
+import NumberInput from '@/components/ui/NumberInput';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useDebounce } from '@/hooks/cart/useDebounce';
+import { useOrder } from '@/hooks/order/useOrder';
+import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
+import { updateCartItemQuantity } from '@/lib/api/cart';
+import { CartItemProps } from '@/types/cart';
+
 import { Button } from '../ui/Button';
+import OrderRequestModal from '../ui/modal/OrderRequestModal';
 
 export default function CartItem({
   id,
@@ -222,7 +224,7 @@ export default function CartItem({
           const success = await submitOrderRequest([
             { productId, quantity: localQuantity, requestMessage: message },
           ]);
-          if (success) setShowModal(false);
+          if (success) {setShowModal(false);}
         }}
       />
     </div>

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+
 import {
+  deleteUserApi,
   getUserListApi,
   updateUserRoleApi,
-  deleteUserApi,
 } from '@/app/api/users/api';
 import { inviteUserApi } from '@/app/api/users/api';
 import { useAuthStore } from '@/app/auth/useAuthStore';
@@ -61,7 +62,7 @@ export default function UserManagementPage() {
     setDeleteModalOpen(true);
   };
   const handleDeleteUser = async () => {
-    if (!userToDelete) return;
+    if (!userToDelete) {return;}
 
     try {
       await deleteUserApi(userToDelete.id);
@@ -115,7 +116,7 @@ export default function UserManagementPage() {
 
   // ✅ 이 함수는 MemberRoleChangeModal의 onConfirm에서 호출됨
   const handleRoleChangeConfirm = async (data: { role: string }) => {
-    if (!selectedUser) return;
+    if (!selectedUser) {return;}
 
     try {
       await updateUserRoleApi({ userId: selectedUser.id, role: data.role }); // ✅

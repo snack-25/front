@@ -1,8 +1,15 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import CartItem from '@/components/cartItems/cartItem';
+import CartSummary from '@/components/cartItems/cartSummary';
+import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useOrder } from '@/hooks/order/useOrder';
+import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 import {
   deleteCartItems,
   getCartItems,
@@ -13,12 +20,6 @@ import {
   CreateOrderRequestItem,
   GetCartSummaryResponse,
 } from '@/types/cart';
-import CartSummary from '@/components/cartItems/cartSummary';
-import { useAuthStore } from '@/app/auth/useAuthStore';
-import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
-import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { useOrder } from '@/hooks/order/useOrder';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -129,7 +130,7 @@ export default function CartsPage() {
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    if (allIds.length === 0) return;
+    if (allIds.length === 0) {return;}
 
     try {
       await deleteCartItems(cartId, allIds);
@@ -163,7 +164,7 @@ export default function CartsPage() {
 
     if (user?.role === 'SUPERADMIN' || user?.role === 'ADMIN') {
       const success = await submitOrder(selectedItems);
-      if (success) fetchCart();
+      if (success) {fetchCart();}
     } else {
       setPendingItems(selectedItems);
       setShowModal(true);
@@ -171,7 +172,7 @@ export default function CartsPage() {
   };
 
   if (!cartData)
-    return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
+    {return <div className='text-center py-20'>장바구니 불러오는 중...</div>;}
 
   return (
     <div className='min-h-screen bg-[#FBF8F4] px-4 lg:px-[120px] pt-[40px] pb-[80px] mt-auto'>

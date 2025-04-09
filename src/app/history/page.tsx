@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
 
 import DropdownMenu, {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
+import Pagenation from '@/components/ui/Pagination';
 import { Order } from '@/lib/api/orders';
 
 import HistoryTable from './components/HistoryTable';
 import SummaryCards from './components/SummaryCards';
-import Pagenation from '@/components/ui/Pagination';
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);

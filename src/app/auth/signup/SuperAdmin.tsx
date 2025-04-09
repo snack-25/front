@@ -1,16 +1,17 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Form from 'next/form';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { signupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { emailRegex } from '@/lib/constants';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
-import Image from 'next/image';
-import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { emailRegex } from '@/lib/constants';
 
 interface IError {
   isError: boolean;

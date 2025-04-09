@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import DropdownMenu, {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
-import MyRequestTable from './components/MyRequestTable';
 import Pagenation from '@/components/ui/Pagination';
+
 import CancelModal from './components/CancelModal';
+import MyRequestTable from './components/MyRequestTable';
 
 interface OrderItem {
   id: string;
@@ -54,7 +56,7 @@ const MyRequestPage = () => {
         );
         const data = await res.json();
   
-        if (!Array.isArray(data)) return;
+        if (!Array.isArray(data)) {return;}
   
         const transformed: Order[] = data.map((item: any) => ({
           id: item.id,
@@ -81,8 +83,8 @@ const MyRequestPage = () => {
   }, [sortOption, currentPage]);
 
   const sortedOrders = [...orders].sort((a, b) => {
-    if (sortOption === '낮은금액순') return a.price - b.price;
-    if (sortOption === '높은금액순') return b.price - a.price;
+    if (sortOption === '낮은금액순') {return a.price - b.price;}
+    if (sortOption === '높은금액순') {return b.price - a.price;}
     return 0;
   });
 

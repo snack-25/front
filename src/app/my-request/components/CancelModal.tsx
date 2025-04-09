@@ -1,8 +1,8 @@
 // components/CancelModal.tsx
 'use client';
 
-import { useEffect } from 'react';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 interface Props {
   open: boolean;
@@ -21,7 +21,7 @@ const CancelModal = ({ open, onClose, onConfirm, itemName, count }: Props) => {
     }
   }, [open]);
 
-  if (!open) return null;
+  if (!open) {return null;}
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">

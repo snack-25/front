@@ -8,9 +8,9 @@ import DropdownMenu, {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
+import Pagination from '@/components/ui/Pagination'; // ✅ 페이지네이션 컴포넌트
 
 import OrderTable from './components/OrderTable'; // ✅ 테이블 컴포넌트
-import Pagination from '@/components/ui/Pagination'; // ✅ 페이지네이션 컴포넌트
 
 interface OrderItem {
   id: string;

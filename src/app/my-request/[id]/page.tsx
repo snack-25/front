@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
@@ -73,7 +74,7 @@ const OrderDetailPage = () => {
 
   const handleAddToCart = async () => {
     const cartId = user?.cartId;
-    if (!cartId) return alert('장바구니 정보가 없습니다.');
+    if (!cartId) {return alert('장바구니 정보가 없습니다.');}
     for (const item of order!.items) {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carts/${cartId}/items`, {
         method: 'POST',
@@ -85,7 +86,7 @@ const OrderDetailPage = () => {
     showCustomToast({ label: '🛒 모든 상품을 장바구니에 담았습니다!', variant: 'success' });
   };
 
-  if (!order) return <div className='text-center py-20'>불러오는 중...</div>;
+  if (!order) {return <div className='text-center py-20'>불러오는 중...</div>;}
 
   const shippingFee = Math.max(0, order.totalAmount - order.items.reduce((sum, i) => sum + i.price * i.quantity, 0));
 

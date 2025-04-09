@@ -1,10 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import LogoImg from '@public/img/landing/landing-title-md.svg';
+
+import { MobileLoginBox } from '@/components/mobileLoginBox/MobileLoginBox';
 import { LANDING_CATCHPHRASE } from '@/lib/constants';
 import CustomTooltip from '@components/tooltip/CustomTooltip';
-import { MobileLoginBox } from '@/components/mobileLoginBox/MobileLoginBox';
+import LogoImg from '@public/img/landing/landing-title-md.svg';
 
 export default function Home() {
   return (
