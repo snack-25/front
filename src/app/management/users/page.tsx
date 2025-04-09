@@ -28,16 +28,30 @@ const getProfileImage = (role: string) =>
     : '/icon/flat/profile-md.svg';
 
 const RoleChip = ({ role }: { role: string }) => {
-  const isAdmin = role === 'ADMIN' || role === 'SUPERADMIN';
+  let label = '';
+  let bgColor = '';
+  let textColor = '';
+
+  if (role === 'SUPERADMIN') {
+    label = '최종 관리자';
+    bgColor = 'bg-orange-100';
+    textColor = 'text-orange-500';
+  } else if (role === 'ADMIN') {
+    label = '관리자';
+    bgColor = 'bg-background-500';
+    textColor = 'text-primary-400';
+  } else {
+    label = '일반';
+    bgColor = 'bg-background-300';
+    textColor = 'text-gray-500';
+  }
+
   return (
     <span
-      className={`text-sm font-medium px-2 h-[36px] w-[51px] flex items-center justify-center rounded-full ${
-        isAdmin
-          ? 'bg-background-500 text-primary-400'
-          : 'bg-background-300 text-gray-500'
-      }`}
+      className={`inline-flex items-center justify-center text-sm font-medium px-3 py-1 rounded-full ${bgColor} ${textColor} whitespace-nowrap`}
     >
-      {isAdmin ? '관리자' : '일반'}
+      {' '}
+      {label}
     </span>
   );
 };
@@ -243,6 +257,7 @@ export default function UserManagementPage() {
                           height='tb:h-[42px]'
                           rounded='rounded-[8px]'
                           onClick={() => handleOpenDeleteModal(user)}
+                          disabled={user.role === 'SUPERADMIN'}
                         >
                           계정 탈퇴
                         </Button>
@@ -252,6 +267,7 @@ export default function UserManagementPage() {
                           rounded='rounded-[8px]'
                           className='px-[16px] py-[8px]'
                           onClick={() => handleOpenRoleModal(user)} // 선택된 유저 정보 전달
+                          disabled={user.role === 'SUPERADMIN'}
                         >
                           권한 변경
                         </Button>
