@@ -179,46 +179,46 @@ const OrderDetailPage = () => {
         <div className='w-1/3 space-y-6'>
           <div>
             <h2 className='text-xl font-bold border-b'>요청 정보</h2>
-            <p className='mt-2 text-gray-500'>{order.createdAt}</p>
-            <label className='block mt-4 text-sm'>요청인</label>
+            <p className='mt-2 text-gray-500 text-xl'>{order.createdAt}</p>
+            <label className='block mt-4 font-semibold text-xl text-black-400'>요청인</label>
             <input
               readOnly
               value={order.requester}
-              className='w-full border px-4 py-3 rounded-md'
+              className='w-full border px-4 py-3 rounded-md text-gray-500 text-2lg'
             />
-            <label className='block mt-4 text-sm'>요청 메시지</label>
+            <label className='block mt-4 text-xl text-black-400 font-semibold'>요청 메시지</label>
             <textarea
               readOnly
               value={order.requestMessage || '요청 메시지가 없습니다.'}
-              className='w-full border px-4 py-3 rounded-md resize-none'
+              className='w-full border px-4 py-3 rounded-md resize-none text-2lg text-gray-500'
               rows={3}
             />
           </div>
           <div>
-            <h2 className='text-xl font-bold border-b'>승인 정보</h2>
-            <label className='block mt-4 text-sm'>승인일</label>
+            <h2 className='text-xl font-bold border-b-2 border-black'>승인 정보</h2>
+            <label className='block mt-4 text-xl font-semibold'>승인일</label>
             <input
               readOnly
               value={order.approvedAt || '-'}
-              className='w-full border px-4 py-3 rounded-md'
+              className='w-full border px-4 py-3 rounded-md text-2lg text-gray-500'
             />
-            <label className='block mt-4 text-sm'>승인자</label>
+            <label className='block mt-4 text-xl font-semibold'>승인자</label>
             <input
               readOnly
               value={order.approver || '-'}
-              className='w-full border px-4 py-3 rounded-md'
+              className='w-full border px-4 py-3 rounded-md text-2lg text-gray-500'
             />
-            <label className='block mt-4 text-sm'>상태</label>
+            <label className='block mt-4 text-xl font-semibold'>상태</label>
             <input
               readOnly
               value={getStatusLabel(order.status)}
-              className='w-full border px-4 py-3 rounded-md'
+              className='w-full border px-4 py-3 rounded-md text-2lg text-gray-500'
             />
-            <label className='block mt-4 text-sm'>응답 메시지</label>
+            <label className='block mt-4 text-xl font-semibold'>응답 메시지</label>
             <textarea
               readOnly
               value={order.resultMessage || ''}
-              className='w-full border px-4 py-3 rounded-md resize-none'
+              className='w-full border px-4 py-3 rounded-md resize-none text-2lg text-gray-500'
               rows={3}
             />
           </div>
