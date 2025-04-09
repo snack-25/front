@@ -33,7 +33,7 @@ const RoleChip = ({ role }: { role: string }) => {
   let textColor = '';
 
   if (role === 'SUPERADMIN') {
-    label = '최종 관리자';
+    label = '최고 관리자';
     bgColor = 'bg-orange-100';
     textColor = 'text-orange-500';
   } else if (role === 'ADMIN') {
