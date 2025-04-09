@@ -1,8 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
-import { notFound, useSearchParams } from 'next/navigation';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { Category } from '@/components/gnb/TabMenu';
 import CardList from '@/components/productList/CardList';
@@ -32,6 +31,8 @@ export interface IProducts {
   description: string;
   categoryId: Category['id'];
   imageUrl: string;
+  totalSold: number;
+  createdAt: string;
 }
 
 interface IFetchData {
