@@ -25,7 +25,8 @@ const SummaryCards = () => {
       try {
         const authStorage = localStorage.getItem('auth-storage');
         const parsed = authStorage ? JSON.parse(authStorage) : null;
-        const companyId = parsed?.state?.user?.companyId;
+        const companyId = parsed?.state?.company?.companyId;
+        
 
         if (!companyId) {
           console.warn('❗ 회사 정보가 없습니다.', parsed);

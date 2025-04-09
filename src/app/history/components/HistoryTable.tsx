@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface OrderItem {
+  imageUrl?: string;
   name: string;
   quantity: number;
 }
@@ -94,11 +95,12 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
         {/* 상단: 이미지 + 상품명/수량 + 주문금액 */}
         <div className="flex justify-between items-start">
           <div className="flex gap-4">
-            <img
-              src="/images/default-product.png"
-              alt="상품 이미지"
-              className="w-[50px] h-[50px] object-cover"
-            />
+          <Image
+          src={order.items[0]?.imageUrl || '/images/default-product.png'}
+           alt="상품 이미지"
+           width={50}
+         height={50}
+        className="object-cover"          />
             <div className="flex flex-col justify-center">
               <p className="text-[15px] font-medium">
                 {order.items[0]?.name}

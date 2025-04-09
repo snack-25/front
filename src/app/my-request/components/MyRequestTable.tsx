@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Order } from '@/types/order';
 
 interface OrderItem {
   id: string;
@@ -13,13 +14,6 @@ interface OrderItem {
   productId: string;
 }
 
-interface Order {
-  id: string;
-  date: string;
-  price: number;
-  status: string;
-  items: OrderItem[];
-}
 
 interface Props {
   orders: Order[];
