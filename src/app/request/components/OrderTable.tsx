@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 
 import PurchaseApprovalModal from '@/components/ui/modal/purchaseApprovalModal';
 
@@ -38,6 +39,7 @@ const OrderTable: React.FC<OrderTableProps> = ({
   onApprove,
   onReject,
 }) => {
+  const { user } = useAuthStore();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -62,12 +64,10 @@ const OrderTable: React.FC<OrderTableProps> = ({
       }
 
       // 회사 ID 가져오기
-      const userData = localStorage.getItem('user');
-      const parsed = userData ? JSON.parse(userData) : null;
-      const companyId = parsed?.companyId;
+      const companyId = user?.companyId;
 
       if (!companyId) {
-        console.warn('❗ 회사 정보가 없습니다.', parsed);
+        console.warn('❗ 회사 정보가 없습니다.');
         alert('회사 정보를 불러올 수 없습니다.');
         return;
       }
@@ -299,9 +299,6 @@ const OrderTable: React.FC<OrderTableProps> = ({
           isOpen={isOpen}
           onCloseAction={() => setIsOpen(false)}
           onConfirmAction={(message) => {
-            console.log('🧾 selectedOrder:', selectedOrder);
-            console.log('승인 요청 ID:', selectedOrder?.id);
-            console.log('승인 메시지:', message);
             onApprove?.(selectedOrder.id, message);
             setIsOpen(false);
           }}
