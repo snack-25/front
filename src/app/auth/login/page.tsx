@@ -102,6 +102,7 @@ export default function Login() {
             tabIndex={1}
             titleClassName='이메일'
             name='email'
+            type='email'
             placeholder='이메일을 입력해주세요'
             onChange={handleChange}
             onBlur={handleEmailBlur}
@@ -151,8 +152,8 @@ export default function Login() {
         <Button
           className='mt-[16px] tb:mt-[40px] cursor-pointer w-full'
           filled={isFormValid ? 'orange' : 'gray'}
-          type='button'
-          onClick={handleSubmit}
+          type='submit'
+          onSubmit={async () => await handleSubmit()}
           disabled={!isFormValid}
         >
           로그인

@@ -1,8 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import LogoImg from '@public/img/landing/landing-title-md.svg';
 import { LANDING_CATCHPHRASE } from '@/lib/constants';
 import CustomTooltip from '@components/tooltip/CustomTooltip';
-import { Button } from '@ui/Button';
+import { MobileLoginBox } from '@/components/mobileLoginBox/MobileLoginBox';
 
 export default function Home() {
   return (
@@ -34,22 +36,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='gird-cols-1 min-[744px]:hidden grid justify-center w-full gap-2 pt-8 pb-10'>
-          <Button
-            variant='outline'
-            outlined='orange'
-            className='rounded-full bg-white w-[194px] h-10'
-          >
-            로그인
-          </Button>
-          <Button
-            variant='outline'
-            outlined='orange'
-            className='rounded-full bg-white w-[194px] h-10'
-          >
-            관리자 회원가입
-          </Button>
-        </div>
+        <MobileLoginBox />
 
         <div
           className='flex-1 w-full bg-[url(/img/landing/landing-hero-sm.svg)] max-tb:bg-[url(/img/landing/landing-hero-md.svg)] bg-bottom bg-no-repeat bg-contain max-tb:bg-size-[670px] lt:bg-size-[100vh]

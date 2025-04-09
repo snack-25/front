@@ -90,11 +90,17 @@ export const useAuthStore = create<AuthState>()(
 
       // 로그아웃 (상태 초기화 + localStorage 삭제)
       logout: async () => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('로그아웃 ');
+        try {
+          await logoutApi();
+          set({ user: null, company: null, isAuth: false });
+        } catch (e) {
+          console.error('로그아웃 실패:', e);
+        } finally {
+          window.history.replaceState(null, '', '/');
         }
-        await logoutApi();
-        set({ user: null, company: null, isAuth: false });
+        // if (process.env.NODE_ENV === 'development') {
+        //   console.log('로그아웃 ');
+        // }
       },
 
       edit: async (companyName: string) => {
