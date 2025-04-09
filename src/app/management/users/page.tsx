@@ -210,7 +210,7 @@ export default function UserManagementPage() {
           {/* 🧍 사용자 리스트 */}
           <div className=' bg-[#FBF8F4]  max-w-[1680px] w-full flex flex-col gap-4'>
             {/* 테이블 바디 */}
-            {users.map((user, key) => (
+            {users.map((user) => (
               <React.Fragment key={user.id}>
                 <div className=' border-b border-b-[#E6E6E6] flex flex-col gap-0'>
                   <div className='max-w-[1520px]  w-full mx-auto'>
