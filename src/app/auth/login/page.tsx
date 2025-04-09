@@ -84,10 +84,8 @@ export default function Login() {
 
   const isFormValid = form.email.length > 0 && form.password.length > 0;
 
-  // if (isAuth) return <>....</>;
-
   return (
-    <div className='py-[80px] tb:pb-[100px] px-[24px] tb:max-w-[640px] m-auto flex flex-col'>
+    <>
       <div className='pr-[10px]'>
         <h2 className='text-[24px] tb:text-[32px] font-semibold text-center'>
           로그인
@@ -150,7 +148,7 @@ export default function Login() {
         </div>
 
         <Button
-          className='mt-[16px] tb:mt-[40px] cursor-pointer w-full'
+          className='mt-[16px] tb:mt-[40px] cursor-pointer w-full '
           filled={isFormValid ? 'orange' : 'gray'}
           type='submit'
           onSubmit={async () => await handleSubmit()}
@@ -164,12 +162,12 @@ export default function Login() {
           </span>
           <Link
             href='/auth/signup'
-            className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+            className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] focus:underline hover:underline decoration-1 underline-offset-2'
           >
             가입하기
           </Link>
         </div>
       </Form>
-    </div>
+    </>
   );
 }
