@@ -10,7 +10,7 @@ export default function ProductListLayout({ children }: IProps) {
     <>
       <ClientWrapper>
         <TabMenu />
-        <main>{children}</main>
+        <main className='p-2 pt-8'>{children}</main>
       </ClientWrapper>
     </>
   );

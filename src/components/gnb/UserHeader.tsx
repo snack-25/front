@@ -58,7 +58,7 @@ export default function UserHeader({ user }: { user: userInfo }) {
                 width={126}
                 height={32}
                 alt='gnb snack logo'
-                className='max-tb:w-20 max-tb:h-[54px]'
+                className='max-tb:w-20 max-tb:h-[54px] min-w-16'
                 priority
               />
             </Link>
@@ -139,7 +139,7 @@ export default function UserHeader({ user }: { user: userInfo }) {
               className={`bg-transparent hover:bg-transparent text-gray-400 text-[1.4vw] font-bold w-auto h-auto cursor-pointer ${hoverStyle}`}
               font='tb:text-[1.4vw]'
               onClick={async () => {
-                await logout();
+                logout();
                 router.push('/');
               }}
             >
@@ -148,22 +148,22 @@ export default function UserHeader({ user }: { user: userInfo }) {
           </div>
 
           <div className='flex items-center gap-4 tb:hidden'>
-            <button className='cursor-pointer'>
+            <Link href={`/cart/${user.cartId}`}>
               <Image
                 src='/icon/flat/cart-outlined-md.svg'
                 width={24}
                 height={24}
                 alt='cart-outlined'
               />
-            </button>
-            <button className='cursor-pointer'>
+            </Link>
+            <Link href='/management/profile'>
               <Image
                 src='/icon/flat/profile-md.svg'
                 width={24}
                 height={24}
                 alt='profile icon'
               />
-            </button>
+            </Link>
           </div>
         </div>
       </header>

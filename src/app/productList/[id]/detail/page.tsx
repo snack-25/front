@@ -88,7 +88,7 @@ export default function ProductDetail() {
     return <EmptyImage />;
   }
 
-  const { name, price, categoryId, imageUrl } = detail;
+  const { name, price, categoryId, imageUrl, totalSold } = detail;
 
   const handleAddToCart = async () => {
     if (!user?.cartId) {
@@ -132,13 +132,13 @@ export default function ProductDetail() {
 
       <div className='relative w-full flex gap-20 max-tb:gap-6 max-tb:flex-col'>
         <div className='relative bg-white w-1/2 max-tb:w-full aspect-square rounded-2xl flex items-center justify-center'>
-          <div className='absolute w-1/2 h-1/2'>
+          <div className='absolute w-1/2 h-1/2 aspect-square'>
             <Image
-              src={imageUrl}
+              src={imageUrl || '/img/gnb/gnb-logo-primary.svg'}
               fill
               sizes='(max-width:745px):100vw, 50vw'
               className='object-contain'
-              alt='product image'
+              alt={name || '상품 이미지'}
             />
           </div>
         </div>
@@ -147,16 +147,16 @@ export default function ProductDetail() {
           <div className='flex justify-between'>
             <div>
               <p className='lt:text-xl max-lt:text-xs font-medium text-gray-500 mb-2'>
-                {subName}
+                {subName || '카테고리'}
               </p>
               <h1 className='lt:text-3xl max-lt:text-2xl font-semibold text-black-400 mb-6'>
-                {name}
+                {name || '상품명'}
               </h1>
               <p className='bg-illustration-02 lt:text-xl max-lt:text-xs font-semibold mb-6 text-orange-400 text-center py-1 w-[98px] h-[40px] max-lt:w-[62px] max-lt:h-6'>
-                {123}회 구매
+                {totalSold ?? 1}회 구매
               </p>
               <p className='lt:text-3xl max-lt:text-2xl font-bold text-black-400 mb-6'>
-                {price}원
+                {price.toLocaleString() ?? 1}원
               </p>
             </div>
 
