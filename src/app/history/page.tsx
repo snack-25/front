@@ -20,8 +20,10 @@ const OrdersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
 
+  const statuses = ['PENDING', 'PROCESSING'];
+
   useEffect(() => {
-    const fetchApprovedOrders = async () => {
+    const fetchOrders = async () => {
       try {
         const sortQuery =
           sortOption === '높은금액순'
@@ -30,53 +32,51 @@ const OrdersPage = () => {
               ? 'lowPrice'
               : 'latest';
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/order-requests?page=${currentPage}&pageSize=10&status=APPROVED&sort=${sortQuery}`,
-          {
-            credentials: 'include',
-          },
-        );
+        let allOrders: Order[] = [];
+        let total = 0;
 
-        if (!res.ok) {
-          throw new Error('주문 불러오기 실패');
-        }
+        // ✅ 상태별로 하나씩 요청
+        for (const status of statuses) {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/orders?page=${currentPage}&pageSize=10&status=${status}&sort=${sortQuery}`,
+            { credentials: 'include' }
+          );
 
-        const data = await res.json();
-        console.log('✅ 서버 응답 확인', data);
+          if (!res.ok) throw new Error(`${status} 주문 불러오기 실패`);
 
-        const approvedOnly = data.filter(
-          (item: any) => item.status === 'APPROVED',
-        );
+          const data = await res.json();
 
-        const transformed: Order[] = approvedOnly.map((item: any) => ({
-          id: item.id,
-          date: item.resolvedAt?.slice(0, 10) ?? '-',
-          requestDate: item.requestedAt?.slice(0, 10) ?? '-',
-          requester: item.requesterName || '-',
-          handler: item.resolverName || '-',
-          price: item.totalAmount?.toLocaleString() || '0',
-          status: item.status,
-          items:
-            item.orderRequestItems?.map((it: any) => ({
+          const transformed: Order[] = data.orders.map((item: any) => ({
+            id: item.id,
+            date: item.createdAt?.slice(0, 10) ?? '-',
+            requestDate: item.createdAt?.slice(0, 10) ?? '-',
+            requester: item.requestedBy?.name || '-',
+            handler: item.updatedBy?.name || '-',
+            price: item.totalAmount?.toLocaleString() + '원' || '0원',
+            status: item.status,
+            items: item.orderItems?.map((it: any) => ({
               name: it.product?.name || '상품 없음',
               quantity: it.quantity || 0,
             })) || [],
-        }));
+          }));
 
-        setOrders(transformed);
+          allOrders = [...allOrders, ...transformed];
+          total += data.totalOrders;
+        }
+
+        setOrders(allOrders);
+        setTotalPage(Math.ceil(total / 10)); // ✅ 10개씩이라고 가정
       } catch (err) {
         console.error('데이터 로딩 실패:', err);
         setIsError(true);
       }
     };
 
-    fetchApprovedOrders();
-  }, [sortOption]);
+    fetchOrders();
+  }, [sortOption, currentPage]);
 
   return (
-    <div
-      className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen'}
-    >
+    <div className={'w-full px-8 lg:px-16 pt-10 pb-10 bg-[#FBF8F4] min-h-screen'}>
       <div className={'w-full h-[114px] flex justify-between items-center'}>
         <h1 className={'text-[42px] font-bold'}>구매 내역 확인</h1>
       </div>
@@ -103,11 +103,7 @@ const OrdersPage = () => {
           </DropdownMenu>
         </div>
         <HistoryTable orders={orders} />
-
-        <Pagenation
-          currentPage={currentPage}
-          totalPage={totalPage}
-        />
+        <Pagenation currentPage={currentPage} totalPage={totalPage} />
       </div>
     </div>
   );
