@@ -109,11 +109,12 @@ const PurchaseRequestPage = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          credentials: 'include', // ✅ 요거 꼭 필요
-          body: JSON.stringify({ resolveMessage: message }),
+          credentials: 'include',
+          body: JSON.stringify({ resolvedMessage: message }),
         },
       );
       setOrders((prev) => prev.filter((o) => o.id !== id));
+      router.push('/history');
     } catch (err) {
       console.error('승인 실패:', err);
     }
@@ -131,7 +132,9 @@ const PurchaseRequestPage = () => {
             Authorization: `Bearer ${token}`,
           },
           credentials: 'include',
-          body: JSON.stringify({ resolveMessage: '사유 부족으로 반려합니다.' }),
+          body: JSON.stringify({
+            resolvedMessage: '사유 부족으로 반려합니다.',
+          }),
         },
       );
       setOrders((prev) => prev.filter((o) => o.id !== id));
