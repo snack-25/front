@@ -1,4 +1,3 @@
-
 // src/types/order.ts
 export interface OrderItem {
   id: string;
@@ -16,4 +15,3 @@ export interface Order {
   status: string;
   items: OrderItem[];
 }
-

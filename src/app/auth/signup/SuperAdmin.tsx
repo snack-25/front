@@ -1,16 +1,17 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useAuthStore } from '@/app/auth/useAuthStore';
+import Form from 'next/form';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { signupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import { emailRegex } from '@/lib/constants';
-import { showCustomToast } from '@/components/ui/Toast/Toast';
-import Image from 'next/image';
-import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
+import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { emailRegex } from '@/lib/constants';
 
 interface IError {
   isError: boolean;
@@ -309,55 +310,65 @@ export function SuperAdmin() {
         </span>
       </div>
 
-      {renderInputField(
-        '이름(기업 담당자)',
-        'name',
-        '이름을 입력해주세요',
-        form.name,
-      )}
-      {renderInputField('이메일', 'email', '이메일을 입력해주세요', form.email)}
-      {renderPasswordField(
-        '비밀번호',
-        'password',
-        '비밀번호를 입력해주세요',
-        form.password,
-        passwordVisibility.password,
-      )}
-      {renderPasswordField(
-        '비밀번호 확인',
-        'validatePassword',
-        '비밀번호를 다시 한 번 입력해주세요',
-        form.validatePassword,
-        passwordVisibility.validatePassword,
-      )}
-      {renderInputField(
-        '회사명',
-        'company',
-        '회사명을 입력해주세요',
-        form.company,
-      )}
-      {renderInputField(
-        '사업자 번호',
-        'bizno',
-        '사업자 번호를 입력해주세요',
-        form.bizno,
-      )}
-
-      <Button
-        className='mt-[16px] tb:mt-[40px]'
-        filled={isFormValid ? 'orange' : 'gray'}
-        onClick={handleSubmit}
-        disabled={!isFormValid}
+      <Form
+        action={async () => await handleSubmit()}
+        className='flex flex-col gap-[16px] tb:gap-[36px]'
       >
-        시작하기
-      </Button>
+        {renderInputField(
+          '이름(기업 담당자)',
+          'name',
+          '이름을 입력해주세요',
+          form.name,
+        )}
+        {renderInputField(
+          '이메일',
+          'email',
+          '이메일을 입력해주세요',
+          form.email,
+        )}
+        {renderPasswordField(
+          '비밀번호',
+          'password',
+          '비밀번호를 입력해주세요',
+          form.password,
+          passwordVisibility.password,
+        )}
+        {renderPasswordField(
+          '비밀번호 확인',
+          'validatePassword',
+          '비밀번호를 다시 한 번 입력해주세요',
+          form.validatePassword,
+          passwordVisibility.validatePassword,
+        )}
+        {renderInputField(
+          '회사명',
+          'company',
+          '회사명을 입력해주세요',
+          form.company,
+        )}
+        {renderInputField(
+          '사업자 번호',
+          'bizno',
+          '사업자 번호를 입력해주세요',
+          form.bizno,
+        )}
+        <Button
+          className='mt-[16px] tb:mt-[40px]'
+          filled={isFormValid ? 'orange' : 'gray'}
+          type='submit'
+          onSubmit={async () => await handleSubmit()}
+          disabled={!isFormValid}
+        >
+          시작하기
+        </Button>
+      </Form>
       <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
         <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>
           이미 계정이 있으신가요?
         </span>
         <Link
-          href='/auth/signup'
-          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+          href='/auth/login'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] focus:underline hover:underline decoration-1 underline-offset-2'
         >
           로그인
         </Link>

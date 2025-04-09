@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import DropdownMenu, {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/Dropdown-Menu';
-import MyRequestTable from './components/MyRequestTable';
 import Pagenation from '@/components/ui/Pagination';
+
 import CancelModal from './components/CancelModal';
 import { Order} from '@/types/order';
+import MyRequestTable from './components/MyRequestTable';
 
 interface OrderItem {
   id: string;
@@ -30,7 +32,6 @@ const MyRequestPage = () => {
   const [totalPage, setTotalPage] = useState(1);
   const [cancelTarget, setCancelTarget] = useState<Order | null>(null);
 
-
   useEffect(() => {
     const fetchMyOrders = async () => {
       try {
@@ -38,9 +39,9 @@ const MyRequestPage = () => {
           sortOption === '높은금액순'
             ? 'highPrice'
             : sortOption === '낮은금액순'
-            ? 'lowPrice'
-            : 'latest';
-  
+              ? 'lowPrice'
+              : 'latest';
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/order-requests?userOnly=true&page=${currentPage}&pageSize=10&sort=${sortQuery}`,
           {
@@ -48,9 +49,11 @@ const MyRequestPage = () => {
           },
         );
         const data = await res.json();
-  
-        if (!Array.isArray(data)) return;
-  
+
+        if (!Array.isArray(data)) {
+          return;
+        }
+
         const transformed: Order[] = data.map((item: any) => ({
           id: item.id,
           date: item.requestedAt?.slice(0, 10) || '-',
@@ -65,19 +68,23 @@ const MyRequestPage = () => {
             quantity: i.quantity ?? 0,
           })),
         }));
-  
+
         setOrders(transformed);
       } catch (err) {
         console.error('내 주문 목록 불러오기 실패:', err);
       }
     };
-  
+
     fetchMyOrders();
   }, [sortOption, currentPage]);
 
   const sortedOrders = [...orders].sort((a, b) => {
-    if (sortOption === '낮은금액순') return a.price - b.price;
-    if (sortOption === '높은금액순') return b.price - a.price;
+    if (sortOption === '낮은금액순') {
+      return a.price - b.price;
+    }
+    if (sortOption === '높은금액순') {
+      return b.price - a.price;
+    }
     return 0;
   });
 
@@ -104,7 +111,7 @@ const MyRequestPage = () => {
 
       <div className='space-y-6'>
         <div className='flex justify-end relative overflow-visible'>
-        <DropdownMenu>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className='w-[136px] h-[50px] btn text-gray-500 text-left pl-[14px] border-2 bg-gray-50 rounded-sm '>
                 {sortOption}
@@ -125,27 +132,30 @@ const MyRequestPage = () => {
         </div>
 
         <MyRequestTable
-        orders={orders} // ✅ 실제 데이터
-        onCancel={handleCancel}
-        sortOption={sortOption}
-        setSortOption={setSortOption}
-        setCancelTarget={setCancelTarget}
+          orders={orders} // ✅ 실제 데이터
+          onCancel={handleCancel}
+          sortOption={sortOption}
+          setSortOption={setSortOption}
+          setCancelTarget={setCancelTarget}
         />
 
-        <Pagenation currentPage={currentPage} totalPage={totalPage} />
+        <Pagenation
+          currentPage={currentPage}
+          totalPage={totalPage}
+        />
 
         {cancelTarget && (
-      <CancelModal
-      open={true}
-      itemName={cancelTarget.items[0]?.name || '상품'}
-      count={cancelTarget.items.length - 1}
-      onClose={() => setCancelTarget(null)}
-      onConfirm={async () => {
-      await handleCancel(cancelTarget.id);
-      setCancelTarget(null);
-      }}
-        />
-          )}
+          <CancelModal
+            open={true}
+            itemName={cancelTarget.items[0]?.name || '상품'}
+            count={cancelTarget.items.length - 1}
+            onClose={() => setCancelTarget(null)}
+            onConfirm={async () => {
+              await handleCancel(cancelTarget.id);
+              setCancelTarget(null);
+            }}
+          />
+        )}
 
         {totalPages > 1 && (
           <div className='flex justify-center mt-6 gap-2'>

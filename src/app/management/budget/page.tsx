@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
 import { getBudgetApi, updateBudgetApi } from '@/app/auth/api';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
@@ -31,6 +32,10 @@ export default function Budget() {
 
   // 서버에서 예산 정보를 받아와 form 상태 업데이트 (초기 로딩)
   useEffect(() => {
+    console.log('user', user);
+    console.log('company', company);
+    console.log('cartId', user?.cartId);
+
     if (!company || !company.companyId) {
       console.log('회사 정보가 아직 없습니다');
       return;
@@ -85,7 +90,9 @@ export default function Budget() {
     const { name, value } = e.target;
     const rawValue = value.replace(/,/g, '');
 
-    if (!/^\d*$/.test(rawValue)) return;
+    if (!/^\d*$/.test(rawValue)) {
+      return;
+    }
 
     const numericValue = Number(rawValue);
     if (numericValue > 500000000) {

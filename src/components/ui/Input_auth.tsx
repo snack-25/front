@@ -28,6 +28,7 @@ interface InputProps
   children?: React.ReactNode;
   titleClassName?: string;
   isModified?: boolean; // 수정된 상태를 판단하는 prop 추가
+  iconPosition?: 'left' | 'right';
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -44,6 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       onBlur,
       isModified,
       value,
+      iconPosition,
       ...props
     },
     ref,
@@ -78,6 +80,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               : 'border-[#FCC49C]', // ✅ 기본 border 색 유지
           )}
         >
+          {/* 왼쪽 아이콘 (검색 등) */}
+          {iconPosition === 'left' && children && (
+            <div className='mr-2 flex-shrink-0 flex items-center'>
+              {children}
+            </div>
+          )}
           <input
             type={type}
             className={cn(
@@ -85,7 +93,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               // 포커스 상태일 때 텍스트 색상
               isFocused || value ? 'text-black' : '', // 포커스가 있을 때 검정색
               // 수정된 값이 있을 때 텍스트 색상
-              isModified ? 'text-black' : '##999999', // 수정된 값은 검정색, 기본값은 회색
+              isModified ? 'text-black' : 'text-[#999999]', // 수정된 값은 검정색, 기본값은 회색
               className,
               titleClassName,
             )}
@@ -99,7 +107,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             value={value}
             {...props}
           />
-          {children}
+          {/* 오른쪽 아이콘 (기본) */}
+          {(!iconPosition || iconPosition === 'right') && children && (
+            <div className='ml-2 flex-shrink-0 flex items-center'>
+              {children}
+            </div>
+          )}
         </div>
       </div>
     );

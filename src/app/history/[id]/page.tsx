@@ -40,8 +40,6 @@ const OrderDetailPage = () => {
           },
         );
 
-        
-
         const data = await res.json();
         console.log('상세 주문 데이터', data);
 
@@ -76,11 +74,14 @@ const OrderDetailPage = () => {
 
   const totalItemCost = order?.items.reduce(
     (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
-    0
+    0,
   );
-  
+
   // 배송비는 총합에서 상품 금액을 뺀 값, 음수 방지용
-  const shippingFee = Math.max(0, (order?.totalAmount || 0) - (totalItemCost || 0));
+  const shippingFee = Math.max(
+    0,
+    (order?.totalAmount || 0) - (totalItemCost || 0),
+  );
 
   return (
     <div className='w-full min-h-screen bg-[#FBF8F4] flex px-16 pt-10 pb-10'>
@@ -123,13 +124,17 @@ const OrderDetailPage = () => {
 
           {/* 배송비 표기 */}
           <div className='flex justify-end mt-4 text-base text-gray-500'>
-          배송비: {shippingFee.toLocaleString()}원
+            배송비: {shippingFee.toLocaleString()}원
           </div>
 
           <div className='flex justify-end items-end mt-6 text-xl font-bold text-[#E67E22]'>
             <span className='text-black'>총 {order?.items.length}건</span>
-            <span className='ml-2'>{order?.totalAmount.toLocaleString()} 원</span>
-            <span className='ml-2 text-sm text-gray-500 font-normal'>배송비포함</span>
+            <span className='ml-2'>
+              {order?.totalAmount.toLocaleString()} 원
+            </span>
+            <span className='ml-2 text-sm text-gray-500 font-normal'>
+              배송비포함
+            </span>
           </div>
         </div>
       </div>

@@ -1,13 +1,15 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Form from 'next/form';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { invitationCodeApi, invitationSignupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
-import Image from 'next/image';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface InvitedUser {
@@ -85,7 +87,7 @@ export function InvitationUser() {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (Object.values(form).some((value) => !value.trim())) {
       showCustomToast({
         label: '모든 항목을 입력해주세요',
@@ -94,25 +96,27 @@ export function InvitationUser() {
       return;
     }
 
-    invitationSignupApi({
-      token: tokenFromUrl!,
-      password: form.password,
-    })
-      .then((res) => {
-        if (res.msg === '회원가입 실패') {
-          throw new Error('회원가입 실패');
-        }
-        setInvitedUser((prev) => ({
-          ...prev,
-          role: res.data?.role,
-          company: res.data?.company, // 회사 이름도 함께 업데이트
-        }));
-        setIsModalOpen(true);
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('실패다');
+    try {
+      const res = await invitationSignupApi({
+        token: tokenFromUrl!,
+        password: form.password,
       });
+
+      console.log('회원가입 응답:', res);
+
+      if (res.msg === '회원가입 실패') {
+        throw new Error('회원가입 실패');
+      }
+
+      // 초대 코드 API로 이미 정보를 받아왔으므로 다시 덮어쓰지 않고 모달을 오픈
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error(err);
+      showCustomToast({
+        label: '회원가입 처리 중 오류가 발생했습니다.',
+        variant: 'error',
+      });
+    }
   };
 
   useEffect(() => {
@@ -122,13 +126,16 @@ export function InvitationUser() {
 
     // 초대 코드 API 응답 시
     invitationCodeApi({ token: tokenFromUrl })
-      .then((data) => {
+      .then((res) => {
+        console.log('초대 응답 데이터:', res); // 디버깅용 로그
+        const data = res.data;
         if (data) {
-          // API 응답에 role도 포함되어 있다면
+          // 초대 응답 데이터에서 회사명은 data.companyName 혹은 data.company.name 로 내려옴
           setInvitedUser({
             email: data.email,
             name: data.name,
-            company: data.company, // 혹은 data.companyName
+            company:
+              data.companyName || (data.company && data.company.name) || '',
             role: data.role,
           });
           setForm((prev) => ({ ...prev, email: data.email || '' }));
@@ -137,7 +144,7 @@ export function InvitationUser() {
         }
       })
       .catch((err) => console.error(err.msg));
-  }, []);
+  }, [tokenFromUrl]);
 
   const isFormValid = Object.values(form).every(
     (value) => (value ?? '').length > 0,
@@ -156,6 +163,7 @@ export function InvitationUser() {
         onChange={handleChange}
         value={form[name]}
         onBlur={handleBlur}
+        isModified={!!form[name]}
       >
         <Image
           src={
@@ -182,9 +190,13 @@ export function InvitationUser() {
           안녕하세요, {invitedUser.name}님!
         </h2>
         <span className='text-[var(--color-gray-600)] text-[14px] tb:text-[20px]'>
+          <span className='font-semibold'>{invitedUser.company}</span>의{' '}
+          <span className='font-semibold'>{invitedUser.role}</span>으로
+          초대되었어요. <br />
           비밀번호를 입력해 회원가입을 완료해주세요.
         </span>
       </div>
+
       <div className='flex flex-col gap-[4px]'>
         <Input
           titleClassName='이메일'
@@ -212,8 +224,8 @@ export function InvitationUser() {
           이미 계정이 있으신가요?
         </span>
         <Link
-          href='/auth/signup'
-          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+          href='/auth/login'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] focus:underline hover:underline decoration-1 underline-offset-2'
         >
           로그인
         </Link>
@@ -230,19 +242,17 @@ export function InvitationUser() {
         <div className='flex flex-col justify-center items-center gap-[24px]'>
           <Image
             src='/img/modal/approved-md.svg'
-            alt='강아지 승인 사진'
+            alt='회원가입 승인 이미지'
             width={240}
             height={140}
           />
           <h2 className='mt-[24px] text-[24px] font-[700]'>회원가입 성공</h2>
           <div className='gap-[6px] flex flex-col items-center text-[20px] font-[500] text-[#ABABAB]'>
-            <span className=''>
-              {invitedUser.name}님, 회원가입을 진심으로 축하드립니다.
-            </span>
+            <span>{invitedUser.name}님, 회원가입을 진심으로 축하드립니다.</span>
             <div className='flex items-center gap-[15px]'>
-              <span className=''>회사명: {invitedUser.company}</span>
+              <span>회사명: {invitedUser.company}</span>
               <div>|</div>
-              <span className=''>직급: {invitedUser.role}</span>
+              <span>직급: {invitedUser.role}</span>
             </div>
           </div>
         </div>

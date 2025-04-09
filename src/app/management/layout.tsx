@@ -1,6 +1,7 @@
 // app/management/layout.tsx
-import ManagementTabMenu from '@/components/gnb/ManagementTabMenu';
 import React from 'react';
+
+import ManagementTabMenu from '@/components/gnb/ManagementTabMenu';
 
 export default function ManagementLayout({
   children,
@@ -8,7 +9,7 @@ export default function ManagementLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className='bg-[#FFFBF6] min-h-screen'>
+    <div className='bg-[#FBF8F4] min-h-screen'>
       <ManagementTabMenu />
       {children}
     </div>

@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 import { updatePasswordApi } from '@/app/auth/api';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
-import { useRouter } from 'next/navigation';
 
 interface IError {
   isError: boolean;
@@ -38,7 +39,7 @@ const validatePasswordFunc = (password: string): string => {
     throw new Error('비밀번호는 최소 8자 이상이어야 합니다.');
   }
   if (password.length > 128) {
-    throw new Error('비밀번호는 최대 128자 이하여야 합니다.');
+    throw new Error('비밀번호는 최대 12자 이하여야 합니다.');
   }
   const PASSWORD_REGEX =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`]).{8,128}$/;

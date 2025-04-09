@@ -45,7 +45,7 @@
     system-ui, roboto, 'Helvetica Neue', 'Segoe UI', sans-serif;
 }
 
-.dark {
+/* .dark {
   --background: oklch(14.1% 0.005 285.823deg);
   --foreground: oklch(98.5% 0 0deg);
   --card: oklch(14.1% 0.005 285.823deg);
@@ -78,7 +78,7 @@
   --sidebar-accent-foreground: oklch(98.5% 0 0deg);
   --sidebar-border: oklch(27.4% 0.006 286.033deg);
   --sidebar-ring: oklch(44.2% 0.017 285.786deg);
-}
+} */
 
 @theme inline {
   --color-background: var(--background);
