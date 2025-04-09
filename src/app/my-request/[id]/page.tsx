@@ -103,7 +103,9 @@ const OrderDetailPage = () => {
               {order.items.map((item, index) => (
                 <div key={index} className='flex justify-between items-center p-4 border-b last:border-none'>
                   <div className='flex gap-4'>
+
                     <img src={item.imageUrl} alt="상품이미지" className='w-14 h-14 rounded-md' />
+
                     <div>
                       <p className='text-sm text-gray-500'>{item.category}</p>
                       <p className='font-semibold'>{item.name}</p>
@@ -187,6 +189,7 @@ const OrderDetailPage = () => {
               <div key={index} className='flex justify-between items-center p-4 border-b last:border-none'>
                 <div className='flex gap-4'>
                   <img src={item.imageUrl} alt="상품이미지" className='w-14 h-14 rounded-md' />
+
                   <div>
                     <p className='text-sm text-gray-500'>{item.category}</p>
                     <p className='font-semibold'>{item.name}</p>

@@ -95,12 +95,14 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
         {/* 상단: 이미지 + 상품명/수량 + 주문금액 */}
         <div className="flex justify-between items-start">
           <div className="flex gap-4">
+
           <Image
           src={order.items[0]?.imageUrl || '/images/default-product.png'}
            alt="상품 이미지"
            width={50}
          height={50}
         className="object-cover"          />
+
             <div className="flex flex-col justify-center">
               <p className="text-[15px] font-medium">
                 {order.items[0]?.name}
@@ -112,6 +114,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
             </div>
           </div>
           
+
         </div>
       
         {/* 하단: 라벨 - 값 좌우 정렬 */}
@@ -139,6 +142,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
             <p>{order.handler || '-'}</p>
           </div>
         </div>
+
       </div>
        
         ))}
