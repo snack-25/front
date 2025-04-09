@@ -5,37 +5,31 @@ import { initFormType } from '@/app/auth/login/page';
 
 import { loginApi, logoutApi } from './api';
 
-// 백엔드에서 보내는거
-// user {
-//   email: 'test1111@naver.com',
-//   name: '찐찐막',
-//   role: 'SUPERADMIN',
-//   company: { name: '찐찐막', id: 'ywkvll8eg16s83zcnik2gg1j' },
-// }
-
 // JWT 토큰 구조 정의 (백엔드에서 어떤 정보를 주는지에 따라 다름)
 interface userInfo {
-  id: number;
+  id: string;
   email: string;
   name: string;
-  companyId: string;
   role: 'SUPERADMIN' | 'ADMIN' | 'USER';
   cartId: string;
-}
-interface companyInfo {
-  companyName: string;
   companyId: string;
+  companyName: string;
+}
+
+interface companyInfo {
+  companyId: string;
+  companyName: string;
 }
 
 // Zustand Store 타입 정의
 interface AuthState {
   user: userInfo | null;
   company: companyInfo | null;
-  edit: (name: string) => void;
   isAuth: boolean;
   isHydrated: boolean;
   login: (form: initFormType) => Promise<any>;
   logout: () => void;
+  edit: (companyName: string) => void;
 }
 
 // Zustand Store 생성
@@ -51,39 +45,45 @@ export const useAuthStore = create<AuthState>()(
       login: async (form: initFormType) => {
         try {
           const loginData = await loginApi(form);
-          // console.log('🔍 로그인 API 응답:', loginData.data);
 
           if (loginData.status !== 200) {
-            return { status: loginData.status, message: loginData.message };
+            return {
+              status: loginData.status,
+              message: loginData.message,
+            };
           }
 
-          if (!loginData.data) {
-            throw new Error('로그인 실패: 응답 데이터가 없습니다');
-          }
+          const { user, token } = loginData.data.data;
 
-          // loginData.data가 있는 경우에만 구조 분해 할당
-          const { id, companyId, companyName, ...res } = loginData.data.data;
+          if (!user) {
+            throw new Error('로그인 실패: 사용자 정보가 없습니다.');
+          }
 
           set({
-            user: { ...res, id },
-            company: { companyId, companyName },
+            user: {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              role: user.role,
+              cartId: user.cartId,
+              companyId: user.companyId,
+              companyName: user.companyName,
+            },
+            company: {
+              companyId: user.companyId,
+              companyName: user.companyName,
+            },
             isAuth: true,
           });
 
           return loginData;
         } catch (error: any) {
-          // 백엔드에서 응답한 오류 메시지가 있으면 그걸 사용
-          console.log('error', error);
-
           if (error.response) {
-            console.log('error.response', error.response);
             return {
               status: error.response.status,
               message: error.response.data?.message || '로그인 실패',
             };
           }
-
-          // 백엔드에서 응답이 없을 경우 기본 메시지 반환
           return { status: 500, message: '서버 오류 발생' };
         }
       },

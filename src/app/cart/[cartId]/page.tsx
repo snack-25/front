@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import CartItem from '@/components/cartItems/cartItem';
 import {
-  createOrder,
   deleteCartItems,
   getCartItems,
   getSelectedCartSummary,
@@ -19,6 +18,7 @@ import { useAuthStore } from '@/app/auth/useAuthStore';
 import OrderRequestModal from '@/components/ui/modal/OrderRequestModal';
 import { useOrderRequest } from '@/hooks/orderRequest/useOrderRequest';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { useOrder } from '@/hooks/order/useOrder';
 
 export default function CartsPage() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -34,6 +34,7 @@ export default function CartsPage() {
   const { user } = useAuthStore();
   const router = useRouter();
   const { submitOrderRequest } = useOrderRequest();
+  const { submitOrder } = useOrder();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -49,12 +50,11 @@ export default function CartsPage() {
   }, [fetchCart]);
 
   const toggleSelect = (itemId: string) => {
-    setSelectedIds((prev) => {
-      const updated = prev.includes(itemId)
+    setSelectedIds((prev) =>
+      prev.includes(itemId)
         ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId];
-      return updated;
-    });
+        : [...prev, itemId],
+    );
   };
 
   const handleSelectAll = () => {
@@ -112,10 +112,7 @@ export default function CartsPage() {
       fetchCart();
     } catch (error) {
       console.error(error);
-      showCustomToast({
-        label: '삭제에 실패했습니다.',
-        variant: 'error',
-      });
+      showCustomToast({ label: '삭제에 실패했습니다.', variant: 'error' });
     }
   };
 
@@ -126,18 +123,13 @@ export default function CartsPage() {
       fetchCart();
     } catch (error) {
       console.error(error);
-      showCustomToast({
-        label: '삭제에 실패했습니다.',
-        variant: 'error',
-      });
+      showCustomToast({ label: '삭제에 실패했습니다.', variant: 'error' });
     }
   };
 
   const handleDeleteAll = async () => {
     const allIds = cartData?.items.map((item) => item.id) || [];
-    if (allIds.length === 0) {
-      return;
-    }
+    if (allIds.length === 0) return;
 
     try {
       await deleteCartItems(cartId, allIds);
@@ -145,10 +137,7 @@ export default function CartsPage() {
       fetchCart();
     } catch (error) {
       console.error(error);
-      showCustomToast({
-        label: '전체 삭제에 실패했습니다.',
-        variant: 'error',
-      });
+      showCustomToast({ label: '전체 삭제에 실패했습니다.', variant: 'error' });
     }
   };
 
@@ -164,7 +153,7 @@ export default function CartsPage() {
     const selectedItems = cartData.items
       .filter((item) => selectedIds.includes(item.id))
       .map((item) => ({
-        productId: item.product.id ?? item.productId,
+        productId: item.product.id,
         quantity: item.quantity,
         price: item.product.price,
         productName: item.product.name,
@@ -173,56 +162,46 @@ export default function CartsPage() {
       }));
 
     if (user?.role === 'SUPERADMIN' || user?.role === 'ADMIN') {
-      try {
-        await createOrder(selectedItems);
-        showCustomToast({
-          label: '주문이 완료되었습니다.',
-          variant: 'success',
-        });
-        router.push('/history');
-      } catch (error) {
-        console.error('주문 실패:', error);
-        showCustomToast({
-          label: '주문에 실패했습니다.',
-          variant: 'error',
-        });
-      }
+      const success = await submitOrder(selectedItems);
+      if (success) fetchCart();
     } else {
       setPendingItems(selectedItems);
       setShowModal(true);
     }
   };
 
-  if (!cartData) {
+  if (!cartData)
     return <div className='text-center py-20'>장바구니 불러오는 중...</div>;
-  }
 
   return (
-    <div className='min-h-screen bg-[#FBF8F4] px-[120px] pt-[40px] pb-[80px] mt-auto'>
+    <div className='min-h-screen bg-[#FBF8F4] px-4 lg:px-[120px] pt-[40px] pb-[80px] mt-auto'>
       <h1 className='h-[40px] text-[32px] font-semibold mb-10 text-[#1F1F1F]'>
         장바구니
       </h1>
 
-      <div className='flex gap-6'>
-        <div className='w-[1254px] h-[850px] bg-[#FBF8F4] border border-[#FFFDF9] flex flex-col'>
-          <div className='flex w-full h-[80px] border-b border-[#C4C4C4] items-center px-6 font-semibold text-sm bg-[#FFFDF9]'>
+      <div className='w-full flex flex-col lg:flex-row gap-6 lg:min-w-[1254px]'>
+        <div className='w-full lg:w-[1254px] bg-[#FBF8F4] border border-[#FFFDF9] flex flex-col'>
+          <div className='flex w-full h-[80px] border-b border-[#C4C4C4] items-center px-4 lg:px-6 font-semibold text-sm bg-[#FFFDF9]'>
             <input
               type='checkbox'
-              className='mr-4'
+              className='mr-2 lg:mr-4'
               checked={selectAll}
               onChange={handleSelectAll}
             />
-            <div className='flex flex-row justify-between'>
-              <div className='w-[594px] text-center'>상품정보</div>
-              <div className='flex flex-row'>
-                <div className='w-[200px] text-center'>수량</div>
-                <div className='w-[200px] text-center'>주문 금액</div>
-                <div className='w-[200px] text-center'>배송 정보</div>
+
+            <span className='lg:hidden text-sm text-[#1F1F1F]'>전체선택</span>
+
+            <div className='hidden lg:flex flex-row justify-between w-full text-center'>
+              <div className='w-[594px]'>상품정보</div>
+              <div className='flex flex-row justify-between flex-1'>
+                <div className='w-[200px]'>수량</div>
+                <div className='w-[200px]'>주문 금액</div>
+                <div className='w-[200px]'>배송 정보</div>
               </div>
             </div>
           </div>
 
-          <div className='h-[720px] overflow-y-auto'>
+          <div className='max-h-[720px] overflow-y-auto'>
             {cartData.items.map((item) => (
               <CartItem
                 key={item.id}
@@ -244,16 +223,16 @@ export default function CartsPage() {
             ))}
           </div>
 
-          <div className='flex justify-between px-6 py-4 bg-[#F9F6F1] text-sm text-gray-600 border-t'>
-            <div className='w-[310px] flex justify-between'>
+          <div className='flex justify-between px-4 lg:px-6 py-4 bg-[#F9F6F1] text-sm text-gray-600 border-t'>
+            <div className='w-full lg:w-[310px] flex justify-between gap-2'>
               <button
-                className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
+                className='w-1/2 h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
                 onClick={handleDeleteAll}
               >
                 전체 상품 삭제
               </button>
               <button
-                className='w-[139px] h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
+                className='w-1/2 h-[50px] px-[18px] py-[12px] rounded-full border border-[#E0E0E0] text-[#1F1F1F] cursor-pointer'
                 onClick={handleDelete}
               >
                 선택 상품 삭제
@@ -266,6 +245,7 @@ export default function CartsPage() {
           cartData={cartData}
           summary={selectedSummary}
           onOrder={handleOrder}
+          selectedIds={selectedIds}
         />
 
         <OrderRequestModal
@@ -278,10 +258,10 @@ export default function CartsPage() {
               ...item,
               requestMessage: message,
             }));
-
             const success = await submitOrderRequest(itemsWithMessage);
             if (success) {
               setShowModal(false);
+              fetchCart();
             }
           }}
         />

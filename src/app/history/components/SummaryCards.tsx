@@ -40,9 +40,10 @@ const SummaryCards = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ companyId }),
-          },
-        );
+            body: JSON.stringify({
+              companyId: parsed.companyId,
+          }),
+      });
 
         const result = await res.json();
         console.log('🔥 result:', result);
