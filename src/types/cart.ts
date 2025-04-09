@@ -144,3 +144,37 @@ export interface CreateOrderItem {
   price?: number;
   productName?: string;
 }
+
+export interface CartItemListProps {
+  cartData: CartResponse;
+  selectedIds: string[];
+  toggleSelect: (itemId: string) => void;
+  handleDeleteItem: (itemId: string) => void;
+  fetchCart: () => void;
+}
+
+export interface CartHeaderProps {
+  selectAll: boolean;
+  handleSelectAll: () => void;
+}
+
+export type CartContainerProps = {
+  cartData: CartResponse;
+  selectedIds: string[];
+  selectAll: boolean;
+  handleSelectAll: () => void;
+  toggleSelect: (itemId: string) => void;
+  handleDeleteItem: (itemId: string) => void;
+  handleDelete: () => void;
+  handleDeleteAll: () => void;
+  fetchCart: () => void;
+};
+
+export interface CartActionsProps {
+  handleDelete: () => void;
+  handleDeleteAll: () => void;
+}
+
+export interface Props {
+  cartId?: string;
+}
