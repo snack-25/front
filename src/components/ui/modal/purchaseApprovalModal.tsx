@@ -36,11 +36,16 @@ export default function PurchaseApprovalModal({
   const {
     register,
     watch,
-    setValue,
     formState: { isValid },
   } = useForm({ mode: 'onChange' });
 
   const approvalMessage = watch('approvalMessage', '');
+
+  // ✅ register 분해
+  const { ref, onChange, onBlur, name } = register('approvalMessage', {
+    required: true,
+    minLength: 8,
+  });
 
   const calculatedTotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -49,7 +54,7 @@ export default function PurchaseApprovalModal({
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const isOverBudget =
-    typeof budgetLeft === 'number' && calculatedTotal > budgetLeft; // 예산 초과 여부
+    typeof budgetLeft === 'number' && calculatedTotal > budgetLeft;
 
   useEffect(() => {
     if (totalAmount !== calculatedTotal) {
@@ -149,11 +154,10 @@ export default function PurchaseApprovalModal({
           <Textarea
             placeholder='승인 메시지를 입력해주세요.'
             value={approvalMessage}
-            {...register('approvalMessage', {
-              required: true,
-              minLength: 8,
-              onChange: (e) => setValue('approvalMessage', e.target.value),
-            })}
+            onChange={onChange}
+            onBlur={onBlur}
+            name={name}
+            ref={ref}
             className='text-[16px] border border-[#FCC49C] px-4 rounded-xl h-[120px]'
           />
         </div>
