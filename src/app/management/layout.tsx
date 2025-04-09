@@ -8,7 +8,7 @@ export default function ManagementLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className='bg-[##FBF8F4] min-h-screen'>
+    <div className='bg-[#FBF8F4] min-h-screen'>
       <ManagementTabMenu />
       {children}
     </div>
