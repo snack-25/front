@@ -1,13 +1,15 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Form from 'next/form';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { invitationCodeApi, invitationSignupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
-import Image from 'next/image';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface InvitedUser {
@@ -222,8 +224,8 @@ export function InvitationUser() {
           이미 계정이 있으신가요?
         </span>
         <Link
-          href='/auth/signup'
-          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+          href='/auth/login'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] focus:underline hover:underline decoration-1 underline-offset-2'
         >
           로그인
         </Link>

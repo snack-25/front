@@ -21,7 +21,7 @@ interface PurchaseApprovalModalProps {
     quantity: number;
   }[];
   totalAmount: number;
-  budgetLeft: number; 
+  budgetLeft: number;
 }
 
 export default function PurchaseApprovalModal({
@@ -87,26 +87,29 @@ export default function PurchaseApprovalModal({
         </div>
 
         {/* 요청 품목 */}
-        <div className="flex flex-col gap-3">
-          <label className="text-[20px] font-semibold">요청 품목</label>
-          <div className="flex flex-col gap-3 border border-[#FCC49C] rounded-xl p-3 bg-white max-h-[250px] overflow-y-auto">
+        <div className='flex flex-col gap-3'>
+          <label className='text-[20px] font-semibold'>요청 품목</label>
+          <div className='flex flex-col gap-3 border border-[#FCC49C] rounded-xl p-3 bg-white max-h-[250px] overflow-y-auto'>
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between border rounded-lg p-4 mb-2">
-                <div className="flex gap-4 items-center">
+              <div
+                key={item.id}
+                className='flex justify-between border rounded-lg p-4 mb-2'
+              >
+                <div className='flex gap-4 items-center'>
                   <img
                     src={item.imageUrl}
                     alt={item.name}
-                    className="w-14 h-14 rounded-md"
+                    className='w-14 h-14 rounded-md'
                   />
                   <div>
-                    <p className="text-sm text-gray-500">{item.category}</p>
-                    <p className="text-lg font-semibold">{item.name}</p>
-                    <p className="text-sm">수량: {item.quantity}개</p>
+                    <p className='text-sm text-gray-500'>{item.category}</p>
+                    <p className='text-lg font-semibold'>{item.name}</p>
+                    <p className='text-sm'>수량: {item.quantity}개</p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className='text-right'>
                   <p>{item.price.toLocaleString()}원</p>
-                  <p className="text-lg font-semibold">
+                  <p className='text-lg font-semibold'>
                     {(item.price * item.quantity).toLocaleString()}원
                   </p>
                 </div>

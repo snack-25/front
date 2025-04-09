@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { useAuthStore } from '@/app/auth/useAuthStore';
-import { OrderRequestModalProps } from '@/types/cart';
-import { getCategoryNamePair } from '@/lib/utils/getCategoryNamePair';
-import { getAllCategories } from '@/lib/api/cart';
 import { Category } from '@/components/gnb/TabMenu';
+import { getAllCategories } from '@/lib/api/cart';
+import { getCategoryNamePair } from '@/lib/utils/getCategoryNamePair';
+import { OrderRequestModalProps } from '@/types/cart';
 
 export default function OrderRequestModal({
   visible,
@@ -33,7 +33,9 @@ export default function OrderRequestModal({
     fetchCategories();
   }, []);
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalProductAmount = items.reduce(
