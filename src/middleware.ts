@@ -43,8 +43,8 @@ export async function middleware(req: NextRequest) {
     '/management/profile',
     '/management/budget',
     '/cart',
-    'order',
-    'order-request',
+    '/order',
+    '/order-request',
   ];
   const isProtectedRoute = protectedRoutes.some((route) =>
     req.nextUrl.pathname.startsWith(route),
