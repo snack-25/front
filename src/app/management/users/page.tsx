@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-
 import {
-  deleteUserApi,
   getUserListApi,
   updateUserRoleApi,
+  deleteUserApi,
 } from '@/app/api/users/api';
 import { inviteUserApi } from '@/app/api/users/api';
 import { useAuthStore } from '@/app/auth/useAuthStore';
@@ -32,13 +31,13 @@ const RoleChip = ({ role }: { role: string }) => {
   const isAdmin = role === 'ADMIN' || role === 'SUPERADMIN';
   return (
     <span
-      className={`text-sm font-medium px-2 h-[36px] min-w-auto flex items-center justify-center rounded-full ${
+      className={`text-sm font-medium px-2 h-[36px] w-[51px] flex items-center justify-center rounded-full ${
         isAdmin
           ? 'bg-background-500 text-primary-400'
           : 'bg-background-300 text-gray-500'
       }`}
     >
-      {role === 'SUPERADMIN' ? '최종관리자' : isAdmin ? '관리자' : '일반'}
+      {isAdmin ? '관리자' : '일반'}
     </span>
   );
 };
@@ -62,9 +61,7 @@ export default function UserManagementPage() {
     setDeleteModalOpen(true);
   };
   const handleDeleteUser = async () => {
-    if (!userToDelete) {
-      return;
-    }
+    if (!userToDelete) return;
 
     try {
       await deleteUserApi(userToDelete.id);
@@ -118,9 +115,7 @@ export default function UserManagementPage() {
 
   // ✅ 이 함수는 MemberRoleChangeModal의 onConfirm에서 호출됨
   const handleRoleChangeConfirm = async (data: { role: string }) => {
-    if (!selectedUser) {
-      return;
-    }
+    if (!selectedUser) return;
 
     try {
       await updateUserRoleApi({ userId: selectedUser.id, role: data.role }); // ✅
