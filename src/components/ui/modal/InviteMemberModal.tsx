@@ -14,7 +14,7 @@ interface InviteMemberModalProps {
 
 // 권한 목록 (value는 서버에 보낼 값, label은 사용자에게 보여지는 이름)
 const roleOptions = [
-  { value: 'SUPERADMIN', label: '최종 관리자' },
+  { value: 'SUPERADMIN', label: '최고 관리자' },
   { value: 'ADMIN', label: '관리자' },
   { value: 'USER', label: '일반 유저' },
 ];
