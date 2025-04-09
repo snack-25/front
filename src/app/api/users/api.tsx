@@ -68,5 +68,6 @@ export async function updateUserRoleApi({
 export async function deleteUserApi(userId: string) {
   return await fetchApi(`/users/${userId}`, {
     method: 'DELETE',
+    credentials: 'include', // 쿠키 포함
   });
 }

@@ -8,7 +8,7 @@ import {
   deleteUserApi,
 } from '@/app/api/users/api';
 import { inviteUserApi } from '@/app/api/users/api';
-import { useAuthStore } from '@/app/api/auth/useAuthStore';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
@@ -23,21 +23,21 @@ type User = {
 };
 
 const getProfileImage = (role: string) =>
-  role === 'admin' || role === 'SUPERADMIN'
+  role === 'ADMIN' || role === 'SUPERADMIN'
     ? '/icon/flat/profile-admin-md.svg'
     : '/icon/flat/profile-md.svg';
 
 const RoleChip = ({ role }: { role: string }) => {
-  const isAdmin = role === 'admin' || role === 'SUPERADMIN';
+  const isAdmin = role === 'ADMIN' || role === 'SUPERADMIN';
   return (
     <span
-      className={`text-sm font-medium px-2 h-[36px] w-[51px] flex items-center justify-center rounded-full ${
+      className={`text-sm font-medium px-2 h-[36px] min-w-auto flex items-center justify-center rounded-full ${
         isAdmin
           ? 'bg-background-500 text-primary-400'
           : 'bg-background-300 text-gray-500'
       }`}
     >
-      {isAdmin ? '관리자' : '일반'}
+      {role === 'SUPERADMIN' ? '최종관리자' : isAdmin ? '관리자' : '일반'}
     </span>
   );
 };
@@ -90,14 +90,16 @@ export default function UserManagementPage() {
 
   // ✅ useEffect: 검색어 또는 페이지가 변경될 때마다 fetchUsers 실행
   useEffect(() => {
-    // ✅ 디바운스 적용: 입력 후 500ms 뒤 API 호출
-    const delay = setTimeout(() => {
-      fetchUsers();
-    }, 500);
+    // ✅ 디바운스 적용: 입력 후 300ms 뒤 API 호출
+    if (!isRoleModalOpen) {
+      const delay = setTimeout(() => {
+        fetchUsers();
+      }, 300); // debounce 줄이기 가능
 
-    // ✅ 입력 도중에는 이전 요청 제거
-    return () => clearTimeout(delay);
-  }, [search, page]);
+      // ✅ 입력 도중에는 이전 요청 제거
+      return () => clearTimeout(delay);
+    }
+  }, [search, page, isRoleModalOpen]); // 검색어, 페이지, 모달 열림 여부에 따라 실행
 
   // 🔽 권한 변경 버튼 클릭 시
   const handleOpenRoleModal = (user: User) => {
@@ -266,6 +268,8 @@ export default function UserManagementPage() {
         onClose={() => setInviteModalOpen(false)}
         onConfirm={async (data) => {
           try {
+            console.log('✅ user:', user); // <- null or undefined 확인
+            console.log('✅ company:', user?.companyId); // company 정보 확인
             if (!user?.id || !user?.companyId) {
               alert('로그인 또는 회사 정보가 누락되었습니다.');
               return;
@@ -275,7 +279,7 @@ export default function UserManagementPage() {
               name: data.name,
               email: data.email,
               role: data.role,
-              companyId: company.companyId,
+              companyId: user.companyId,
               inviterId: String(user.id),
             });
 

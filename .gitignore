@@ -286,3 +286,4 @@ aws-logs/
 ecosystem.config.js
 .pm2/
 # pnpm-lock.yaml
+.vscode/launch.json
