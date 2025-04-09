@@ -31,13 +31,13 @@ const RoleChip = ({ role }: { role: string }) => {
   const isAdmin = role === 'ADMIN' || role === 'SUPERADMIN';
   return (
     <span
-      className={`text-sm font-medium px-2 h-[36px] min-w-auto flex items-center justify-center rounded-full ${
+      className={`text-sm font-medium px-2 h-[36px] w-[51px] flex items-center justify-center rounded-full ${
         isAdmin
           ? 'bg-background-500 text-primary-400'
           : 'bg-background-300 text-gray-500'
       }`}
     >
-      {role === 'SUPERADMIN' ? '최종관리자' : isAdmin ? '관리자' : '일반'}
+      {isAdmin ? '관리자' : '일반'}
     </span>
   );
 };
