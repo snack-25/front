@@ -38,12 +38,6 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // 1️⃣ 로그인 페이지 접근 시, 이미 로그인한 유저는 홈으로 리디렉트
-  if (token && isAuthPage) {
-    console.log('ser');
-    return NextResponse.redirect(new URL('/', req.url));
-  }
-
   // 2️⃣ 보호된 페이지 접근 시, 로그인하지 않았으면 로그인 페이지로 리디렉트
   const protectedRoutes = ['/management/profile', '/management/budget'];
   const isProtectedRoute = protectedRoutes.some((route) =>
