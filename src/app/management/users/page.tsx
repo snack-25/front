@@ -245,7 +245,7 @@ export default function UserManagementPage() {
                             className=' text-[#999999] px-[16px] py-[8px]'
                             height='tb:h-[42px]'
                             rounded='rounded-[8px]'
-                            // onClick={() => setIsUnsubscribeModalOpen(true)}
+                            onClick={() => handleOpenDeleteModal(user)}
                           >
                             계정 탈퇴
                           </Button>
