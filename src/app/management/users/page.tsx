@@ -21,6 +21,7 @@ type User = {
   name: string;
   email: string;
   role: string;
+  companyId: string;
 };
 
 const getProfileImage = (role: string) =>
@@ -34,7 +35,7 @@ const RoleChip = ({ role }: { role: string }) => {
   let textColor = '';
 
   if (role === 'SUPERADMIN') {
-    label = '최종 관리자';
+    label = '최고 관리자';
     bgColor = 'bg-orange-100';
     textColor = 'text-orange-500';
   } else if (role === 'ADMIN') {
@@ -93,9 +94,15 @@ export default function UserManagementPage() {
   const fetchUsers = async () => {
     try {
       const response = await getUserListApi({ page, limit, search });
-      if (response?.users) {
-        setUsers(response.users);
-        setTotalCount(response.totalCount); // ✅ 총 유저 수 저장
+
+      if (response?.users && user?.companyId) {
+        // 🔒 같은 회사 소속 유저만 필터링
+        const filtered = response.users.filter(
+          (u) => u.companyId === user.companyId,
+        );
+
+        setUsers(filtered);
+        setTotalCount(filtered.length); // ⚠️ 필터링된 유저 수로 전체 수 업데이트
       }
     } catch (error) {
       console.error('❌ 사용자 목록 불러오기 실패:', error);
@@ -222,34 +229,36 @@ export default function UserManagementPage() {
           {/* 🧍 사용자 리스트 */}
           <div className=' bg-[#FBF8F4]  max-w-[1680px] w-full flex flex-col gap-4'>
             {/* 테이블 바디 */}
-            {users.map((user) => (
-              <React.Fragment key={user.id}>
+            {users.map((targetUser) => (
+              <React.Fragment key={targetUser.id}>
                 <div className=' border-b border-b-[#E6E6E6] flex flex-col gap-0'>
                   <div className='max-w-[1520px]  w-full mx-auto'>
                     <div
-                      key={user.id}
+                      key={targetUser.id}
                       className=' w-full justify-around flex h-[104px]  border-[#E6E6E6] items-center'
                     >
                       {/* 왼쪽 그룹 */}
                       <div className=' w-full flex gap-0 text-[#6B6B6B]'>
                         <div className='ml-[14px] tb:ml-[20px] tb:max-w-[320px] max-w-[180px] w-full flex justify-start items-center gap-2 text-[20px]'>
                           <Image
-                            src={getProfileImage(user.role)}
-                            alt={`${user.role} 프로필`}
+                            src={getProfileImage(targetUser.role)}
+                            alt={`${targetUser.role} 프로필`}
                             width={48}
                             height={48}
                           />
-                          {user.name}
+                          {targetUser.name}
                         </div>
                         <div className='max-w-[400px] flex justify-start items-center text-[20px] '>
-                          {user.email}
+                          {targetUser.email}
                         </div>
                       </div>
 
                       {/* 오른쪽 그룹 */}
                       <div className='max-w-[524px] justify-between w-full flex '>
                         <div className='max-w-[250px] w-full flex justify-center items-center'>
-                          <RoleChip role={user.role as 'admin' | 'user'} />
+                          <RoleChip
+                            role={targetUser.role as 'admin' | 'user'}
+                          />
                         </div>
                         <div className='max-w-[250px] flex justify-center tb:text-[16px] items-center gap-2'>
                           <Button
@@ -257,7 +266,11 @@ export default function UserManagementPage() {
                             className=' text-[#999999] px-[16px] py-[8px]'
                             height='tb:h-[42px]'
                             rounded='rounded-[8px]'
-                            onClick={() => handleOpenDeleteModal(user)}
+                            onClick={() => handleOpenDeleteModal(targetUser)}
+                            disabled={
+                              targetUser.role === 'SUPERADMIN' ||
+                              targetUser.companyId !== user?.companyId //  로그인 유저와 비교
+                            } // ✅ 다른 회사 유저면 버튼 비활성화
                           >
                             계정 탈퇴
                           </Button>
@@ -266,6 +279,11 @@ export default function UserManagementPage() {
                             height='tb:h-[42px]'
                             rounded='rounded-[8px]'
                             className='px-[16px] py-[8px]'
+                            onClick={() => handleOpenRoleModal(targetUser)} // 선택된 유저 정보 전달
+                            disabled={
+                              targetUser.role === 'SUPERADMIN' ||
+                              targetUser.companyId !== user?.companyId
+                            } // ✅ 다른 회사 유저면 버튼 비활성화
                           >
                             권한 변경
                           </Button>

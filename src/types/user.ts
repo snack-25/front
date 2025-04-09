@@ -2,6 +2,7 @@
 export type PaginatedUserResponse = {
   totalCount: number; // 전체 사용자 수
   users: {
+    companyId: string;
     id: string; // 사용자 ID
     name: string; // 사용자 이름
     email: string; // 이메일 주소
