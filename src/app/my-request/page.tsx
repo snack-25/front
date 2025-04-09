@@ -9,6 +9,7 @@ import DropdownMenu, {
 import MyRequestTable from './components/MyRequestTable';
 import Pagenation from '@/components/ui/Pagination';
 import CancelModal from './components/CancelModal';
+import { Order} from '@/types/order';
 
 interface OrderItem {
   id: string;
@@ -19,13 +20,7 @@ interface OrderItem {
   quantity: number;
 }
 
-interface Order {
-  id: string;
-  date: string;
-  price: number;
-  status: string;
-  items: OrderItem[];
-}
+
 
 const MyRequestPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -86,10 +81,7 @@ const MyRequestPage = () => {
     return 0;
   });
 
-  const paginatedOrders = sortedOrders.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  
   const totalPages = Math.ceil(sortedOrders.length / pageSize);
 
   const handleCancel = async (id: string) => {

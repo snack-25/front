@@ -93,12 +93,7 @@ export default function Header() {
                   >
                     구매 요청 관리
                   </NavItem>
-                  <NavItem
-                    href='/my-request'
-                    currentPath={pathname}
-                  >
-                    구매 요청 내역
-                  </NavItem>
+                  
                   <NavItem
                     href='/history'
                     currentPath={pathname}

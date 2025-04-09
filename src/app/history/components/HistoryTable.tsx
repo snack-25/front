@@ -76,7 +76,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
                 총 수량: {order.items.reduce((sum, i) => sum + i.quantity, 0)}개
               </span>
             </span>
-            <span className="flex-1 text-center text-black-100">{order.price}원</span>
+            <span className="flex-1 text-center text-black-100">{order.price}</span>
             <span className="flex-1 text-center text-black-100">{order.requester}</span>
             <span className="flex-1 text-center text-black-100">{order.handler}</span>
             <span className="flex-1 text-center text-black-100">{order.requestDate}</span>
@@ -121,7 +121,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
         <div className="mt-6 space-y-2  text-gray-600">
           <div className="flex justify-between font-semibold border-b py-2 ">
             <p className="text-black-400 ">주문 금액</p>
-            <p className="text-black-400 ">{order.price}원</p>
+            <p className="text-black-400 ">{order.price}</p>
           </div>
           <div className="flex justify-between text-sm">
             <p className="text-gray-400">구매승인일</p>

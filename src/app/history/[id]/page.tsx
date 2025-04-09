@@ -34,7 +34,7 @@ const OrderDetailPage = () => {
     const fetchOrderDetail = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/order-requests/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/orders/${id}`,
           {
             credentials: 'include',
           },
@@ -46,22 +46,24 @@ const OrderDetailPage = () => {
         console.log('상세 주문 데이터', data);
 
         const transformed: OrderDetail = {
-          id: data.requestId ?? id,
-          date: data.resolvedAt?.slice(0, 10) ?? '-', 
-          requestDate: data.requestedAt?.slice(0, 10) ?? '-', 
-          requester: data.requesterName ?? '-',
-          handler: data.resolverName ?? '-',
-          message: data.items?.[0]?.requestMessage ?? '',
-          approvalMessage: data.resolveMessage ?? '',
+          id: data.id ?? id,
+          date: data.updatedAt?.slice(0, 10) ?? '-',
+          requestDate: data.createdAt?.slice(0, 10) ?? '-',
+          requester: data.requestedBy?.name ?? '-',
+          handler: data.updatedBy?.name ?? '-',
+          message: data.notes ?? '',
+          approvalMessage: data.adminNotes ?? '',
           totalAmount: data.totalAmount ?? 0,
-          items: (data.items || []).map((item: any) => ({
-            id: item.id ?? '',
-            name: item.productName ?? '상품 없음',
-            category: item.categoryName ?? '기타',
+          items: (data.orderItems || []).map((item: any) => ({
+            id: item.productId,
+            name: item.product?.name ?? '상품 없음',
+            category: item.product?.category?.name ?? '기타',
+            imageUrl: item.product?.imageUrl ?? '/images/default.png',
             quantity: item.quantity ?? 0,
             price: item.price ?? 0,
           })),
         };
+
 
         setOrder(transformed);
       } catch (err) {
