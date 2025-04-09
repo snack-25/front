@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
 import { getBudgetApi, updateBudgetApi } from '@/app/auth/api';
 import { useAuthStore } from '@/app/auth/useAuthStore';
 import { Button } from '@/components/ui/Button';
@@ -85,7 +86,9 @@ export default function Budget() {
     const { name, value } = e.target;
     const rawValue = value.replace(/,/g, '');
 
-    if (!/^\d*$/.test(rawValue)) return;
+    if (!/^\d*$/.test(rawValue)) {
+      return;
+    }
 
     const numericValue = Number(rawValue);
     if (numericValue > 500000000) {

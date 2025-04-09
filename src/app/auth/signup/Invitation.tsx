@@ -1,13 +1,15 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Form from 'next/form';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { invitationCodeApi, invitationSignupApi } from '@/app/auth/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input_auth';
-import Link from 'next/link';
 import Modal from '@/components/ui/modal/Modal';
-import Image from 'next/image';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 interface InvitedUser {
@@ -185,35 +187,41 @@ export function InvitationUser() {
           비밀번호를 입력해 회원가입을 완료해주세요.
         </span>
       </div>
-      <div className='flex flex-col gap-[4px]'>
-        <Input
-          titleClassName='이메일'
-          name='email'
-          placeholder={invitedUser.email}
-          value={form.email}
-          disabled
-        />
-      </div>
-      {renderPasswordField('password', '비밀번호를 입력해주세요')}
-      {renderPasswordField(
-        'validatePassword',
-        '비밀번호를 다시 한 번 입력해주세요',
-      )}
-      <Button
-        className='mt-[16px] tb:mt-[40px]'
-        filled={isFormValid ? 'orange' : 'gray'}
-        onClick={handleSubmit}
-        disabled={!isFormValid}
+      <Form
+        action={async () => await handleSubmit()}
+        className='flex flex-col gap-[16px] tb:gap-[36px]'
       >
-        시작하기
-      </Button>
+        <div className='flex flex-col gap-[4px]'>
+          <Input
+            titleClassName='이메일'
+            name='email'
+            placeholder={invitedUser.email}
+            value={form.email}
+            disabled
+          />
+        </div>
+        {renderPasswordField('password', '비밀번호를 입력해주세요')}
+        {renderPasswordField(
+          'validatePassword',
+          '비밀번호를 다시 한 번 입력해주세요',
+        )}
+        <Button
+          className='mt-[16px] tb:mt-[40px]'
+          filled={isFormValid ? 'orange' : 'gray'}
+          type='submit'
+          onSubmit={async () => await handleSubmit()}
+          disabled={!isFormValid}
+        >
+          시작하기
+        </Button>
+      </Form>
       <div className='flex gap-[4px] mx-auto tb:mt-[8px]'>
         <span className='text-[12px] tb:text-[20px] text-[var(--color-gray-600)]'>
           이미 계정이 있으신가요?
         </span>
         <Link
-          href='/auth/signup'
-          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] underline decoration-1'
+          href='/auth/login'
+          className='text-[12px] tb:text-[20px] font-[600] text-[var(--color-primary-400)] focus:underline hover:underline decoration-1 underline-offset-2'
         >
           로그인
         </Link>

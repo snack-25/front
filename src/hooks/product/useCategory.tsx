@@ -1,9 +1,9 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-import { useAuthStore } from '@/app/auth/useAuthStore';
 import { fetchApi } from '@/app/api/instance';
+import { useAuthStore } from '@/app/auth/useAuthStore';
 import { IProducts } from '@/app/productList/ProductList';
 import { Category } from '@/components/gnb/TabMenu';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
