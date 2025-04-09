@@ -34,6 +34,7 @@ const headers = [
 
 const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
   const router = useRouter();
+  
 
   if (orders.length === 0) {
     return (
@@ -47,6 +48,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
       </div>
     );
   }
+
 
   return (
     <div className='w-full space-y-4'>
@@ -63,7 +65,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
           ))}
         </div>
 
-        {orders.map((order) => (
+        {orders.map((order) =>(          
           <div
             key={order.id}
             className='flex justify-around items-center h-20 border-b border-line-200 cursor-pointer hover:bg-gray-50'
@@ -82,7 +84,15 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
               </span>
             </span>
             <span className="flex-1 text-center text-black-100">{order.price}</span>
-            <span className="flex-1 text-center text-black-100">{order.requester}</span>
+            <span className="flex-1 text-center text-black-100 flex justify-center items-center gap-2">
+              {order.requester}
+              {order.requester === order.handler && (
+            <span className="text-orange-400 border border-orange-200 px-2 py-[2px] text-sm rounded-md bg-orange-100 font-semibold">
+              즉시 구매
+            </span>
+            )}
+            </span>
+
             <span className="flex-1 text-center text-black-100">{order.handler}</span>
             <span className="flex-1 text-center text-black-100">{order.requestDate}</span>
           </div>
@@ -90,7 +100,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
       </div>
 
       {/* ✅ 모바일/타블렛용 카드 */}
-      <div className='md:hidden space-y-4'>
+      <div className='md:hidden'>
         {orders.map((order) => (
           <div
             key={order.id}
@@ -140,9 +150,16 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ orders = [] }) => {
           </div>
           <div className="flex justify-between text-sm">
             <p className="text-gray-400">요청인</p>
-            <p className="flex items-center gap-1">
-              {order.requester}
-            </p>
+            <span className="flex justify-between text-sm items-center">
+              <span className="flex items-center gap-1">
+                {order.requester === order.handler && (
+                  <span className="text-orange-400 border border-orange-200 px-2 py-[2px] text-sm rounded-md bg-orange-100 font-semibold">
+                    즉시 구매
+                  </span>
+                )}
+                {order.requester}
+            </span>
+          </span> 
           </div>
           <div className="flex justify-between text-sm">
             <p className="text-gray-400">담당자</p>
