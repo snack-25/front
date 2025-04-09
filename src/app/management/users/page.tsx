@@ -158,8 +158,7 @@ export default function UserManagementPage() {
           <Button
             className='w-full max-w-[214px]'
             filled={'orange'}
-
-            //   onClick={() => setInviteModalOpen(true)}
+            onClick={() => setInviteModalOpen(true)}
           >
             회원 초대하기
           </Button>
@@ -243,7 +242,7 @@ export default function UserManagementPage() {
                           className=' text-[#999999] px-[16px] py-[8px]'
                           height='tb:h-[42px]'
                           rounded='rounded-[8px]'
-                          // onClick={() => setIsUnsubscribeModalOpen(true)}
+                          onClick={() => handleOpenDeleteModal(user)}
                         >
                           계정 탈퇴
                         </Button>
@@ -252,6 +251,7 @@ export default function UserManagementPage() {
                           height='tb:h-[42px]'
                           rounded='rounded-[8px]'
                           className='px-[16px] py-[8px]'
+                          onClick={() => handleOpenRoleModal(user)} // 선택된 유저 정보 전달
                         >
                           권한 변경
                         </Button>
