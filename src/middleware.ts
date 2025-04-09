@@ -39,7 +39,13 @@ export async function middleware(req: NextRequest) {
   }
 
   // 2️⃣ 보호된 페이지 접근 시, 로그인하지 않았으면 로그인 페이지로 리디렉트
-  const protectedRoutes = ['/management/profile', '/management/budget'];
+  const protectedRoutes = [
+    '/management/profile',
+    '/management/budget',
+    '/cart',
+    'order',
+    'order-request',
+  ];
   const isProtectedRoute = protectedRoutes.some((route) =>
     req.nextUrl.pathname.startsWith(route),
   );
