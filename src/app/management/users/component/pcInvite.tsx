@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-
 import { Input } from '@/components/ui/Input_auth';
 import { Button } from '@/components/ui/Button';
 
@@ -111,16 +110,17 @@ export default function PcversionInvitePcversionInvite({
               className='flex h-[104px] bg-[#FBF8F4] border-b border-[#E6E6E6] px-[80px] items-center'
             >
               {/* 왼쪽 그룹 */}
-              <div className='w-[720px] flex gap-0'>
-                <div className='w-[320px] flex justify-start items-center gap-2 text-sm text-[#1F1F1F]'>
-                  <img
+              <div className='w-[720px] flex gap-0 text-[#6B6B6B]'>
+                <div className='w-[320px] flex justify-start items-center gap-2 text-[20px]'>
+                  <Image
                     src={getProfileImage(user.role)}
                     alt={`${user.role} 프로필`}
-                    className='w-6 h-6'
+                    width={48}
+                    height={48}
                   />
                   {user.name}
                 </div>
-                <div className='w-[400px] flex justify-start items-center text-sm text-[#1F1F1F]'>
+                <div className='w-[400px] flex justify-start items-center text-[20px] '>
                   {user.email}
                 </div>
               </div>
@@ -128,16 +128,24 @@ export default function PcversionInvitePcversionInvite({
               {/* 오른쪽 그룹 */}
               <div className='w-[480px] flex gap-0 ml-auto'>
                 <div className='w-[120px] flex justify-center items-center'>
-                  {/* <RoleChip role={user.role as 'admin' | 'user'} /> */}
+                  <RoleChip role={user.role as 'admin' | 'user'} />
                 </div>
-                <div className='w-[360px] flex justify-center items-center gap-2'>
+                <div className='w-[360px] flex justify-center tb:text-[16px] items-center gap-2'>
                   <Button
-                    className='bg-gray-200 text-gray-600 rounded-md px-3 py-1 text-sm cursor-pointer'
+                    filled='gray'
+                    className=' text-[#999999] px-[16px] py-[8px]'
+                    height='tb:h-[42px]'
+                    rounded='rounded-[8px]'
                     // onClick={() => setIsUnsubscribeModalOpen(true)}
                   >
                     계정 탈퇴
                   </Button>
-                  <Button className='bg-primary-400 text-white rounded-md px-3 py-1 text-sm cursor-pointer'>
+                  <Button
+                    filled='orange'
+                    height='tb:h-[42px]'
+                    rounded='rounded-[8px]'
+                    className='px-[16px] py-[8px]'
+                  >
                     권한 변경
                   </Button>
                 </div>

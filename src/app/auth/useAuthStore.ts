@@ -15,7 +15,7 @@ import { loginApi, logoutApi } from './api';
 
 // JWT 토큰 구조 정의 (백엔드에서 어떤 정보를 주는지에 따라 다름)
 interface userInfo {
-  id: number;
+  id: string; // string으로 바꿔야 함
   email: string;
   name: string;
   companyId: string;
@@ -62,10 +62,13 @@ export const useAuthStore = create<AuthState>()(
           }
 
           // loginData.data가 있는 경우에만 구조 분해 할당
-          const { id, companyId, companyName, ...res } = loginData.data.data;
+          const { user } = loginData.data.data;
+
+          const { id, email, name, role, cartId, companyId, companyName } =
+            user;
 
           set({
-            user: { ...res, id },
+            user: { id, email, name, role, cartId, companyId },
             company: { companyId, companyName },
             isAuth: true,
           });

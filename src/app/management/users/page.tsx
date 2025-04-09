@@ -35,10 +35,10 @@ const RoleChip = ({ role }: { role: 'admin' | 'user' }) => {
   const isAdmin = role === 'admin';
   return (
     <span
-      className={`text-sm font-medium px-2 h-[36px] w-[51px] flex items-center justify-center rounded-full ${
+      className={`text-[20px] font-medium py-[2px] px-[8px] flex items-center justify-center rounded-full ${
         isAdmin
           ? 'bg-background-500 text-primary-400'
-          : 'bg-background-300 text-gray-500'
+          : 'bg-[#EFEFEF] text-[#999]'
       }`}
     >
       {isAdmin ? '관리자' : '일반'}
@@ -95,7 +95,7 @@ export default function UserManagementPage() {
       }
     };
 
-    fetchUsers({ companyId: company.companyId });
+    fetchUsers({ companyId: companyId });
 
     const checkSize = () => {
       setIsTablet(window.innerWidth >= 745); // 예: tb = 745px
