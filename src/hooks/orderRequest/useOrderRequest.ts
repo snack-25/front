@@ -8,6 +8,7 @@ import {
   CreateOrderRequestPayload,
 } from '@/types/cart';
 import { showCustomToast } from '@/components/ui/Toast/Toast';
+import { showToastWithAutoClose } from '@/lib/utils/useToastWithAutoClose';
 
 export function useOrderRequest() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export function useOrderRequest() {
 
     try {
       const res = await createOrderRequest(payload);
-      showCustomToast({
+      showToastWithAutoClose({
         label: '구매 요청이 완료되었습니다.',
         variant: 'success',
       });
