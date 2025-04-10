@@ -15,7 +15,7 @@ export default function OrderRequestInfo({
   categories,
 }: OrderRequestProps) {
   if (!data.items.length) {
-    return <p className='text-center p-4'>주문 상품 정보가 없습니다.</p>;
+    return <p className='text-center p-4'>주문 상품 정보가 없습니다 .</p>;
   }
 
   const firstItem = data.items[0];
