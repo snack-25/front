@@ -10,12 +10,12 @@ import { showCustomToast } from '@/components/ui/Toast/Toast';
 
 export default function useCategory() {
   const searchParams = useSearchParams();
-  const mainCategory = searchParams.get('parentId') as string;
-  const subCategory = searchParams.get('categoryId') as string;
+  const mainCategory = searchParams.get('parentId') ?? '';
+  const subCategory = searchParams.get('categoryId') ?? '';
 
   const [mainName, setMainName] = useState<string>('');
   const [subName, setSubName] = useState<string>('');
-  const { isAuth, isHydrated } = useAuthStore();
+  const { isAuth, isHydrated, company } = useAuthStore();
 
   const getParents = async (): Promise<Category[]> => {
     try {
@@ -28,7 +28,7 @@ export default function useCategory() {
       if (process.env.NODE_ENV === 'development') {
         console.log('상위 카테고리 패칭 완료:', parents);
       }
-      return parents;
+      return parents.filter((item) => item.companyId === company?.companyId);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.log('상위 카테고리 패칭 실패:', err);
@@ -51,7 +51,7 @@ export default function useCategory() {
       if (process.env.NODE_ENV === 'development') {
         console.log('초기 하위 카테고리 패칭 완료:', sub);
       }
-      return sub;
+      return sub.filter((item) => item.companyId === company?.companyId);
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
         console.log('초기 하위 카테고리 패칭 실패:', err);
@@ -88,7 +88,7 @@ export default function useCategory() {
     return () => {
       isMounted = false;
     };
-  }, [mainCategory, subCategory, isAuth]);
+  }, [mainCategory, subCategory, isAuth, isHydrated, company]);
 
   return { getParents, getSub, mainName, subName };
 }
