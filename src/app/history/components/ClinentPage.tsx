@@ -40,6 +40,7 @@ const ClientPage = () => {
         { credentials: 'include' }
       );
       const data = await res.json();
+      console.log('주문 목록:', data);
 
       const transformed: Order[] = data.orders.map((item: any) => ({
         id: item.id,
@@ -52,6 +53,7 @@ const ClientPage = () => {
         items: item.orderItems?.map((it: any) => ({
           name: it.product?.name || '상품 없음',
           quantity: it.quantity || 0,
+          imageUrl: it.product?.imageUrl ? it.product.imageUrl : '/img/product/default.png',
         })) || [],
       }));
 

@@ -87,11 +87,11 @@ const OrderTable: React.FC<OrderTableProps> = ({
 
       // 데이터 변환
       const items = (orderData.items || []).map((i: any) => ({
-        id: i.product?.id ?? i.id ?? `${Math.random()}`,
-        name: i.product?.name || '상품 없음',
-        imageUrl: i.product?.imageUrl || '/images/default.png',
-        category: i.product?.categoryName || '기타',
-        price: i.price ?? i.product?.price ?? 0,
+        id: i.productId ?? i.id ?? `${Math.random()}`,
+        name: i.productName || '상품 없음', // ✅ 수정
+        imageUrl: i.imageUrl || '/images/default.png', // ✅ 수정
+        category: i.categoryName || '기타', // ✅ 수정
+        price: i.price ?? 0, // ✅ 수정
         quantity: i.quantity ?? 1,
       }));
 
@@ -293,21 +293,26 @@ const OrderTable: React.FC<OrderTableProps> = ({
         ))}
       </div>
 
-      {/* 승인 모달 */}
-      {selectedOrder && (
-        <PurchaseApprovalModal
-          isOpen={isOpen}
-          onCloseAction={() => setIsOpen(false)}
-          onConfirmAction={(message) => {
-            onApprove?.(selectedOrder.id, message);
-            setIsOpen(false);
-          }}
-          requester={selectedOrder.requester}
-          items={selectedOrder.items}
-          totalAmount={selectedOrder.price ?? 0}
-          budgetLeft={selectedOrder.budgetLeft ?? 0}
-        />
-      )}
+
+      
+     {/* 승인 모달 */}
+{selectedOrder && (
+  <>
+    {console.log('💥 모달로 넘어가는 items:', selectedOrder.items)}
+    <PurchaseApprovalModal
+      isOpen={isOpen}
+      onCloseAction={() => setIsOpen(false)}
+      onConfirmAction={(message) => {
+        onApprove?.(selectedOrder.id, message);
+        setIsOpen(false);
+      }}
+      requester={selectedOrder.requester}
+      items={selectedOrder.items}
+      totalAmount={selectedOrder.price ?? 0}
+      budgetLeft={selectedOrder.budgetLeft ?? 0}
+    />
+  </>
+)}
     </div>
   );
 };

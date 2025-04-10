@@ -130,8 +130,8 @@ export default function ProductFormModal({
       confirmText='등록하기'
       cancelText='취소'
       confirmDisabled={!isValid}
-      smallSize='w-[375px] h-[770px]'
-      largeSize='md:w-[688px] md:h-[1048px]'
+      smallSize='min-w-[375px] w-fit max-h-[770px] h-fit'
+      largeSize='md:min-w-[688px] md:min-h-fit'
       confirmButtonProps='w-[158px] h-[54px] md:w-[310px] md:h-[64px]'
       cancelButtonProps='w-[158px] h-[54px] md:w-[310px] md:h-[64px]'
     >
@@ -192,17 +192,6 @@ export default function ProductFormModal({
               altText='상품 기본 이미지'
             />
           </label>
-        </div>
-
-        {/* 링크 입력 */}
-        <div className='flex flex-col gap-2'>
-          <label className='text-[20px] font-semibold'>제품 링크</label>
-          <Input
-            type='url'
-            placeholder='링크를 입력해주세요.'
-            {...register('link', { required: true })}
-            className='text-[16px] border border-[#FCC49C] px-4 rounded-xl h-[54px] md:h-[64px]'
-          />
         </div>
       </div>
     </BaseFormModal>
