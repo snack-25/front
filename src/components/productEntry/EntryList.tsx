@@ -65,7 +65,17 @@ export default function EntryList({ items }: IProps) {
             <div className='flex flex-col gap-2 mx-6 pt-3 pb-8 border-t-1 border-t-line-200 text-gray-500 font-normal text-md'>
               <p className='flex justify-between'>
                 <span>등록일</span>
-                <span>{data.createdAt || new Date().toLocaleDateString()}</span>
+                <span>
+                  {Intl.DateTimeFormat('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  }).format(new Date(data.createdAt)) ||
+                    new Date().toLocaleDateString()}
+                </span>
               </p>
               <p className='flex justify-between'>
                 <span>가격</span>
