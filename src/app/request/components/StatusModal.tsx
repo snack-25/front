@@ -2,13 +2,11 @@
 
 import React from 'react';
 
-interface ProductItem {
-  product: {
-    name: string;
-    categoryName: string;
-    imageUrl?: string;
-    price: number;
-  };
+interface OrderItem {
+  name: string;
+  category: string;
+  imageUrl?: string;
+  price: number;
   quantity: number;
 }
 
@@ -20,7 +18,7 @@ interface StatusModalProps {
   buttonRight: string;
   onClose: () => void;
   onNavigate: () => void;
-  orderRequestItems?: ProductItem[];
+  orderRequestItems?: OrderItem[];
   budget?: {
     currentAmount: number;
     totalAmount: number;
@@ -64,24 +62,24 @@ const StatusModal: React.FC<StatusModalProps> = ({
               >
                 <div className='flex gap-4 items-center'>
                   <img
-                    src={item.product.imageUrl || '/images/default.png'}
-                    alt={item.product.name || '상품'}
+                    src={item.imageUrl || '/images/default.png'}
+                    alt={item.name || '상품'}
                     className='w-14 h-14 rounded-md'
                   />
                   <div>
                     <p className='text-sm text-gray-500'>
-                      {item.product.categoryName || '기타'}
+                      {item.category || '기타'}
                     </p>
                     <p className='text-lg font-semibold'>
-                      {item.product.name || '상품명 없음'}
+                      {item.name || '상품명 없음'}
                     </p>
                     <p className='text-sm'>수량: {item.quantity}개</p>
                   </div>
                 </div>
                 <div className='text-right'>
-                  <p>{item.product.price.toLocaleString()}원</p>
+                  <p>{item.price.toLocaleString()}원</p>
                   <p className='text-lg font-semibold'>
-                    {(item.product.price * item.quantity).toLocaleString()}원
+                    {(item.price * item.quantity).toLocaleString()}원
                   </p>
                 </div>
               </div>
