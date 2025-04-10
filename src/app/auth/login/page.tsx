@@ -73,7 +73,6 @@ export default function Login() {
       });
       router.replace('/');
     } else {
-      console.log('에러result', result);
       showCustomToast({
         label: result.message, // 백엔드에서 온 오류 메시지 그대로 사용
         variant: 'error',

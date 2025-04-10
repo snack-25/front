@@ -112,7 +112,7 @@ const MyRequestTable = ({
                     e.stopPropagation();
                     setCancelTarget(order);
                   }}
-                  className='bg-none text-orange-400 font-bold border-2 border-orange-400 px-3 py-1 rounded hover:bg-gray-300 w-[94px] h-[44px]'
+                  className='bg-none text-orange-400 font-bold border-2 border-orange-400 px-3 py-1 rounded hover:bg-gray-300 w-1/2 h-[44px] whitespace-nowrap'
                 >
                   요청 취소
                 </button>

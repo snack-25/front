@@ -80,10 +80,10 @@ export async function invitationCodeApi(params: {
     );
     const data = await res.json();
     // token을 URL 쿼리 파라미터에 포함하여 요청 (혹은 body에 함께 보내도 됨)
-    return data;
+    return { status: res.status, data };
   } catch (error) {
     console.error('초대 코드 정보 요청 에러:', error);
-    return { msg: '초대 코드 정보 요청 오류가 발생했습니다.', error };
+    return { status: 500, message: '서버 오류 발생' };
   }
 }
 
@@ -103,9 +103,9 @@ export async function invitationSignupApi(params: {
       },
     );
     const data = await res.json();
-    return data;
+    return { status: res.status, data };
   } catch (error) {
-    return { msg: '회원가입에 실패했습니다', error };
+    return { status: 500, message: '서버 오류 발생' };
   }
 }
 
