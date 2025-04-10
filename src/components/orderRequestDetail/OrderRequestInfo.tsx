@@ -15,7 +15,7 @@ export default function OrderRequestInfo({
   categories,
 }: OrderRequestProps) {
   if (!data.items.length) {
-    return <p className='text-center p-4'>주문 상품 정보가 없습니다 .</p>;
+    return <p className='text-center p-4'>주문 상품 정보가 없습니다.</p>;
   }
 
   const firstItem = data.items[0];
@@ -24,6 +24,12 @@ export default function OrderRequestInfo({
     0,
   );
   const category = getCategoryNamePair(categories, firstItem.categoryId || '');
+
+  const firstMessage =
+    data.items.find(
+      (item) =>
+        typeof item.requestMessage === 'string' && item.requestMessage.trim(),
+    )?.requestMessage || '요청 메시지가 없습니다.';
 
   return (
     <>
@@ -70,7 +76,7 @@ export default function OrderRequestInfo({
         <p className='text-sm font-semibold text-[#1F1F1F] mb-2'>요청 메시지</p>
         <textarea
           readOnly
-          value={data.resolverMessage || '요청 메시지가 없습니다.'}
+          value={firstMessage}
           className='w-full h-[100px] p-3 rounded-[16px] border-2 border-[#F1ECE7] text-[#999999] text-[18px] leading-[26px] font-normal resize-none bg-[#FBF8F4]'
         />
       </div>

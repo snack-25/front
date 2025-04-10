@@ -103,6 +103,7 @@ export interface OrderRequestDetail {
     imageUrl: string | null;
     quantity: number;
     price: number;
+    requestMessage: string | null;
   }[];
 }
 
