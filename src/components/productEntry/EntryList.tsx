@@ -21,7 +21,11 @@ export default function EntryList({ items }: IProps) {
             key={data.id}
             className=' lt:grid lt:grid-cols-4 h-[104px] place-items-center text-black-100 text-xl border-b border-line-200 bg-background-400'
           >
-            <p>{data.createdAt || new Date().toDateString()}</p>
+            <p>{Intl.DateTimeFormat('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            }).format(new Date(data.createdAt)) || new Date().toDateString()}</p>
             <div className='grid grid-cols-2 gap-4 place-items-center'>
               <div className='relative w-20 h-20 bg-gray-50 border border-line-200 rounded-lg'>
                 <Image
