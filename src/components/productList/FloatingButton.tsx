@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { Button } from '../ui/Button';
+import { Button } from '@ui/Button';
 
 interface IProps {
   handleClick: () => void;

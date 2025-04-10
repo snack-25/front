@@ -179,15 +179,6 @@ export default function ProductEditModal({
             />
           </label>
         </div>
-
-        <div className='flex flex-col gap-2'>
-          <label className='text-[20px] font-semibold'>제품 링크</label>
-          <Input
-            type='url'
-            {...register('link', { required: true })}
-            className='text-[16px] border border-[#FCC49C] px-4 rounded-xl h-[54px] md:h-[64px]'
-          />
-        </div>
       </div>
     </BaseFormModal>
   );
