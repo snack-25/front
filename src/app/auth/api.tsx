@@ -78,12 +78,23 @@ export async function invitationCodeApi(params: {
         credentials: 'include',
       },
     );
+
     const data = await res.json();
-    // token을 URL 쿼리 파라미터에 포함하여 요청 (혹은 body에 함께 보내도 됨)
+
+    if (!res.ok) {
+      // ✅ 401, 403 등 HTTP 에러 상태면 강제로 throw
+      throw {
+        status: res.status,
+        response: {
+          data,
+        },
+      };
+    }
+
     return { status: res.status, data };
   } catch (error) {
     console.error('초대 코드 정보 요청 에러:', error);
-    return { status: 500, message: '서버 오류 발생' };
+    throw error; // ❗ 이걸 던져야 호출한 곳의 .catch()에서 잡힘
   }
 }
 

@@ -125,6 +125,9 @@ export function InvitationUser() {
 
     invitationCodeApi({ token: tokenFromUrl })
       .then((res) => {
+        if (!res.data || !res.data.data) {
+          throw new Error('초대 데이터가 없습니다.');
+        }
         const data = res.data;
         const { email, name, companyName, role } = data.data;
 
@@ -143,7 +146,25 @@ export function InvitationUser() {
           });
         }
       })
-      .catch((err) => console.error(err.msg));
+      .catch((err: any) => {
+        // 👇 사용자에게 보이지 않아야 할 예외 메시지 처리
+        const raw = err?.response?.data?.message || err?.message || '';
+        const isUnauthorized = raw.includes('UnauthorizedException');
+
+        const message = isUnauthorized
+          ? '초대 토큰이 만료되었습니다.'
+          : raw || '초대 정보 조회에 실패했습니다.';
+
+        showCustomToast({
+          label: message,
+          variant: 'error',
+        });
+
+        // ✅ 만료 페이지로 이동 (경로 변경)
+        router.replace(
+          `/auth/signup/expired?message=${encodeURIComponent(message)}`,
+        );
+      });
   }, [tokenFromUrl]);
 
   const isFormValid =

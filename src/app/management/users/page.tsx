@@ -15,6 +15,7 @@ import InviteMemberModal from '@/components/ui/modal/InviteMemberModal';
 import MemberRoleChangeModal from '@/components/ui/modal/MemberRoleChangeModal';
 import Modal from '@/components/ui/modal/Modal';
 import React from 'react';
+import { toast } from 'sonner';
 
 type User = {
   id: string;
@@ -229,71 +230,73 @@ export default function UserManagementPage() {
           {/* 🧍 사용자 리스트 */}
           <div className=' bg-[#FBF8F4]  max-w-[1680px] w-full flex flex-col gap-4'>
             {/* 테이블 바디 */}
-            {users.map((targetUser) => (
-              <React.Fragment key={targetUser.id}>
-                <div className=' border-b border-b-[#E6E6E6] flex flex-col gap-0'>
-                  <div className='max-w-[1520px]  w-full mx-auto'>
-                    <div
-                      key={targetUser.id}
-                      className=' w-full justify-around flex h-[104px]  border-[#E6E6E6] items-center'
-                    >
-                      {/* 왼쪽 그룹 */}
-                      <div className=' w-full flex gap-0 text-[#6B6B6B]'>
-                        <div className='ml-[14px] tb:ml-[20px] tb:max-w-[320px] max-w-[180px] w-full flex justify-start items-center gap-2 text-[20px]'>
-                          <Image
-                            src={getProfileImage(targetUser.role)}
-                            alt={`${targetUser.role} 프로필`}
-                            width={48}
-                            height={48}
-                          />
-                          {targetUser.name}
+            {users
+              .filter((user) => user.role !== 'SUPERADMIN') // 🔥 최고 관리자는 안 보여 준다.
+              .map((targetUser) => (
+                <React.Fragment key={targetUser.id}>
+                  <div className=' border-b border-b-[#E6E6E6] flex flex-col gap-0'>
+                    <div className='max-w-[1520px]  w-full mx-auto'>
+                      <div
+                        key={targetUser.id}
+                        className=' w-full justify-around flex h-[104px]  border-[#E6E6E6] items-center'
+                      >
+                        {/* 왼쪽 그룹 */}
+                        <div className=' w-full flex gap-0 text-[#6B6B6B]'>
+                          <div className='ml-[14px] tb:ml-[20px] tb:max-w-[320px] max-w-[180px] w-full flex justify-start items-center gap-2 text-[20px]'>
+                            <Image
+                              src={getProfileImage(targetUser.role)}
+                              alt={`${targetUser.role} 프로필`}
+                              width={48}
+                              height={48}
+                            />
+                            {targetUser.name}
+                          </div>
+                          <div className='max-w-[400px] flex justify-start items-center text-[20px] '>
+                            {targetUser.email}
+                          </div>
                         </div>
-                        <div className='max-w-[400px] flex justify-start items-center text-[20px] '>
-                          {targetUser.email}
-                        </div>
-                      </div>
 
-                      {/* 오른쪽 그룹 */}
-                      <div className='max-w-[524px] justify-between w-full flex '>
-                        <div className='max-w-[250px] w-full flex justify-center items-center'>
-                          <RoleChip
-                            role={targetUser.role as 'admin' | 'user'}
-                          />
-                        </div>
-                        <div className='max-w-[250px] flex justify-center tb:text-[16px] items-center gap-2'>
-                          <Button
-                            filled='gray'
-                            className=' text-[#999999] px-[16px] py-[8px]'
-                            height='tb:h-[42px]'
-                            rounded='rounded-[8px]'
-                            onClick={() => handleOpenDeleteModal(targetUser)}
-                            disabled={
-                              targetUser.role === 'SUPERADMIN' ||
-                              targetUser.companyId !== user?.companyId //  로그인 유저와 비교
-                            } // ✅ 다른 회사 유저면 버튼 비활성화
-                          >
-                            계정 탈퇴
-                          </Button>
-                          <Button
-                            filled='orange'
-                            height='tb:h-[42px]'
-                            rounded='rounded-[8px]'
-                            className='px-[16px] py-[8px]'
-                            onClick={() => handleOpenRoleModal(targetUser)} // 선택된 유저 정보 전달
-                            disabled={
-                              targetUser.role === 'SUPERADMIN' ||
-                              targetUser.companyId !== user?.companyId
-                            } // ✅ 다른 회사 유저면 버튼 비활성화
-                          >
-                            권한 변경
-                          </Button>
+                        {/* 오른쪽 그룹 */}
+                        <div className='max-w-[524px] justify-between w-full flex '>
+                          <div className='max-w-[250px] w-full flex justify-center items-center'>
+                            <RoleChip
+                              role={targetUser.role as 'admin' | 'user'}
+                            />
+                          </div>
+                          <div className='max-w-[250px] flex justify-center tb:text-[16px] items-center gap-2'>
+                            <Button
+                              filled='gray'
+                              className=' text-[#999999] px-[16px] py-[8px]'
+                              height='tb:h-[42px]'
+                              rounded='rounded-[8px]'
+                              onClick={() => handleOpenDeleteModal(targetUser)}
+                              disabled={
+                                targetUser.role === 'SUPERADMIN' ||
+                                targetUser.companyId !== user?.companyId //  로그인 유저와 비교
+                              } // ✅ 다른 회사 유저면 버튼 비활성화
+                            >
+                              계정 탈퇴
+                            </Button>
+                            <Button
+                              filled='orange'
+                              height='tb:h-[42px]'
+                              rounded='rounded-[8px]'
+                              className='px-[16px] py-[8px]'
+                              onClick={() => handleOpenRoleModal(targetUser)} // 선택된 유저 정보 전달
+                              disabled={
+                                targetUser.role === 'SUPERADMIN' ||
+                                targetUser.companyId !== user?.companyId
+                              } // ✅ 다른 회사 유저면 버튼 비활성화
+                            >
+                              권한 변경
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </React.Fragment>
-            ))}
+                </React.Fragment>
+              ))}
           </div>
 
           {/* ◀️ 페이지네이션 */}
@@ -332,8 +335,8 @@ export default function UserManagementPage() {
           onClose={() => setInviteModalOpen(false)}
           onConfirm={async (data) => {
             try {
-              console.log('✅ user:', user); // <- null or undefined 확인
-              console.log('✅ company:', user?.companyId); // company 정보 확인
+              // console.log('✅ user:', user); // <- null or undefined 확인
+              // console.log('✅ company:', user?.companyId); // company 정보 확인
               if (!user?.id || !user?.companyId) {
                 alert('로그인 또는 회사 정보가 누락되었습니다.');
                 return;
@@ -347,11 +350,19 @@ export default function UserManagementPage() {
                 inviterId: String(user.id),
               });
 
+              toast.success('회원 초대가 완료되었습니다!');
               console.log('✅ 초대 완료:', response);
-              alert('회원 초대가 완료되었습니다!');
-            } catch (error) {
+            } catch (error: any) {
               console.error('❌ 초대 실패:', error);
-              alert('회원 초대에 실패했습니다.');
+
+              const errorMessage =
+                error?.response?.data?.message ||
+                error?.message || // Error('...') 로 생성된 경우
+                '회원 초대에 실패했습니다.';
+
+              console.log('🐛 최종 에러 메시지:', errorMessage);
+
+              toast.error(errorMessage);
             } finally {
               setInviteModalOpen(false);
             }
