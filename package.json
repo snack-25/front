@@ -4,7 +4,7 @@
   "private": true,
   "license": "BSD-3-Clause-Clear",
   "engines": {
-    "node": ">=24",
+    "node": ">=22",
     "pnpm": ">=10"
   },
   "scripts": {
